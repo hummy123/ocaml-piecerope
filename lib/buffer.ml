@@ -1,6 +1,6 @@
-type buffer =
+type t =
     | BE
-    | BT of int * buffer * int * string * int * buffer
+    | BT of int * t * int * string * int * t
 
 let target_size = 512
 
