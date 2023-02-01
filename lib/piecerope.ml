@@ -90,3 +90,24 @@ let linesRight node =
   match node with
   | PE -> 0
   | PT(_, _, v, _) -> v.right_lns
+
+(* Logic for handling piece nodes. *)
+let splitLines rStart (lines: int array) =
+  let rec findIndex pos =
+    if pos >= Array.length lines then
+      None
+    else
+      let cur = Array.get lines pos in
+      if cur >= rStart then
+        Some pos
+      else
+        findIndex (pos + 1)
+  in
+  match findIndex 0 with
+  | Some splitPoint ->
+      let arrLeft = Array.sub lines 0 (splitPoint - 1) in
+      let arrRight = Array.sub lines splitPoint (Array.length lines - splitPoint - 1) in
+      arrLeft, arrRight
+  | None ->
+      lines, Array.make 0 0
+
