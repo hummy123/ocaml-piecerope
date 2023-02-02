@@ -153,7 +153,7 @@ let deleteAtEnd curIndex start piece =
   in
   (length, lines)
 
-let text piece rope = Buffer.substring piece.start piece.length rope.buffer
+(* let text piece rope = Buffer.substring piece.start piece.length rope.buffer *)
 
 let textInRange curIndex start finish piece table =
   let textStart = start - curIndex + piece.start in
