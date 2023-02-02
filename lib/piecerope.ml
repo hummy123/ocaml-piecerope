@@ -280,3 +280,51 @@ let insMax pcStart pcLength (pcLines: int array) tree =
   max tree topLevelCont
 
 let isConsecutive v pcStart = v.start + v.length = pcStart
+
+let insert_tree insIndex pcStart pcLength pcLines tree =
+  let rec ins curIndex node cont =
+    match node with
+    | PE -> PT(1, PE, create pcStart pcLength pcLines, PE) |> cont
+    | PT(h, l, v, r) when insIndex < curIndex ->
+        let nextIndex = curIndex - nLength l - sizeRight l in
+        let v' = addLeft pcLength (Array.length pcLines) v in
+        ins nextIndex l (fun l' -> 
+          PT(h, l', v', r) |> skew |> split |> cont
+        )
+    | PT(h, l, v, r) when insIndex > curIndex + v.length ->
+        let nextIndex = curIndex + v.length + sizeLeft r in
+        let v' = addRight pcLength (Array.length pcLines) v in
+        ins nextIndex r (fun r' ->
+          PT(h, l, v', r') |> skew |> split |> cont
+        )
+    | PT(h, l, v, r) when insIndex = curIndex && isConsecutive v pcStart ->
+        let v'Lines = Array.append v.lines pcLines in
+        let v' = { v with length = v.length + pcLength; lines = v'Lines }
+        PT(h, l, v', r) |> cont
+    | PT(h, l, v, r) when insIndex = curIndex ->
+        let v' = addRight pcLength (Array.length pcLines) v in
+        let r' = insMin pcStart pcLength pcLines r in
+        PT(h, l, v', r') |> skew |> split |> cont
+    | PT(h, l, v, r) ->
+        let difference = insIndex - curIndex in
+        let rStart = v.start + difference in
+        let rLength = v.length - difference in
+        
+        let (leftLines, rightLines) = splitLines rStart v.lines in
+        
+        let l' = insMax v.start difference leftLines l in
+        let r' = insMin rStart rLength rightLines r in
+        let v' =  { v with
+                    start = pcStart;
+                    length = pcLength;
+                    lines = pcLines;
+                    left_idx = v.left_idx + difference;
+                    left_lns = v.left_lns + Array.length leftLines;
+                    right_idx = v.right_idx + rLength;
+                    right_lns = v.right_lns + Array.length rightLines;
+                  }
+        PT(h, l', v', r') |> skew |> split |> cont
+    in
+    ins (sizeLeft tree) tree topLevelCont
+
+
