@@ -17,6 +17,8 @@ type t = {
   pieces: tree;
 }
 
+let topLevelCont x = x
+
 let create start length lines = { 
   start = start; 
   length = length; 
@@ -223,3 +225,58 @@ let adjust = function
       let ka = setData (idxLnSize leftNode) (idxLnSize rightNode) ka in
       PT(lva + 1, leftNode, ka, rightNode)
   | t -> t
+
+let rec splitMax = function
+  | PT(_, l, v, PE) ->
+      let v' = setData (idxLnSize l) (0, 0) v in
+      l, v'
+  | PT(h, l, v, r) -> 
+      let (r', b) = splitMax r in
+      let (r'Size, r'Lines) = idxLnSize r' in
+      let v' = {v with right_idx = r'Size; right_lns = r'Lines} in
+      let newLeft = PT(h, l, v', r') in
+      let (leftSize, leftLines) = idxLnSize newLeft in
+      let b' = {b with left_idx = leftSize; left_lns = leftLines} in
+      newLeft, b'
+  | PE -> failwith "unexpected splitMax case"
+
+let rec fold f x t =
+  match t with
+  | PE -> x
+  | PT(_, l, v, r) ->
+      let x = fold f x l in
+      let x = f x v in
+      fold f x r
+
+(* Core PieceTree logic. *)
+let text piecerope = 
+  fold (fun (acc: string) pc ->
+    let text = Buffer.substring pc.start pc.length piecerope.buffer in
+    acc ^ text
+  ) "" piecerope.pieces
+
+let insMin pcStart pcLength pcLines tree =
+  let rec min node cont =
+    match node with
+    | PE -> PT(1, PE, create pcStart pcLength pcLines, PE) |> cont
+    | PT(h, l, v, r) ->
+        min l (fun l' ->
+          let v' = addLeft pcLength (Array.length pcLines) v in
+          PT(h, l', v', r) |> skew |> split |> cont
+        )
+  in
+  min tree topLevelCont
+
+let insMax pcStart pcLength (pcLines: int array) tree = 
+  let rec max node cont =
+    match node with
+    | PE -> PT(1, PE, create pcStart pcLength pcLines, PE) |> cont
+    | PT(h, l, v, r) ->
+        max r (fun r' ->
+          let v' = addRight pcLength (Array.length pcLines) v in
+          PT(h, l, v', r') |> skew |> split |> cont
+        )
+  in
+  max tree topLevelCont
+
+let isConsecutive v pcStart = v.start + v.length = pcStart
