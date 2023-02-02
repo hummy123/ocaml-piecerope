@@ -299,7 +299,7 @@ let insert_tree insIndex pcStart pcLength pcLines tree =
         )
     | PT(h, l, v, r) when insIndex = curIndex && isConsecutive v pcStart ->
         let v'Lines = Array.append v.lines pcLines in
-        let v' = { v with length = v.length + pcLength; lines = v'Lines }
+        let v' = { v with length = v.length + pcLength; lines = v'Lines } in
         PT(h, l, v', r) |> cont
     | PT(h, l, v, r) when insIndex = curIndex ->
         let v' = addRight pcLength (Array.length pcLines) v in
@@ -314,7 +314,7 @@ let insert_tree insIndex pcStart pcLength pcLines tree =
         
         let l' = insMax v.start difference leftLines l in
         let r' = insMin rStart rLength rightLines r in
-        let v' =  { v with
+        let v' =  { 
                     start = pcStart;
                     length = pcLength;
                     lines = pcLines;
@@ -322,7 +322,7 @@ let insert_tree insIndex pcStart pcLength pcLines tree =
                     left_lns = v.left_lns + Array.length leftLines;
                     right_idx = v.right_idx + rLength;
                     right_lns = v.right_lns + Array.length rightLines;
-                  }
+                  } in
         PT(h, l', v', r') |> skew |> split |> cont
     in
     ins (sizeLeft tree) tree topLevelCont
@@ -345,7 +345,7 @@ let delete_tree start length tree =
   let rec del curIndex node =
     match node with
     | PE -> PE
-    | PT(_, l, v, r) ->
+    | PT(h, l, v, r) ->
         let left =
           if start < curIndex
           then del (curIndex - nLength l - sizeRight l) l
@@ -363,7 +363,7 @@ let delete_tree start length tree =
           then right
           else
             let (newLeft, newVal) = splitMax left in
-            let v' = setData (idxLnSize newLeft) (idxLnSize right) in
+            let v' = setData (idxLnSize newLeft) (idxLnSize right) newVal in
             PT(h, newLeft, v', right) |> adjust
         else if startIsInRange start curIndex finish nodeEndIndex then
           let (newStart, newLength, newLines) = deleteAtStart curIndex finish v in
@@ -414,3 +414,38 @@ let delete_tree start length tree =
           PT(h, left, v', right) |> adjust
   in
   del (sizeLeft tree) tree
+
+let rec findLineBreaksRec (str: string) strLengthMinus1 pcStart pos acc =
+  if pos > strLengthMinus1 then
+    List.rev acc |> Array.of_list
+  else
+    let cur = str.[pos] in
+    if cur = '\n' then
+      findLineBreaksRec str strLengthMinus1 pcStart (pos + 1) ((pos + pcStart)::acc)
+    else if cur = '\r' then
+      let acc = (pos + pcStart)::acc in
+      if pos = strLengthMinus1 then
+        List.rev acc |> Array.of_list
+      else
+        let next = str.[pos + 1] in
+        if next = '\n' then
+          findLineBreaksRec str strLengthMinus1 pcStart (pos + 2) acc
+        else
+          findLineBreaksRec str strLengthMinus1 pcStart (pos + 1) acc
+    else
+      findLineBreaksRec str strLengthMinus1 pcStart (pos + 1) acc
+
+
+(* Public functions exposed via interface. *)
+let empty = { buffer = Buffer.empty; pieces = PE }
+
+let insert index (str: string) piecerope =
+  let pcStart = Buffer.size piecerope.buffer in
+  let pcLines = findLineBreaksRec str (String.length str - 1) pcStart 0 [] in
+  let buffer = Buffer.append str piecerope.buffer in
+  let pieces = insert_tree index pcStart (String.length str) pcLines piecerope.pieces in
+  { buffer; pieces }
+
+let delete start length piecerope =
+  let pieces = delete_tree start length piecerope.pieces in
+  { piecerope with pieces = pieces; }
