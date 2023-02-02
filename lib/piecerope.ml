@@ -327,4 +327,90 @@ let insert_tree insIndex pcStart pcLength pcLines tree =
     in
     ins (sizeLeft tree) tree topLevelCont
 
+(* Repeated if-statements used in both delete and substring. *)
+let inRange start curIndex finish nodeEndIndex =
+  start <= curIndex && finish >= nodeEndIndex
 
+let startIsInRange start curIndex finish nodeEndIndex =
+  start <= curIndex && finish < nodeEndIndex && curIndex < finish
+
+let endIsInRange start curIndex finish nodeEndIndex =
+  start > curIndex && finish >= nodeEndIndex && start <= nodeEndIndex
+
+let middleIsInRange start curIndex finish nodeEndIndex =
+  start >= curIndex && finish <= nodeEndIndex
+
+let delete_tree start length tree =
+  let finish = start + length in
+  let rec del curIndex node =
+    match node with
+    | PE -> PE
+    | PT(_, l, v, r) ->
+        let left =
+          if start < curIndex
+          then del (curIndex - nLength l - sizeRight l) l
+          else l in
+        
+        let nodeEndIndex = curIndex + v.length in
+        
+        let right =
+          if finish > nodeEndIndex
+          then del (nodeEndIndex + sizeLeft r) r
+          else r in
+
+        if inRange start curIndex finish nodeEndIndex then
+          if left = PE
+          then right
+          else
+            let (newLeft, newVal) = splitMax left in
+            let v' = setData (idxLnSize newLeft) (idxLnSize right) in
+            PT(h, newLeft, v', right) |> adjust
+        else if startIsInRange start curIndex finish nodeEndIndex then
+          let (newStart, newLength, newLines) = deleteAtStart curIndex finish v in
+          let (leftidx, leftlns) = idxLnSize left in
+          let (rightidx, rightlns) = idxLnSize right in
+          let v' =  {
+                      start = newStart;
+                      length = newLength;
+                      lines = newLines;
+                      left_idx = leftidx;
+                      left_lns = leftlns;
+                      right_idx = rightidx;
+                      right_lns = rightlns;
+                    } in
+          PT(h, left, v', right) |> skew |> split
+        else if endIsInRange start curIndex finish nodeEndIndex then
+          let (length, lines) = deleteAtEnd curIndex start v in
+          let (leftidx, leftlns) = idxLnSize left in
+          let (rightidx, rightlns) = idxLnSize right in
+          let v' =  {
+                      v with
+                      length = length;
+                      lines = lines;
+                      left_idx = leftidx;
+                      left_lns = leftlns;
+                      right_idx = rightidx;
+                      right_lns = rightlns;
+                    } in
+          PT(h, left, v', right) |> adjust
+        else if middleIsInRange start curIndex finish nodeEndIndex then
+          let (p1Length, p1Lines, p2Start, p2Length, p2Lines) =
+            deleteInRange curIndex start finish v in
+          let newRight = insMin p2Start p2Length p2Lines right in
+          let (leftidx, leftlns) = idxLnSize left in
+          let (rightidx, rightlns) = idxLnSize newRight in
+          let v' =  {
+                      v with
+                      length = p1Length;
+                      lines = p1Lines;
+                      left_idx = leftidx;
+                      left_lns = leftlns;
+                      right_idx = rightidx;
+                      right_lns = rightlns;
+                    } in
+          PT(h, left, v', newRight) |> skew |> split
+        else
+          let v' = setData (idxLnSize left) (idxLnSize right) v in
+          PT(h, left, v', right) |> adjust
+  in
+  del (sizeLeft tree) tree
