@@ -36,7 +36,7 @@ let addRight idxDelta lnDelta node =
 let setIdx left right node =
   { node with left_idx = left; right_idx = right; }
 
-let setData leftSize leftLines rightSize rightLines node =
+let setData (leftSize, leftLines) (rightSize, rightLines) node =
   { node with 
       left_idx = leftSize;
       left_lns = leftLines; 
@@ -169,3 +169,57 @@ let textAtEnd curIndex start piece table =
 
 let atStartAndLength start length table =
   Buffer.substring start length table.buffer
+
+(* AA Tree balancing functions. *)
+let sngl = function
+  | PE -> false
+  | PT(_, _, _, PE) -> false
+  | PT(lvx, _, _, PT(lvy, _, _, _)) -> lvx > lvy
+
+let lvl = function
+  | PE -> 0
+  | PT(lvt, _, _, _) -> lvt
+
+let skew = function
+  | PT(lvx, PT(lvy, a, ky, b), kx, c) when lvx = lvy ->
+      let kx = setData (idxLnSize b) (idxLnSize c) kx in
+      let innerNode = PT(lvx, b, kx, c) in
+      let ky = setData (idxLnSize a) (idxLnSize innerNode) ky in
+      PT(lvx, a, ky, innerNode)
+  | t -> t
+
+let split = function
+  | PT(lvx, a, kx, PT(lvy, b, ky, PT(lvz, c, kz, d))) when lvx = lvy && lvy = lvz ->
+      let right = PT(lvx, c, kz, d) in
+      let kx = setData (idxLnSize a) (idxLnSize b) kx in
+      let left = PT(lvx, a, kx, b) in
+      let ky = setData (idxLnSize left) (idxLnSize right) ky in
+      PT(lvx + 1, left, ky, right)
+  | t -> t
+
+let nlvl = function
+  | PT(lvt, _, _, _) as t -> if sngl t then lvt else lvt - 1
+  | _ -> failwith "unexpected nlvl case"
+
+let adjust = function
+  | PT(lvt, lt, _, rt) as t when lvl lt >= lvt - 1 && lvl rt >= (lvt - 1) -> 
+      t
+  | PT(lvt, lt, kt, rt) when lvl rt < lvt - 1 && sngl lt -> 
+      PT(lvt - 1, lt, kt, rt) |> skew
+  | PT(lvt, PT(lv1, a, kl, PT(lvb, lb, kb, rb)), kt, rt) when lvl rt < lvt - 1 -> 
+      let kl = setData (idxLnSize a) (idxLnSize lb) kl in
+      let leftNode = PT(lv1, a, kl, lb) in
+      let kt = setData (idxLnSize rb) (idxLnSize rt) kt in
+      let rightNode = PT(lvt - 1, rb, kt, rt) in
+      let kb = setData (idxLnSize leftNode) (idxLnSize rightNode) kb in
+      PT(lvb + 1, leftNode, kb, rightNode)
+  | PT(lvt, lt, kt, rt) when lvl rt < lvt -> 
+      PT(lvt - 1, lt, kt, rt) |> split
+  | PT(lvt, lt, kt, PT(_, (PT(lva, c, ka, d) as a), kr, b)) ->
+      let kt = setData (idxLnSize lt) (idxLnSize c) kt in
+      let leftNode = PT(lvt - 1, lt, kt, c) in
+      let kr = setData (idxLnSize d) (idxLnSize b) kr in
+      let rightNode = PT(nlvl a, d, kr, b) |> split in
+      let ka = setData (idxLnSize leftNode) (idxLnSize rightNode) ka in
+      PT(lva + 1, leftNode, ka, rightNode)
+  | t -> t
