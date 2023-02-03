@@ -1,4 +1,4 @@
 (executable
- (public_name piecerope)
+ (public_name benchmark)
  (name main)
  (libraries piecerope))

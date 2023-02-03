@@ -283,11 +283,15 @@ let insert_tree insIndex pcStart pcLength pcLines tree =
         ins nextIndex r (fun r' ->
           PT(h, l, v', r') |> skew |> split |> cont
         )
-    | PT(h, l, v, r) when insIndex = curIndex && is_consecutive v pcStart ->
+    | PT(h, l, v, r) when insIndex = curIndex ->
+        let v' = plus_left pcLength (Array.length pcLines) v in
+        let l' = ins_max pcStart pcLength pcLines l in
+        PT(h, l', v', r) |> skew |> split |> cont
+    | PT(h, l, v, r) when insIndex = curIndex + v.length && is_consecutive v pcStart ->
         let v'Lines = Array.append v.lines pcLines in
         let v' = { v with length = v.length + pcLength; lines = v'Lines } in
         PT(h, l, v', r) |> cont
-    | PT(h, l, v, r) when insIndex = curIndex ->
+    | PT(h, l, v, r) when insIndex = curIndex + v.length ->
         let v' = plus_right pcLength (Array.length pcLines) v in
         let r' = ins_min pcStart pcLength pcLines r in
         PT(h, l, v', r') |> skew |> split |> cont
