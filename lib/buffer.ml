@@ -8,15 +8,15 @@ let size = function
   | BE -> 0
   | BT(_, _, lm, v, rm, _) -> lm + String.length v + rm
 
-let stringLength = function
+let string_length = function
   | BE -> 0
   | BT(_, _, _, v, _, _) -> String.length v
 
-let sizeLeft = function
+let size_left = function
   | BE -> 0
   | BT(_, _, lm, _, _, _) -> lm
 
-let sizeRight = function
+let size_right = function
   | BE -> 0
   | BT(_, _, _, _, rm, _) -> rm
 
@@ -33,22 +33,22 @@ let split = function
     BT(lvx + 1, left, size left, ky, size right, right)
   | t -> t
 
-let topLevelCont x = x
+let top_level_cont x = x
 
 let empty = BE
 
 let append str buffer = 
-  let rec insMax node cont =
+  let rec ins_max node cont =
     match node with
     | BE -> BT(1, BE, 0, str, 0, BE) |> cont
     | BT(h, l, lm, v, rm, BE) when String.length v + String.length str <= target_size ->
         BT(h, l, lm, v ^ str, rm, BE) |> cont
     | BT(h, l, lm, v, rm, r) ->
-        insMax r (fun r' ->
+        ins_max r (fun r' ->
           BT(h, l, lm, v, rm + String.length str, r') |> skew |> split |> cont
         )
   in
-  insMax buffer topLevelCont
+  ins_max buffer top_level_cont
 
 let substring start length buffer =
   let finish = start + length in
@@ -58,7 +58,7 @@ let substring start length buffer =
     | BT(_, l, _, v, _, r) ->
         let left =
           if start < curIndex
-          then sub (curIndex - stringLength l - sizeRight l) l acc
+          then sub (curIndex - string_length l - size_right l) l acc
           else acc 
         in
         let nextIndex = curIndex + String.length v in
@@ -83,7 +83,7 @@ let substring start length buffer =
             left
         in
         if finish > nextIndex
-        then sub (nextIndex + sizeLeft r) r middle
+        then sub (nextIndex + size_left r) r middle
         else middle
   in
-  sub (sizeLeft buffer) buffer ""
+  sub (size_left buffer) buffer ""

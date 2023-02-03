@@ -17,7 +17,7 @@ type t = {
   pieces: tree;
 }
 
-let topLevelCont x = x
+let top_level_cont x = x
 
 let create start length lines = { 
   start = start; 
@@ -29,25 +29,25 @@ let create start length lines = {
   lines = lines; 
 }
 
-let addLeft idxDelta lnDelta node =
+let plus_left idxDelta lnDelta node =
   { node with left_idx = node.left_idx + idxDelta; left_lns = node.left_lns + lnDelta }
 
-let addRight idxDelta lnDelta node =
+let plus_right idxDelta lnDelta node =
   { node with right_idx = node.right_idx + idxDelta; right_lns = node.right_lns + lnDelta }
 
-let setData (leftSize, leftLines) (rightSize, rightLines) node =
+let set_data (leftSize, leftLines) (rightSize, rightLines) node =
   { node with 
       left_idx = leftSize;
       left_lns = leftLines; 
       right_idx = rightSize;
       right_lns = rightLines; }
   
-let nLength node = 
+let n_length node = 
   match node with
   | PE -> 0
   | PT(_, _, v, _) -> v.length
 
-let nLines node =
+let n_lines node =
   match node with
   | PE -> 0
   | PT(_, _, v, _) -> Array.length v.lines
@@ -57,28 +57,28 @@ let tree_size node =
   | PE -> 0
   | PT(_, _, v, _) -> v.left_idx + v.right_idx + v.length
 
-let idxLnSize node =
+let idx_ln_size node =
   match node with
   | PE -> 0, 0
   | PT(_, _, v, _) -> v.left_idx + v.right_idx + v.length,
                       v.left_lns + v.right_lns + Array.length v.lines
 
-let sizeLeft node = 
+let size_left node = 
   match node with 
   | PE -> 0
   | PT(_, _, v, _) -> v.left_idx
 
-let sizeRight node = 
+let size_right node = 
   match node with 
   | PE -> 0
   | PT(_, _, v, _) -> v.right_idx
 
-let linesLeft node =
+let lines_left node =
   match node with
   | PE -> 0
   | PT(_, _, v, _) -> v.left_lns
 
-let linesRight node =
+let lines_right node =
   match node with
   | PE -> 0
   | PT(_, _, v, _) -> v.right_lns
@@ -86,7 +86,7 @@ let linesRight node =
 (* Logic for handling piece nodes; not using a separate module because more work due to defining interface. *)
 
 (* tryFindIndex function ported from F#: https://github.com/dotnet/fsharp/blob/main/src/FSharp.Core/array.fs#L1558 *)
-let tryFindIndex (predicate: int -> bool) (lines: int array) =
+let try_find_index (predicate: int -> bool) (lines: int array) =
   let len = Array.length lines in
   let rec find n =
     if n >= len then None
@@ -95,8 +95,8 @@ let tryFindIndex (predicate: int -> bool) (lines: int array) =
   in
   find 0
 
-let splitLines rStart (lines: int array) =
-  match tryFindIndex (fun x -> x >= rStart) lines with
+let split_lines rStart (lines: int array) =
+  match try_find_index (fun x -> x >= rStart) lines with
   | Some splitPoint ->
       let arrLeft = Array.sub lines 0 (splitPoint - 1) in
       let arrRight = Array.sub lines splitPoint (Array.length lines - splitPoint - 1) in
@@ -104,42 +104,42 @@ let splitLines rStart (lines: int array) =
   | None ->
       lines, Array.make 0 0
 
-let deleteLinesInRange p1Length p2Start lines =
+let delete_lines_in_range p1Length p2Start lines =
   let p1Lines =
-    match tryFindIndex (fun x -> x >= p1Length) lines with
+    match try_find_index (fun x -> x >= p1Length) lines with
     | Some x -> Array.sub lines 0 (x - 1)
     | None -> Array.make 0 0
   in
   let p2Lines =
-    match tryFindIndex (fun x -> x >= p2Start) lines with
+    match try_find_index (fun x -> x >= p2Start) lines with
     | Some x -> Array.sub lines x (Array.length lines - 1 - x)
     | None -> Array.make 0 0
   in
   p1Lines, p2Lines
 
-let deleteInRange curIndex start finish piece =
+let delete_in_range curIndex start finish piece =
   let finishDifference = finish - curIndex in
   let p1Length = start - curIndex in
   let p2Start = finishDifference + piece.start in
-  let (p1Lines, p2Lines) = deleteLinesInRange (p1Length + piece.start) p2Start piece.lines in
+  let (p1Lines, p2Lines) = delete_lines_in_range (p1Length + piece.start) p2Start piece.lines in
   let p2Length = piece.length - finishDifference in
   (p1Length, p1Lines, p2Start, p2Length, p2Lines)
 
-let deleteAtStart curIndex finish piece =
+let delete_at_start curIndex finish piece =
   let difference = finish - curIndex in
   let newStart = piece.start + difference in
   let newLength = piece.length - difference in
   let newLines =
-    match tryFindIndex (fun x -> x >= difference) piece.lines with
+    match try_find_index (fun x -> x >= difference) piece.lines with
     | Some x -> Array.sub piece.lines x (Array.length piece.lines - 1 - x)
     | None -> Array.make 0 0 
   in
   (newStart, newLength, newLines)
 
-let deleteAtEnd curIndex start piece =
+let delete_at_end curIndex start piece =
   let length = start - curIndex in
   let lines = 
-    match tryFindIndex (fun x -> x <= length) piece.lines with
+    match try_find_index (fun x -> x <= length) piece.lines with
     | Some x -> Array.sub piece.lines x (Array.length piece.lines - 1 - x)
     | None -> Array.make 0 0
   in
@@ -147,21 +147,21 @@ let deleteAtEnd curIndex start piece =
 
 let text piece rope = Buffer.substring piece.start piece.length rope.buffer
 
-let textInRange curIndex start finish piece table =
+let text_in_range curIndex start finish piece table =
   let textStart = start - curIndex + piece.start in
   let textLength = finish - curIndex + piece.start - textStart in
   Buffer.substring textStart textLength table.buffer
 
-let textAtStart curIndex finish piece table =
+let text_at_start curIndex finish piece table =
   let textLength = finish - curIndex in
   Buffer.substring piece.start textLength table.buffer
 
-let textAtEnd curIndex start piece table =
+let text_at_end curIndex start piece table =
   let textStart = start - curIndex + piece.start in
   let textLength = piece.start + piece.length - textStart in
   Buffer.substring textStart textLength table.buffer
 
-let atStartAndLength start length table =
+let at_start_and_length start length table =
   Buffer.substring start length table.buffer
 
 (* AA Tree balancing functions. *)
@@ -176,18 +176,18 @@ let lvl = function
 
 let skew = function
   | PT(lvx, PT(lvy, a, ky, b), kx, c) when lvx = lvy ->
-      let kx = setData (idxLnSize b) (idxLnSize c) kx in
+      let kx = set_data (idx_ln_size b) (idx_ln_size c) kx in
       let innerNode = PT(lvx, b, kx, c) in
-      let ky = setData (idxLnSize a) (idxLnSize innerNode) ky in
+      let ky = set_data (idx_ln_size a) (idx_ln_size innerNode) ky in
       PT(lvx, a, ky, innerNode)
   | t -> t
 
 let split = function
   | PT(lvx, a, kx, PT(lvy, b, ky, PT(lvz, c, kz, d))) when lvx = lvy && lvy = lvz ->
       let right = PT(lvx, c, kz, d) in
-      let kx = setData (idxLnSize a) (idxLnSize b) kx in
+      let kx = set_data (idx_ln_size a) (idx_ln_size b) kx in
       let left = PT(lvx, a, kx, b) in
-      let ky = setData (idxLnSize left) (idxLnSize right) ky in
+      let ky = set_data (idx_ln_size left) (idx_ln_size right) ky in
       PT(lvx + 1, left, ky, right)
   | t -> t
 
@@ -201,33 +201,33 @@ let adjust = function
   | PT(lvt, lt, kt, rt) when lvl rt < lvt - 1 && sngl lt -> 
       PT(lvt - 1, lt, kt, rt) |> skew
   | PT(lvt, PT(lv1, a, kl, PT(lvb, lb, kb, rb)), kt, rt) when lvl rt < lvt - 1 -> 
-      let kl = setData (idxLnSize a) (idxLnSize lb) kl in
+      let kl = set_data (idx_ln_size a) (idx_ln_size lb) kl in
       let leftNode = PT(lv1, a, kl, lb) in
-      let kt = setData (idxLnSize rb) (idxLnSize rt) kt in
+      let kt = set_data (idx_ln_size rb) (idx_ln_size rt) kt in
       let rightNode = PT(lvt - 1, rb, kt, rt) in
-      let kb = setData (idxLnSize leftNode) (idxLnSize rightNode) kb in
+      let kb = set_data (idx_ln_size leftNode) (idx_ln_size rightNode) kb in
       PT(lvb + 1, leftNode, kb, rightNode)
   | PT(lvt, lt, kt, rt) when lvl rt < lvt -> 
       PT(lvt - 1, lt, kt, rt) |> split
   | PT(lvt, lt, kt, PT(_, (PT(lva, c, ka, d) as a), kr, b)) ->
-      let kt = setData (idxLnSize lt) (idxLnSize c) kt in
+      let kt = set_data (idx_ln_size lt) (idx_ln_size c) kt in
       let leftNode = PT(lvt - 1, lt, kt, c) in
-      let kr = setData (idxLnSize d) (idxLnSize b) kr in
+      let kr = set_data (idx_ln_size d) (idx_ln_size b) kr in
       let rightNode = PT(nlvl a, d, kr, b) |> split in
-      let ka = setData (idxLnSize leftNode) (idxLnSize rightNode) ka in
+      let ka = set_data (idx_ln_size leftNode) (idx_ln_size rightNode) ka in
       PT(lva + 1, leftNode, ka, rightNode)
   | t -> t
 
-let rec splitMax = function
+let rec split_max = function
   | PT(_, l, v, PE) ->
-      let v' = setData (idxLnSize l) (0, 0) v in
+      let v' = set_data (idx_ln_size l) (0, 0) v in
       l, v'
   | PT(h, l, v, r) -> 
-      let (r', b) = splitMax r in
-      let (r'Size, r'Lines) = idxLnSize r' in
+      let (r', b) = split_max r in
+      let (r'Size, r'Lines) = idx_ln_size r' in
       let v' = {v with right_idx = r'Size; right_lns = r'Lines} in
       let newLeft = PT(h, l, v', r') in
-      let (leftSize, leftLines) = idxLnSize newLeft in
+      let (leftSize, leftLines) = idx_ln_size newLeft in
       let b' = {b with left_idx = leftSize; left_lns = leftLines} in
       newLeft, b'
   | PE -> failwith "unexpected splitMax case"
@@ -241,66 +241,65 @@ let rec fold f x t =
       fold f x r
 
 (* Core PieceTree logic. *)
-
-let insMin pcStart pcLength pcLines tree =
+let ins_min pcStart pcLength pcLines tree =
   let rec min node cont =
     match node with
     | PE -> PT(1, PE, create pcStart pcLength pcLines, PE) |> cont
     | PT(h, l, v, r) ->
         min l (fun l' ->
-          let v' = addLeft pcLength (Array.length pcLines) v in
+          let v' = plus_left pcLength (Array.length pcLines) v in
           PT(h, l', v', r) |> skew |> split |> cont
         )
   in
-  min tree topLevelCont
+  min tree top_level_cont
 
-let insMax pcStart pcLength (pcLines: int array) tree = 
+let ins_max pcStart pcLength (pcLines: int array) tree = 
   let rec max node cont =
     match node with
     | PE -> PT(1, PE, create pcStart pcLength pcLines, PE) |> cont
     | PT(h, l, v, r) ->
         max r (fun r' ->
-          let v' = addRight pcLength (Array.length pcLines) v in
+          let v' = plus_right pcLength (Array.length pcLines) v in
           PT(h, l, v', r') |> skew |> split |> cont
         )
   in
-  max tree topLevelCont
+  max tree top_level_cont
 
-let isConsecutive v pcStart = v.start + v.length = pcStart
+let is_consecutive v pcStart = v.start + v.length = pcStart
 
 let insert_tree insIndex pcStart pcLength pcLines tree =
   let rec ins curIndex node cont =
     match node with
     | PE -> PT(1, PE, create pcStart pcLength pcLines, PE) |> cont
     | PT(h, l, v, r) when insIndex < curIndex ->
-        let nextIndex = curIndex - nLength l - sizeRight l in
-        let v' = addLeft pcLength (Array.length pcLines) v in
+        let nextIndex = curIndex - n_length l - size_right l in
+        let v' = plus_left pcLength (Array.length pcLines) v in
         ins nextIndex l (fun l' -> 
           PT(h, l', v', r) |> skew |> split |> cont
         )
     | PT(h, l, v, r) when insIndex > curIndex + v.length ->
-        let nextIndex = curIndex + v.length + sizeLeft r in
-        let v' = addRight pcLength (Array.length pcLines) v in
+        let nextIndex = curIndex + v.length + size_left r in
+        let v' = plus_right pcLength (Array.length pcLines) v in
         ins nextIndex r (fun r' ->
           PT(h, l, v', r') |> skew |> split |> cont
         )
-    | PT(h, l, v, r) when insIndex = curIndex && isConsecutive v pcStart ->
+    | PT(h, l, v, r) when insIndex = curIndex && is_consecutive v pcStart ->
         let v'Lines = Array.append v.lines pcLines in
         let v' = { v with length = v.length + pcLength; lines = v'Lines } in
         PT(h, l, v', r) |> cont
     | PT(h, l, v, r) when insIndex = curIndex ->
-        let v' = addRight pcLength (Array.length pcLines) v in
-        let r' = insMin pcStart pcLength pcLines r in
+        let v' = plus_right pcLength (Array.length pcLines) v in
+        let r' = ins_min pcStart pcLength pcLines r in
         PT(h, l, v', r') |> skew |> split |> cont
     | PT(h, l, v, r) ->
         let difference = insIndex - curIndex in
         let rStart = v.start + difference in
         let rLength = v.length - difference in
         
-        let (leftLines, rightLines) = splitLines rStart v.lines in
+        let (leftLines, rightLines) = split_lines rStart v.lines in
         
-        let l' = insMax v.start difference leftLines l in
-        let r' = insMin rStart rLength rightLines r in
+        let l' = ins_max v.start difference leftLines l in
+        let r' = ins_min rStart rLength rightLines r in
         let v' =  { 
                     start = pcStart;
                     length = pcLength;
@@ -312,19 +311,19 @@ let insert_tree insIndex pcStart pcLength pcLines tree =
                   } in
         PT(h, l', v', r') |> skew |> split |> cont
     in
-    ins (sizeLeft tree) tree topLevelCont
+    ins (size_left tree) tree top_level_cont
 
 (* Repeated if-statements used in both delete and substring. *)
-let inRange start curIndex finish nodeEndIndex =
+let in_range start curIndex finish nodeEndIndex =
   start <= curIndex && finish >= nodeEndIndex
 
-let startIsInRange start curIndex finish nodeEndIndex =
+let start_is_in_range start curIndex finish nodeEndIndex =
   start <= curIndex && finish < nodeEndIndex && curIndex < finish
 
-let endIsInRange start curIndex finish nodeEndIndex =
+let end_is_in_range start curIndex finish nodeEndIndex =
   start > curIndex && finish >= nodeEndIndex && start <= nodeEndIndex
 
-let middleIsInRange start curIndex finish nodeEndIndex =
+let middle_is_in_range start curIndex finish nodeEndIndex =
   start >= curIndex && finish <= nodeEndIndex
 
 let delete_tree start length tree =
@@ -335,27 +334,27 @@ let delete_tree start length tree =
     | PT(h, l, v, r) ->
         let left =
           if start < curIndex
-          then del (curIndex - nLength l - sizeRight l) l
+          then del (curIndex - n_length l - size_right l) l
           else l in
         
         let nodeEndIndex = curIndex + v.length in
         
         let right =
           if finish > nodeEndIndex
-          then del (nodeEndIndex + sizeLeft r) r
+          then del (nodeEndIndex + size_left r) r
           else r in
 
-        if inRange start curIndex finish nodeEndIndex then
+        if in_range start curIndex finish nodeEndIndex then
           if left = PE
           then right
           else
-            let (newLeft, newVal) = splitMax left in
-            let v' = setData (idxLnSize newLeft) (idxLnSize right) newVal in
+            let (newLeft, newVal) = split_max left in
+            let v' = set_data (idx_ln_size newLeft) (idx_ln_size right) newVal in
             PT(h, newLeft, v', right) |> adjust
-        else if startIsInRange start curIndex finish nodeEndIndex then
-          let (newStart, newLength, newLines) = deleteAtStart curIndex finish v in
-          let (leftidx, leftlns) = idxLnSize left in
-          let (rightidx, rightlns) = idxLnSize right in
+        else if start_is_in_range start curIndex finish nodeEndIndex then
+          let (newStart, newLength, newLines) = delete_at_start curIndex finish v in
+          let (leftidx, leftlns) = idx_ln_size left in
+          let (rightidx, rightlns) = idx_ln_size right in
           let v' =  {
                       start = newStart;
                       length = newLength;
@@ -366,10 +365,10 @@ let delete_tree start length tree =
                       right_lns = rightlns;
                     } in
           PT(h, left, v', right) |> skew |> split
-        else if endIsInRange start curIndex finish nodeEndIndex then
-          let (length, lines) = deleteAtEnd curIndex start v in
-          let (leftidx, leftlns) = idxLnSize left in
-          let (rightidx, rightlns) = idxLnSize right in
+        else if end_is_in_range start curIndex finish nodeEndIndex then
+          let (length, lines) = delete_at_end curIndex start v in
+          let (leftidx, leftlns) = idx_ln_size left in
+          let (rightidx, rightlns) = idx_ln_size right in
           let v' =  {
                       v with
                       length = length;
@@ -380,12 +379,12 @@ let delete_tree start length tree =
                       right_lns = rightlns;
                     } in
           PT(h, left, v', right) |> adjust
-        else if middleIsInRange start curIndex finish nodeEndIndex then
+        else if middle_is_in_range start curIndex finish nodeEndIndex then
           let (p1Length, p1Lines, p2Start, p2Length, p2Lines) =
-            deleteInRange curIndex start finish v in
-          let newRight = insMin p2Start p2Length p2Lines right in
-          let (leftidx, leftlns) = idxLnSize left in
-          let (rightidx, rightlns) = idxLnSize newRight in
+            delete_in_range curIndex start finish v in
+          let newRight = ins_min p2Start p2Length p2Lines right in
+          let (leftidx, leftlns) = idx_ln_size left in
+          let (rightidx, rightlns) = idx_ln_size newRight in
           let v' =  {
                       v with
                       length = p1Length;
@@ -397,10 +396,10 @@ let delete_tree start length tree =
                     } in
           PT(h, left, v', newRight) |> skew |> split
         else
-          let v' = setData (idxLnSize left) (idxLnSize right) v in
+          let v' = set_data (idx_ln_size left) (idx_ln_size right) v in
           PT(h, left, v', right) |> adjust
   in
-  del (sizeLeft tree) tree
+  del (size_left tree) tree
 
 let substring start length piecerope =
   let finish = start + length in
@@ -410,88 +409,88 @@ let substring start length piecerope =
     | PT(_, l, v, r) ->
         let left =
           if start < curIndex
-          then sub (curIndex - nLength l - sizeRight l) l acc
+          then sub (curIndex - n_length l - size_right l) l acc
           else acc
         in
         
         let nodeEndIndex = curIndex + v.length in
         let middle =
-          if inRange start curIndex finish nodeEndIndex then
+          if in_range start curIndex finish nodeEndIndex then
             left ^ text v piecerope
-          else if startIsInRange start curIndex finish nodeEndIndex then
-            left ^ textAtStart curIndex finish v piecerope
-          else if endIsInRange start curIndex finish nodeEndIndex then
-            left ^ textAtEnd curIndex start v piecerope
-          else if middleIsInRange start curIndex finish nodeEndIndex then
-            left ^ textInRange curIndex start finish v piecerope
+          else if start_is_in_range start curIndex finish nodeEndIndex then
+            left ^ text_at_start curIndex finish v piecerope
+          else if end_is_in_range start curIndex finish nodeEndIndex then
+            left ^ text_at_end curIndex start v piecerope
+          else if middle_is_in_range start curIndex finish nodeEndIndex then
+            left ^ text_in_range curIndex start finish v piecerope
           else
             left
 
         in
         if finish > curIndex
-        then sub (nodeEndIndex + sizeLeft r) r middle
+        then sub (nodeEndIndex + size_left r) r middle
         else middle
   in
-  sub (sizeLeft piecerope.pieces) piecerope.pieces ""
+  sub (size_left piecerope.pieces) piecerope.pieces ""
 
 (* Delete/substring if-statements adapted to work with lines. *)
-let lineInRange nodeStartLine searchLine nodeEndLine =
+let line_in_range nodeStartLine searchLine nodeEndLine =
   nodeStartLine = searchLine && searchLine = nodeEndLine
 
-let startIsInLine nodeStartLine searchLine nodeEndLine =
+let start_is_in_line nodeStartLine searchLine nodeEndLine =
   nodeStartLine = searchLine && searchLine < nodeEndLine
 
-let endIsInLine nodeStartLine searchLine nodeEndLine =
+let end_is_in_line nodeStartLine searchLine nodeEndLine =
   nodeStartLine < searchLine && searchLine = nodeEndLine
 
-let middleIsInLine nodeStartLine searchLine nodeEndLine =
+let middle_is_in_line nodeStartLine searchLine nodeEndLine =
   nodeStartLine < searchLine && nodeEndLine > searchLine
 
-let getLine line table =
+let get_line line table =
   let rec get curLine node acc =
       match node with
       | PE -> acc
       | PT(_, l, v, r) ->
           let left = 
               if line <= curLine
-              then get (curLine - nLines l - linesRight l) l acc
+              then get (curLine - n_lines l - lines_right l) l acc
               else acc
           in
 
           let nodeEndLine = curLine + (Array.length v.lines) in
           let middle =
-              if lineInRange curLine line nodeEndLine then
+              if line_in_range curLine line nodeEndLine then
                   left ^ text v table
-              else if startIsInLine curLine line nodeEndLine then
+              else if start_is_in_line curLine line nodeEndLine then
                   (* + 1 gives us \n in string and - v.Start takes us to piece offset *)
                   let length: int = (Array.get v.lines 0) + 1 - v.start in
-                  left ^ atStartAndLength v.start length table
-              else if endIsInLine curLine line nodeEndLine then
+                  left ^ at_start_and_length v.start length table
+              else if end_is_in_line curLine line nodeEndLine then
                   let start = (Array.get v.lines (Array.length v.lines - 1)) + 1 in
                   let length = v.length - start + v.start in
-                  left ^ atStartAndLength start length table
-              else if middleIsInLine curLine line nodeEndLine then
+                  left ^ at_start_and_length start length table
+              else if middle_is_in_line curLine line nodeEndLine then
                   let lineDifference = line - curLine in
                   let lineStart = (Array.get v.lines (lineDifference - 1)) + 1 in
                   let lineLength = (Array.get v.lines lineDifference) - lineStart + 1 in
-                  left ^ atStartAndLength lineStart lineLength table
+                  left ^ at_start_and_length lineStart lineLength table
               else
                   left
           in
 
           if line >= nodeEndLine
-          then get (nodeEndLine + linesLeft r) r middle
+          then get (nodeEndLine + lines_left r) r middle
           else middle
   in
-  get (linesLeft table.pieces) table.pieces ""
+  get (lines_left table.pieces) table.pieces ""
 
-let rec findLineBreaksRec (str: string) strLengthMinus1 pcStart pos acc =
+let rec find_line_breaks (str: string) strLengthMinus1 pcStart pos acc =
   if pos > strLengthMinus1 then
     List.rev acc |> Array.of_list
   else
     let cur = str.[pos] in
     if cur = '\n' then
-      findLineBreaksRec str strLengthMinus1 pcStart (pos + 1) ((pos + pcStart)::acc)
+      find_line_breaks str strLengthMinus1 pcStart (pos + 1) ((pos + pcStart)::acc)
     else if cur = '\r' then
       let acc = (pos + pcStart)::acc in
       if pos = strLengthMinus1 then
@@ -499,11 +498,11 @@ let rec findLineBreaksRec (str: string) strLengthMinus1 pcStart pos acc =
       else
         let next = str.[pos + 1] in
         if next = '\n' then
-          findLineBreaksRec str strLengthMinus1 pcStart (pos + 2) acc
+          find_line_breaks str strLengthMinus1 pcStart (pos + 2) acc
         else
-          findLineBreaksRec str strLengthMinus1 pcStart (pos + 1) acc
+          find_line_breaks str strLengthMinus1 pcStart (pos + 1) acc
     else
-      findLineBreaksRec str strLengthMinus1 pcStart (pos + 1) acc
+      find_line_breaks str strLengthMinus1 pcStart (pos + 1) acc
 
 let empty = { buffer = Buffer.empty; pieces = PE }
 
@@ -515,7 +514,7 @@ let get_text piecerope =
 
 let insert index (str: string) piecerope =
   let pcStart = Buffer.size piecerope.buffer in
-  let pcLines = findLineBreaksRec str (String.length str - 1) pcStart 0 [] in
+  let pcLines = find_line_breaks str (String.length str - 1) pcStart 0 [] in
   let buffer = Buffer.append str piecerope.buffer in
   let pieces = insert_tree index pcStart (String.length str) pcLines piecerope.pieces in
   { buffer; pieces }
@@ -528,4 +527,4 @@ let create str = insert 0 str empty
 
 let total_length piecerope = tree_size piecerope.pieces
 
-let total_lines piecerope = nLines piecerope.pieces
+let total_lines piecerope = n_lines piecerope.pieces
