@@ -65,6 +65,34 @@ let test_can_continuously_insert_at_start _ =
   in
   test 0 "" Piecerope.empty
 
+let test_can_continuously_insert_at_middle _ =
+  let rec test loops runningStr table =
+    if loops > 10 then
+      ()
+    else
+      let halfLength = (String.length runningStr) / 2 in
+      let table = Piecerope.insert halfLength "hello" table in
+      let run = (String.sub runningStr 0 halfLength) ^ "hello" ^ (String.sub runningStr halfLength (String.length runningStr - halfLength)) in
+      let tableText = Piecerope.get_text table in
+      let _ = assert_equal run tableText in
+      test (loops + 1) run table
+  in
+  test 0 "" Piecerope.empty
+
+let test_can_continuously_insert_at_end _ =
+  let rec test loops runningStr table =
+    if loops > 10 then
+      ()
+    else
+      let pos = String.length runningStr in
+      let table = Piecerope.insert pos "hello" table in
+      let run = runningStr ^ "hello" in
+      let tableText = Piecerope.get_text table in
+      let _ = assert_equal run tableText in
+      test (loops + 1) run table
+  in
+  test 0 "" Piecerope.empty
+
 (* List of test suites to export. *)
 let insert_test_list = 
   "Insert_Tests" >::: [
@@ -78,7 +106,9 @@ let insert_test_list =
     "test_can_insert_into_the_middle_of_a_table's_add_buffer" >:: test_can_insert_into_the_middle_of_a_table's_add_buffer;
     "test_can_insert_into_the_end_of_a_table's_add_buffer" >:: test_can_insert_into_the_end_of_a_table's_add_buffer;
 
-    "test_can_continuously_insert_at_start " >:: test_can_continuously_insert_at_start;
+    "test_can_continuously_insert_at_start" >:: test_can_continuously_insert_at_start;
+    "test_can_continuously_insert_at_middle" >:: test_can_continuously_insert_at_middle;
+    "test_can_continuously_insert_at_end" >:: test_can_continuously_insert_at_end;
 ]
 
 let () =
