@@ -153,7 +153,7 @@ let deleteAtEnd curIndex start piece =
   in
   (length, lines)
 
-(* let text piece rope = Buffer.substring piece.start piece.length rope.buffer *)
+let text piece rope = Buffer.substring piece.start piece.length rope.buffer
 
 let textInRange curIndex start finish piece table =
   let textStart = start - curIndex + piece.start in
@@ -249,11 +249,6 @@ let rec fold f x t =
       fold f x r
 
 (* Core PieceTree logic. *)
-let text piecerope = 
-  fold (fun (acc: string) pc ->
-    let text = Buffer.substring pc.start pc.length piecerope.buffer in
-    acc ^ text
-  ) "" piecerope.pieces
 
 let insMin pcStart pcLength pcLines tree =
   let rec min node cont =
@@ -414,6 +409,96 @@ let delete_tree start length tree =
           PT(h, left, v', right) |> adjust
   in
   del (sizeLeft tree) tree
+
+let substring start length piecerope =
+  let finish = start + length in
+  let rec sub curIndex node acc =
+    match node with
+    | PE -> acc
+    | PT(_, l, v, r) ->
+        let left =
+          if start < curIndex
+          then sub (curIndex - nLength l - sizeRight l) l acc
+          else acc
+        in
+        
+        let nodeEndIndex = curIndex + v.length in
+        let middle =
+          if inRange start curIndex finish nodeEndIndex then
+            left ^ text v piecerope
+          else if startIsInRange start curIndex finish nodeEndIndex then
+            left ^ textAtStart curIndex finish v piecerope
+          else if endIsInRange start curIndex finish nodeEndIndex then
+            left ^ textAtEnd curIndex start v piecerope
+          else if middleIsInRange start curIndex finish nodeEndIndex then
+            left ^ textInRange curIndex start finish v piecerope
+          else
+            left
+
+        in
+        if finish > curIndex
+        then sub (nodeEndIndex + sizeLeft r) r middle
+        else middle
+  in
+  sub (sizeLeft piecerope.pieces) piecerope.pieces ""
+
+(* Delete/substring if-statements adapted to work with lines. *)
+let lineInRange nodeStartLine searchLine nodeEndLine =
+  nodeStartLine = searchLine && searchLine = nodeEndLine
+
+let startIsInLine nodeStartLine searchLine nodeEndLine =
+  nodeStartLine = searchLine && searchLine < nodeEndLine
+
+let endIsInLine nodeStartLine searchLine nodeEndLine =
+  nodeStartLine < searchLine && searchLine = nodeEndLine
+
+let middleIsInLine nodeStartLine searchLine nodeEndLine =
+  nodeStartLine < searchLine && nodeEndLine > searchLine
+
+let getLine line table =
+  let rec get curLine node acc =
+      match node with
+      | PE -> acc
+      | PT(_, l, v, r) ->
+          let left = 
+              if line <= curLine
+              then get (curLine - nLines l - linesRight l) l acc
+              else acc
+          in
+
+          let nodeEndLine = curLine + (Array.length v.lines) in
+          let middle =
+              if lineInRange curLine line nodeEndLine then
+                  left ^ text v table
+              else if startIsInLine curLine line nodeEndLine then
+                  (* + 1 gives us \n in string and - v.Start takes us to piece offset *)
+                  let length: int = (Array.get v.lines 0) + 1 - v.start in
+                  left ^ atStartAndLength v.start length table
+              else if endIsInLine curLine line nodeEndLine then
+                  let start = (Array.get v.lines (Array.length v.lines - 1)) + 1 in
+                  let length = v.length - start + v.start in
+                  left ^ atStartAndLength start length table
+              else if middleIsInLine curLine line nodeEndLine then
+                  let lineDifference = line - curLine in
+                  let lineStart = (Array.get v.lines (lineDifference - 1)) + 1 in
+                  let lineLength = (Array.get v.lines lineDifference) - lineStart + 1 in
+                  left ^ atStartAndLength lineStart lineLength table
+              else
+                  left
+          in
+
+          if line >= nodeEndLine
+          then get (nodeEndLine + linesLeft r) r middle
+          else middle
+  in
+  get (linesLeft table.pieces) table.pieces ""
+
+(* Public interface functions. *)
+let allText piecerope = 
+  fold (fun (acc: string) pc ->
+    let text = Buffer.substring pc.start pc.length piecerope.buffer in
+    acc ^ text
+  ) "" piecerope.pieces
 
 let rec findLineBreaksRec (str: string) strLengthMinus1 pcStart pos acc =
   if pos > strLengthMinus1 then
