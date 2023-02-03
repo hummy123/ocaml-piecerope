@@ -1,2 +1,3 @@
 (test
- (name piecerope))
+ (name piecerope)
+ (libraries ounit2))

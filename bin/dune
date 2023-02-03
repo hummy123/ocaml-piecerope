@@ -1,4 +1,0 @@
-(executable
- (public_name piecerope)
- (name main)
- (libraries piecerope))

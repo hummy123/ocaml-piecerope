@@ -14,7 +14,7 @@ val total_lines: t -> int
 val substring: int -> int -> t -> string
 
 (** Retrieves a specific line from a Piecerope. *)
-val getLine: int -> t -> string
+val get_line: int -> t -> string
 
 (** Retrieves all the text in the Piecerope. *)
 val get_text: t -> string
