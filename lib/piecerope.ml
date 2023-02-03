@@ -35,9 +35,6 @@ let addLeft idxDelta lnDelta node =
 let addRight idxDelta lnDelta node =
   { node with right_idx = node.right_idx + idxDelta; right_lns = node.right_lns + lnDelta }
 
-let setIdx left right node =
-  { node with left_idx = left; right_idx = right; }
-
 let setData (leftSize, leftLines) (rightSize, rightLines) node =
   { node with 
       left_idx = leftSize;
@@ -55,7 +52,7 @@ let nLines node =
   | PE -> 0
   | PT(_, _, v, _) -> Array.length v.lines
 
-let size node =
+let tree_size node =
   match node with
   | PE -> 0
   | PT(_, _, v, _) -> v.left_idx + v.right_idx + v.length
@@ -65,11 +62,6 @@ let idxLnSize node =
   | PE -> 0, 0
   | PT(_, _, v, _) -> v.left_idx + v.right_idx + v.length,
                       v.left_lns + v.right_lns + Array.length v.lines
-
-let stringLength node =
-  match node with
-  | PE -> 0
-  | PT(_, _, v, _) -> v.length
 
 let sizeLeft node = 
   match node with 
@@ -493,13 +485,6 @@ let getLine line table =
   in
   get (linesLeft table.pieces) table.pieces ""
 
-(* Public interface functions. *)
-let allText piecerope = 
-  fold (fun (acc: string) pc ->
-    let text = Buffer.substring pc.start pc.length piecerope.buffer in
-    acc ^ text
-  ) "" piecerope.pieces
-
 let rec findLineBreaksRec (str: string) strLengthMinus1 pcStart pos acc =
   if pos > strLengthMinus1 then
     List.rev acc |> Array.of_list
@@ -520,9 +505,13 @@ let rec findLineBreaksRec (str: string) strLengthMinus1 pcStart pos acc =
     else
       findLineBreaksRec str strLengthMinus1 pcStart (pos + 1) acc
 
-
-(* Public functions exposed via interface. *)
 let empty = { buffer = Buffer.empty; pieces = PE }
+
+let get_text piecerope = 
+  fold (fun (acc: string) pc ->
+    let text = Buffer.substring pc.start pc.length piecerope.buffer in
+    acc ^ text
+  ) "" piecerope.pieces
 
 let insert index (str: string) piecerope =
   let pcStart = Buffer.size piecerope.buffer in
@@ -534,3 +523,9 @@ let insert index (str: string) piecerope =
 let delete start length piecerope =
   let pieces = delete_tree start length piecerope.pieces in
   { piecerope with pieces = pieces; }
+
+let create str = insert 0 str empty
+
+let total_length piecerope = tree_size piecerope.pieces
+
+let total_lines piecerope = nLines piecerope.pieces
