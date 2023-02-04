@@ -1,121 +1,89 @@
+type t =
+    | BE
+    | BT of int * t * int * string * int * t
+
 let target_size = 512
 
-type node = {
-  left_idx: int;
-  right_idx: int;
-  value: string;
-}
+let size = function
+  | BE -> 0
+  | BT(_, _, lm, v, rm, _) -> lm + String.length v + rm
 
-let create str = {left_idx = 0; right_idx = 0; value = str;}
+let string_length = function
+  | BE -> 0
+  | BT(_, _, _, v, _, _) -> String.length v
 
-type t = 
-  | N0
-  | N1 of t
-  | N2 of t * node * t
-  (* Auxillary *)
-  | L2 of node
-  | N3 of t * node * t * node * t
+let size_left = function
+  | BE -> 0
+  | BT(_, _, lm, _, _, _) -> lm
 
-let empty = N0
+let size_right = function
+  | BE -> 0
+  | BT(_, _, _, _, rm, _) -> rm
 
-let n1 = function
-  | L2 a -> N2(N0, a, N0)
-  | N3(t1, a1, t2, a2, t3) -> N2(N2(t1, a1, t2), a2, N1(t3))
-  | t -> N1(t)
-
-let n2 (x0, a2, t) = 
-  match x0, a2, t with 
-  | L2 a1, a2, t -> N3 (N0, a1, N0, a2, t)
-  | N3 (t1, a1, t2, a2, t3), a3, N1 t4 ->
-      N2 (N2 (t1, a1, t2), a2, N2 (t3, a3, t4))
-  | N3 (t1, a1, t2, a2, t3), a3, t4 -> N3 (N2 (t1, a1, t2), a2, N1 t3, a3, t4)
-  | t1, a1, L2 a2 -> N3 (t1, a1, N0, a2, N0)
-  | N1 t1, a1, N3 (t2, a2, t3, a3, t4) ->
-      N2 (N2 (t1, a1, t2), a2, N2 (t3, a3, t4))
-  | t1, a1, N3 (t2, a2, t3, a3, t4) -> N3 (t1, a1, N1 t2, a2, N2 (t3, a3, t4))
-  | t1, a1, t2 -> N2(t1, a1, t2)
-
-
-let rec appendRec str = function
-  | N0 -> L2(create str)
-  | N1 t -> appendRec str t |> n1
-  | N2(l, a, r) when String.length str + String.length a.value < target_size ->
-      let a' = {a with value = a.value ^ str} in
-      N2(l, a', r)
-  | N2(l, a, r) ->
-      let a' = {a with right_idx = a.right_idx + String.length str} in
-      n2(l, a', appendRec str r)
-  | _ -> failwith "unexpected Buffer.append"
-
-let tree = function
-  | L2 a -> N2(N0, a, N0)
-  | N3(t1, a1, t2, a2, t3) -> N2(N2(t1, a1, t2), a2 ,(N1 t3))
+let skew = function
+  | BT(lvx, BT(lvy, a, lky, ky, rky, b), _, kx, rkx, c) when lvx = lvy ->
+    let innerNode =  BT(lvx, b, rky, kx, rkx, c) in
+    BT(lvx, a, lky, ky, size innerNode, innerNode)
   | t -> t
 
-let append str node = appendRec str node |> tree
+let split = function
+  | BT(lvx, a, lkx, kx, _, BT(lvy, b, lky, ky, _, BT(lvz, c, lkz, kz, rkz, d))) when lvx = lvy && lvy = lvz -> 
+    let right = BT(lvx, c, lkz, kz, rkz, d) in
+    let left = BT(lvx, a, lkx, kx, lky, b) in
+    BT(lvx + 1, left, size left, ky, size right, right)
+  | t -> t
 
-let rec size = function
-  | N0 -> 0
-  | N1 t -> size t
-  | N2(_, a, _) -> a.left_idx + a.right_idx + String.length a.value
-  | _ -> failwith "unexpected Buffer.size"
+let top_level_cont x = x
 
-let rec string_length = function
-  | N0 -> 0
-  | N1 t -> string_length t
-  | N2(_, a, _) -> String.length a.value
-  | _ -> failwith "unexpected Buffer.string_length"
+let empty = BE
 
-let rec size_left = function
-  | N0 -> 0
-  | N1 t -> size_left t
-  | N2(_, a, _) -> a.left_idx
-  | _ -> failwith "unexpected Buffer.size_left"
-
-let rec size_right = function
-  | N0 -> 0
-  | N1 t -> size_right t
-  | N2(_, a, _) -> a.right_idx
-  | _ -> failwith "unexpected Buffer.size_right"
-
-(* let top_level_cont x = x *)
+let append str buffer = 
+  let rec ins_max node cont =
+    match node with
+    | BE -> BT(1, BE, 0, str, 0, BE) |> cont
+    | BT(h, l, lm, v, rm, BE) when String.length v + String.length str <= target_size ->
+        BT(h, l, lm, v ^ str, rm, BE) |> cont
+    | BT(h, l, lm, v, rm, r) ->
+        ins_max r (fun r' ->
+          BT(h, l, lm, v, rm + String.length str, r') |> skew |> split |> cont
+        )
+  in
+  ins_max buffer top_level_cont
 
 let substring start length buffer =
   let finish = start + length in
   let rec sub (curIndex: int) node (acc: string) =
     match node with
-    | N0 -> acc
-    | N1 t -> sub curIndex t acc
-    | N2(l, a, r) ->
+    | BE -> acc
+    | BT(_, l, _, v, _, r) ->
         let left =
           if start < curIndex
           then sub (curIndex - string_length l - size_right l) l acc
           else acc 
         in
-        let nextIndex = curIndex + String.length a.value in
+        let nextIndex = curIndex + String.length v in
         let middle = 
           if start <= curIndex && finish >= nextIndex then 
             (* Node is fully in range. *)
-            left ^ a.value
+            left ^ v
           else if start >= curIndex && finish <= nextIndex then
             (* Range is within node. *)
             let strStart = start - curIndex in
-            left ^ String.sub a.value strStart length
+            left ^ String.sub v strStart length
           else if finish < nextIndex && finish >= curIndex then
             (* Start of node is within range. *)
             let length = finish - curIndex in
-            left ^ String.sub a.value 0 length
+            left ^ String.sub v 0 length
           else if start > curIndex && start <= nextIndex then
             (* End of node is within range. *)
             let strStart = start - curIndex in
-            let len = String.length a.value - strStart - 1 in
-            left ^ String.sub a.value strStart len
+            let len = String.length v - strStart - 1 in
+            left ^ String.sub v strStart len
           else
             left
         in
         if finish > nextIndex
         then sub (nextIndex + size_left r) r middle
         else middle
-    | _ -> failwith "unexpected Buffer.substring case"
   in
-  sub (size_right buffer) buffer ""
+  sub (size_left buffer) buffer ""
