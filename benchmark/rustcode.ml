@@ -42404,7 +42404,7 @@ let run() =
   let r = Piecerope.insert 1069 "2" r in
 
 
-  let endTime = Sys.time() -. t in
-  Printf.printf "Execution time: %fs" endTime ;
+  let endTime = (Sys.time() -. t) *. 1000.0 in
+  Printf.printf "Execution time: %f ms\n" endTime ;
   ig r
 

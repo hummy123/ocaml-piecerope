@@ -21018,7 +21018,7 @@ let run() =
   let r = Piecerope.insert 2362 "%0Adocument.onclick%20%3D%20%28%29%20%3D%3E%20%7B%0A%09if%20%28%21audio_works%29%20test_audio%28%29%0A%7D" r in
   let r = Piecerope.delete 2361 1 r in
 
-  let endTime = Sys.time() -. t in
-  Printf.printf "Execution time: %fs" endTime ;
+  let endTime = (Sys.time() -. t) *. 1000.0 in
+  Printf.printf "Execution time: %f ms\n" endTime ;
   ig r
 
