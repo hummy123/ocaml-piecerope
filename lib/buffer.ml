@@ -1,8 +1,60 @@
-type t =
-    | BE
-    | BT of int * t * int * string * int * t
+type node = {
+  left_idx: int;
+  value: string;
+  right_idx: int;
+}
+
+let create_node str = {
+  left_idx = 0;
+  value = str;
+  right_idx = 0;
+}
+
+type ttf =
+  | L
+  | N2 of ttf * node * ttf
+  | N3 of ttf * node * ttf * node * ttf
+  | N4 of ttf * node * ttf * node * ttf * node * ttf
 
 let target_size = 512
+
+type upi =
+  | T of ttf
+  | Up of ttf * node * ttf
+
+let tree = function
+  | T t -> t
+  | Up(l, v, r) -> N2(l, v, r)
+
+let rec ins (str: string) node =
+  match node with
+  | L -> Up(L, create_node str, L)
+  | N2(l, a, r) when target_size < String.length str + String.length a.value ->
+      let a' = { a with value = a.value ^ str } in
+      T(N2(l, a', r))
+  | N2(l, a, r) ->
+      (match ins str r with
+      | T r' -> T(N2(l, a, r'))
+      | Up(r1, b, r2) -> T(N3(l, a, r1, b, r2)))
+  | N3(l, a, m, b, r) when target_size < String.length str + String.length b.value ->
+      let b' = { b with value = b.value ^ str } in
+      T(N3(l, a, m, b', r))
+  | N3(l, a, m, b, r) ->
+      (match ins str r with
+      | T r' -> T(N3(l, a, m, b, r'))
+      | Up(r1, c, r2) -> Up(N2(l, a, m), b, N2(r1, c, r2)))
+  | N4(t1, a, t2, b, t3, c, t4) when target_size < String.length str + String.length c.value ->
+      let c' = {c with value = c.value ^ str} in
+      T(N4(t1, a, t2, b, t3, c', t4))
+  | N4(t1, a, t2, b, t3, c, t4) ->
+      match ins str t4 with
+      | T t -> T(N4(t1, a, t2, b, t3, c, t))
+      | Up(l, y, r) -> Up(N2(t1, a, t2), b, N3(t3, c, l, y, r))
+
+
+type t = | BE
+    | BT of int * t * int * string * int * t
+
 
 let size = function
   | BE -> 0
