@@ -19,9 +19,14 @@ val get_line: int -> t -> Piece_buffer.t -> string
 (** Returns all text using a Piece_tree and a Piece_buffer. May cause errors if the resulting string is too large for OCaml to handle. *)
 val get_text: t -> Piece_buffer.t -> string
 
-(** Inserts pointers to text in the Piece_buffer into a Piece_tree. *)
-val insert_tree: int -> int -> int -> int array -> t -> t
-
 (** Deletes or truncates pointers to text in the Piece_buffer from a Piece_tree. *)
 val delete_tree: int -> int -> t -> t
 
+(** Inserts pointers to text from the Piece_buffer into a Piece_tree. *)
+val insert_tree: int -> int -> int -> int array -> t -> t
+
+(** Inserts pointers to text from the Piece_buffer into the start of a Piece_tree. *)
+val prepend: int -> int -> int array -> t -> t
+
+(** Inserts points to text from the Piece_buffer into the end of a Piece_tree. *)
+val append: int -> int -> int array -> t -> t

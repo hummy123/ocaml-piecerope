@@ -29,6 +29,20 @@ let insert index (str: string) piecerope =
   let pieces = Piece_tree.insert_tree index pcStart (String.length str) pcLines piecerope.pieces in
   { buffer; pieces }
 
+let prepend (str: string) piecerope =
+  let pcStart = Piece_buffer.size piecerope.buffer in
+  let pcLines = find_line_breaks str (String.length str - 1) pcStart 0 [] in
+  let buffer = Piece_buffer.append str piecerope.buffer in
+  let pieces = Piece_tree.prepend pcStart (String.length str) pcLines piecerope.pieces in
+  { buffer; pieces }
+
+let append (str: string) piecerope =
+  let pcStart = Piece_buffer.size piecerope.buffer in
+  let pcLines = find_line_breaks str (String.length str - 1) pcStart 0 [] in
+  let buffer = Piece_buffer.append str piecerope.buffer in
+  let pieces = Piece_tree.append pcStart (String.length str) pcLines piecerope.pieces in
+  { buffer; pieces }
+
 let delete start length piecerope =
   let pieces = Piece_tree.delete_tree start length piecerope.pieces in
   { piecerope with pieces = pieces; }
@@ -46,6 +60,6 @@ let get_text piecerope = Piece_tree.get_text piecerope.pieces piecerope.buffer
 let create str = insert 0 str empty
 
 let total_length piecerope = Piece_tree.total_length piecerope.pieces
-
+ 
 let total_lines piecerope = Piece_tree.total_lines piecerope.pieces
 

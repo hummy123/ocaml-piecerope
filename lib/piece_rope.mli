@@ -22,6 +22,12 @@ val get_text: t -> string
 (** Inserts a string into a Piecerope. *)
 val insert: int -> string -> t -> t
 
+(** Inserts a string into the start of a Piecerope. *)
+val prepend: string -> t -> t
+
+(** Inserts a string into the end of a Piecerope. *)
+val append: string -> t -> t
+
 (** Deletes a range of text from a Piecerope. *)
 val delete: int -> int -> t -> t
 

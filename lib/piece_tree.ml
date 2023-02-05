@@ -236,18 +236,42 @@ let rec fold f x t =
       fold f x r
 
 (* Core PieceTree logic. *)
-let ins_min pcStart pcLength pcLines tree =
-  let rec min node cont =
+let is_consecutive v pcStart = v.start + v.length = pcStart
+
+(** Adds the given piece to the start of the given tree. *)
+let prepend pcStart pcLength pcLines tree =
+  let rec pre node cont =
     match node with
     | PE -> PT(1, PE, create pcStart pcLength pcLines, PE) |> cont
     | PT(h, l, v, r) ->
-        min l (fun l' ->
+        pre l (fun l' ->
           let v' = plus_left pcLength (Array.length pcLines) v in
           PT(h, l', v', r) |> skew |> split |> cont
         )
   in
-  min tree top_level_cont
+  pre tree top_level_cont
 
+(** Adds the given piece to the end of the given tree. 
+    If the previous insert on the tree was done at the very end,
+    we merge with the last piece rather than creating a new node to keep the tree more shallow. *)
+let append pcStart pcLength pcLines tree =
+  let rec app node cont =
+    match node with
+    | PE -> PT(1, PE, create pcStart pcLength pcLines, PE) |> cont
+    | PT(h, l, v, PE) when is_consecutive v pcStart ->
+        let v'Lines = Array.append v.lines pcLines in
+        let v' = { v with length = v.length + pcLength; lines = v'Lines } in
+        PT(h, l, v', PE) |> cont
+    | PT(h, l, v, r) ->
+        app r (fun r' ->
+          let v' = plus_right pcLength (Array.length pcLines) v in
+          PT(h, l, v', r') |> skew |> split |> cont
+        )
+  in
+  app tree top_level_cont
+
+(** Same as above append functino but omits the is_consecutive check. 
+    Used when we split a piece and is not meant to be a public function. *)
 let ins_max pcStart pcLength (pcLines: int array) tree = 
   let rec max node cont =
     match node with
@@ -260,7 +284,6 @@ let ins_max pcStart pcLength (pcLines: int array) tree =
   in
   max tree top_level_cont
 
-let is_consecutive v pcStart = v.start + v.length = pcStart
 
 let insert_tree insIndex pcStart pcLength pcLines tree =
   let rec ins curIndex node cont =
@@ -288,7 +311,7 @@ let insert_tree insIndex pcStart pcLength pcLines tree =
         PT(h, l, v', r) |> cont
     | PT(h, l, v, r) when insIndex = curIndex + v.length ->
         let v' = plus_right pcLength (Array.length pcLines) v in
-        let r' = ins_min pcStart pcLength pcLines r in
+        let r' = prepend pcStart pcLength pcLines r in
         PT(h, l, v', r') |> skew |> split |> cont
     | PT(h, l, v, r) ->
         let difference = insIndex - curIndex in
@@ -298,7 +321,7 @@ let insert_tree insIndex pcStart pcLength pcLines tree =
         let (leftLines, rightLines) = split_lines rStart v.lines in
         
         let l' = ins_max v.start difference leftLines l in
-        let r' = ins_min rStart rLength rightLines r in
+        let r' = prepend rStart rLength rightLines r in
         let v' =  { 
                     start = pcStart;
                     length = pcLength;
@@ -381,7 +404,7 @@ let delete_tree start length tree =
         else if middle_is_in_range start curIndex finish nodeEndIndex then
           let (p1Length, p1Lines, p2Start, p2Length, p2Lines) =
             delete_in_range curIndex start finish v in
-          let newRight = ins_min p2Start p2Length p2Lines right in
+          let newRight = prepend p2Start p2Length p2Lines right in
           let (leftidx, leftlns) = idx_ln_size left in
           let (rightidx, rightlns) = idx_ln_size newRight in
           let v' =  {
