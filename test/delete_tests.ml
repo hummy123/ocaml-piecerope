@@ -40,6 +40,22 @@ let test_can_delete_from_start_of_add_buffer _ =
   |> Piece_rope.get_text in
   assert_equal ~printer:print_text expected tableText
 
+let test_can_delete_from_middle_of_add_buffer _ =
+  let expected = String.make 1 (String.get text 1) in
+  let tableText = Piece_rope.empty
+  |> Piece_rope.insert 0 text
+  |> Piece_rope.delete 1 1
+  |> Piece_rope.get_text in
+  assert_equal ~printer:print_text expected tableText
+
+let test_we_can_delete_from_end_of_add_buffer _ =
+  let expected = String.sub text 0 (String.length text - 5) in
+  let tableText = Piece_rope.empty
+  |> Piece_rope.insert 0 text
+  |> Piece_rope.delete (String.length text - 5) 5
+  |> Piece_rope.get_text in
+  assert_equal ~printer:print_text expected tableText
+
 let test_can_delete_from_start_when_we_inserted_multiple_times _ =
   let expected = String.sub (insText ^ text) 10 (String.length (insText ^ text) - 10) in
   let tableText = Piece_rope.insert 0 insText initialTable
@@ -68,7 +84,7 @@ let test_can_delete_at_end_after_we_insert_at_end _ =
   |> Piece_rope.get_text in
   assert_equal ~printer:print_text expected tableText
 
-let test_can_delete_at_start_after_we_insert_in_middle _ =
+let test_can_delete_from_start_after_we_insert_in_middle _ =
   let expected = String.sub text 5 (String.length text / 2 - String.length insText)
   ^ insText
   ^ String.sub text (String.length text / 2) (String.length text / 2 + 1) in
@@ -109,17 +125,18 @@ let test_suite =
     "test_can_delete_from_end_of_original_buffer" >:: test_can_delete_from_end_of_original_buffer;
     
     "test_can_delete_from_start_of_add_buffer" >:: test_can_delete_from_start_of_add_buffer;
-    
+    "test_can_delete_from_middle_of_add_buffer" >:: test_can_delete_from_middle_of_add_buffer;
+    "test_we_can_delete_from_end_of_add_buffer" >:: test_we_can_delete_from_end_of_add_buffer;
+
     "test_can_delete_from_start_when_we_inserted_multiple_times" >:: test_can_delete_from_start_when_we_inserted_multiple_times;
+    "test_can_delete_from_start_after_we_insert_in_middle" >:: test_can_delete_from_start_after_we_insert_in_middle;
     "test_can_delete_from_start_after_we_insert_at_end" >:: test_can_delete_from_start_after_we_insert_at_end;
     
-    
     "test_can_delete_from_middle_after_we_insert_at_end" >:: test_can_delete_from_middle_after_we_insert_at_end;
-    "test_can_delete_at_end_after_we_insert_at_end" >:: test_can_delete_at_end_after_we_insert_at_end;
+    "test_can_delete_around_place_we_inserted_at" >:: test_can_delete_around_place_we_inserted_at;
 
-    "test_can_delete_at_start_after_we_insert_in_middle" >:: test_can_delete_at_start_after_we_insert_in_middle;
     "test_can_delete_in_middle_after_we_insert_in_middle" >:: test_can_delete_in_middle_after_we_insert_in_middle;
     "test_can_delete_at_end_after_we_insert_at_middle" >:: test_can_delete_at_end_after_we_insert_at_middle;    
-    "test_can_delete_around_place_we_inserted_at" >:: test_can_delete_around_place_we_inserted_at;
+    "test_can_delete_at_end_after_we_insert_at_end" >:: test_can_delete_at_end_after_we_insert_at_end;
 ]
 
