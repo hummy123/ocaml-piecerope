@@ -41,7 +41,7 @@ let test_can_delete_from_start_of_add_buffer _ =
   assert_equal ~printer:print_text expected tableText
 
 let test_can_delete_from_middle_of_add_buffer _ =
-  let expected = String.make 1 (String.get text 1) in
+  let expected = String.make 1 (String.get text 0) ^ String.sub text 2 (String.length text - 2) in
   let tableText = Piece_rope.empty
   |> Piece_rope.insert 0 text
   |> Piece_rope.delete 1 1
