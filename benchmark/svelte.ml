@@ -1,3 +1,5 @@
+open Piecerope
+
 let ig _ = ()
 
 let run() =

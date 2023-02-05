@@ -1,4 +1,5 @@
 open OUnit2
+open Piecerope
 
 (* Constant data. *)
 let text =
