@@ -24,34 +24,25 @@ let rec find_line_breaks (str: string) strLengthMinus1 pcStart pos acc =
       find_line_breaks str strLengthMinus1 pcStart (pos + 1) acc
 
 let insert index (str: string) piecerope =
-  if String.empty <> str then
-    let pcStart = Piece_buffer.size piecerope.buffer in
-    let pcLines = find_line_breaks str (String.length str - 1) pcStart 0 [] in
-    let buffer = Piece_buffer.append str piecerope.buffer in
-    let pieces = Piece_tree.insert_tree index pcStart (String.length str) pcLines piecerope.pieces in
-    { buffer; pieces }
-  else
-    piecerope
+  let pcStart = Piece_buffer.size piecerope.buffer in
+  let pcLines = find_line_breaks str (String.length str - 1) pcStart 0 [] in
+  let buffer = Piece_buffer.append str piecerope.buffer in
+  let pieces = Piece_tree.insert_tree index pcStart (String.length str) pcLines piecerope.pieces in
+  { buffer; pieces }
 
 let prepend (str: string) piecerope =
-  if String.empty <> str then
-    let pcStart = Piece_buffer.size piecerope.buffer in
-    let pcLines = find_line_breaks str (String.length str - 1) pcStart 0 [] in
-    let buffer = Piece_buffer.append str piecerope.buffer in
-    let pieces = Piece_tree.prepend pcStart (String.length str) pcLines piecerope.pieces in
-    { buffer; pieces }
-  else
-    piecerope
+  let pcStart = Piece_buffer.size piecerope.buffer in
+  let pcLines = find_line_breaks str (String.length str - 1) pcStart 0 [] in
+  let buffer = Piece_buffer.append str piecerope.buffer in
+  let pieces = Piece_tree.prepend pcStart (String.length str) pcLines piecerope.pieces in
+  { buffer; pieces }
 
 let append (str: string) piecerope =
-  if String.empty <> str then
-    let pcStart = Piece_buffer.size piecerope.buffer in
-    let pcLines = find_line_breaks str (String.length str - 1) pcStart 0 [] in
-    let buffer = Piece_buffer.append str piecerope.buffer in
-    let pieces = Piece_tree.append pcStart (String.length str) pcLines piecerope.pieces in
-    { buffer; pieces }
-  else
-    piecerope
+  let pcStart = Piece_buffer.size piecerope.buffer in
+  let pcLines = find_line_breaks str (String.length str - 1) pcStart 0 [] in
+  let buffer = Piece_buffer.append str piecerope.buffer in
+  let pieces = Piece_tree.append pcStart (String.length str) pcLines piecerope.pieces in
+  { buffer; pieces }
 
 let delete start length piecerope =
   let pieces = Piece_tree.delete_tree start length piecerope.pieces in
