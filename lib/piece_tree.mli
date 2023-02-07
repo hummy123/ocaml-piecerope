@@ -30,3 +30,6 @@ val prepend: int -> int -> int array -> t -> t
 
 (** Inserts points to text from the Piece_buffer into the end of a Piece_tree. *)
 val append: int -> int -> int array -> t -> t
+
+(** Folds over text in order (from start to last). Useful for saving to a file and possibly other situations. *)
+val fold_text: t -> Piece_buffer.t -> 'a -> (string -> 'a) -> 'a

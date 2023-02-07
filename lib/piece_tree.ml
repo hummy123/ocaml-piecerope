@@ -514,6 +514,11 @@ let get_text tree buffer =
     acc ^ text
   ) "" tree
 
+let fold_text tree buffer state folder =
+  fold (fun _ pc ->
+    folder (Piece_buffer.substring pc.start pc.length buffer)
+  ) state tree
+
 let total_length tree = tree_size tree
 
 let total_lines tree = n_lines tree
