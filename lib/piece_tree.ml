@@ -429,31 +429,31 @@ let substring start length tree buffer =
     match node with
     | PE -> acc
     | PT(_, l, v, r) ->
-        let left =
-          if start < curIndex
-          then sub (curIndex - n_length l - size_right l) l acc
+        let nodeEndIndex = curIndex + v.length in
+        let right =
+          if finish > curIndex
+          then sub (nodeEndIndex + size_left r) r acc
           else acc
         in
         
-        let nodeEndIndex = curIndex + v.length in
         let middle =
           if in_range start curIndex finish nodeEndIndex then
-            left ^ text v buffer
+            (text v buffer)::right
           else if start_is_in_range start curIndex finish nodeEndIndex then
-            left ^ text_at_start curIndex finish v buffer
+            (text_at_start curIndex finish v buffer)::right
           else if end_is_in_range start curIndex finish nodeEndIndex then
-            left ^ text_at_end curIndex start v buffer
+            (text_at_end curIndex start v buffer)::right
           else if middle_is_in_range start curIndex finish nodeEndIndex then
-            left ^ text_in_range curIndex start finish v buffer
+            (text_in_range curIndex start finish v buffer)::right
           else
-            left
-
+            right
         in
-        if finish > curIndex
-        then sub (nodeEndIndex + size_left r) r middle
+
+        if start < curIndex
+        then sub (curIndex - n_length l - size_right l) l middle
         else middle
   in
-  sub (size_left tree) tree ""
+  String.concat "" (sub (size_left tree) tree [])
 
 (* Delete/substring if-statements adapted to work with lines. *)
 let line_in_range nodeStartLine searchLine nodeEndLine =
@@ -485,16 +485,16 @@ let get_line line (tree: t) buffer =
                   (text v buffer)::right
               else if start_is_in_line curLine line nodeEndLine then
                   (* + 1 gives us \n in string and - v.Start takes us to piece offset *)
-                  let length: int = (Array.get v.lines 0) + 1 - v.start in
+                  let length: int = (Array.unsafe_get v.lines 0) + 1 - v.start in
                   (at_start_and_length v.start length buffer)::right
               else if end_is_in_line curLine line nodeEndLine then
-                  let start = (Array.get v.lines (Array.length v.lines - 1)) + 1 in
+                  let start = (Array.unsafe_get v.lines (Array.length v.lines - 1)) + 1 in
                   let length = v.length - start + v.start in
                   (at_start_and_length start length buffer)::right
               else if middle_is_in_line curLine line nodeEndLine then
                   let lineDifference = line - curLine in
-                  let lineStart = (Array.get v.lines (lineDifference - 1)) + 1 in
-                  let lineLength = (Array.get v.lines lineDifference) - lineStart + 1 in
+                  let lineStart = (Array.unsafe_get v.lines (lineDifference - 1)) + 1 in
+                  let lineLength = (Array.unsafe_get v.lines lineDifference) - lineStart + 1 in
                   (at_start_and_length lineStart lineLength buffer)::right
               else
                   right
@@ -504,8 +504,7 @@ let get_line line (tree: t) buffer =
           then get (curLine - n_lines l - lines_right l) l middle
           else middle
   in
-  let lst = get (lines_left tree) tree [] in
-  String.concat "" lst
+  String.concat "" (get (lines_left tree) tree [])
 
 let empty = PE
 
