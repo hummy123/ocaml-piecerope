@@ -107,7 +107,7 @@ let delete_lines_in_range p1Length p2Start lines =
   in
   let p2Lines =
     match try_find_index (fun x -> x >= p2Start) lines with
-    | Some x -> Array.sub lines x (Array.length lines - 1 - x)
+    | Some x -> Array.sub lines x (Array.length lines - x)
     | None -> Array.make 0 0
   in
   p1Lines, p2Lines

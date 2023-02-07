@@ -194,8 +194,8 @@ let test_suite =
     "test_get_line_returns_line_when_we_insert_line_break_at_middle" >:: test_get_line_returns_line_when_we_insert_line_break_at_middle ;
     "test_get_line_splits_correctly_when_we_insert_into_middle_of_piece" >:: test_get_line_splits_correctly_when_we_insert_into_middle_of_piece;
     "test_get_line_returns_whole_string_when_we_delete_line_break_in_middle" >:: test_get_line_returns_whole_string_when_we_delete_line_break_in_middle;
-    (* "test_get_line_returns_correct_segments_when_we_delete_line_breaks_in_complex_string" >:: test_get_line_returns_correct_segments_when_we_delete_line_breaks_in_complex_string ; *)
-    (* "test_get_line_returns_correct_segments_when_we_delete_line_breaks_in_first_half" >:: test_get_line_returns_correct_segments_when_we_delete_line_breaks_in_first_half ; *)
-    (* "test_get_line_returns_correct_segments_when_we_delete_line_breaks_in_last_half " >:: test_get_line_returns_correct_segments_when_we_delete_line_breaks_in_last_half ; *)
-    (* "test_get_line_returns_correct_segments_when_we_delete_multiple_line_breaks_in_middle " >:: test_get_line_returns_correct_segments_when_we_delete_multiple_line_breaks_in_middle ; *)
+    "test_get_line_returns_correct_segments_when_we_delete_line_breaks_in_complex_string" >:: test_get_line_returns_correct_segments_when_we_delete_line_breaks_in_complex_string ;
+    "test_get_line_returns_correct_segments_when_we_delete_line_breaks_in_first_half" >:: test_get_line_returns_correct_segments_when_we_delete_line_breaks_in_first_half ;
+    "test_get_line_returns_correct_segments_when_we_delete_line_breaks_in_last_half " >:: test_get_line_returns_correct_segments_when_we_delete_line_breaks_in_last_half ;
+    "test_get_line_returns_correct_segments_when_we_delete_multiple_line_breaks_in_middle " >:: test_get_line_returns_correct_segments_when_we_delete_multiple_line_breaks_in_middle ;
   ]
