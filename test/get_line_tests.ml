@@ -164,7 +164,7 @@ let test_get_line_returns_correct_segments_when_we_delete_multiple_line_breaks_i
   in
   let rope = Piece_rope.create initString in
 
-  let rope = Piece_rope.delete 58 18 rope in
+  let rope = Piece_rope.delete 58 16 rope in
   let rope = Piece_rope.delete 71 26 rope in
   let rope = Piece_rope.delete 12 16 rope in
 
