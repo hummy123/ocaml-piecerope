@@ -52,39 +52,40 @@ let append str buffer =
 
 let substring start length buffer =
   let finish = start + length in
-  let rec sub (curIndex: int) node (acc: string) =
+  let rec sub (curIndex: int) node (acc: string list) =
     match node with
     | BE -> acc
     | BT(_, l, _, v, _, r) ->
-        let left =
-          if start < curIndex
-          then sub (curIndex - string_length l - size_right l) l acc
-          else acc 
-        in
         let nextIndex = curIndex + String.length v in
+        let right =
+          if finish > nextIndex
+          then sub (nextIndex + size_left r) r acc
+          else acc
+        in
         let middle = 
           if start <= curIndex && finish >= nextIndex then 
             (* Node is fully in range. *)
-            left ^ v
+            v::right
           else if start >= curIndex && finish <= nextIndex then
             (* Range is within node. *)
             let strStart = start - curIndex in
-            left ^ String.sub v strStart length
+            (String.sub v strStart length)::right
           else if finish < nextIndex && finish >= curIndex then
             (* Start of node is within range. *)
             let length = finish - curIndex in
-            left ^ String.sub v 0 length
+            (String.sub v 0 length)::right
           else if start > curIndex && start <= nextIndex then
             (* End of node is within range. *)
             let strStart = start - curIndex in
             let len = String.length v - strStart - 1 in
-            left ^ String.sub v strStart len
+            (String.sub v strStart len)::right
           else
-            left
+            right
         in
-        if finish > nextIndex
-        then sub (nextIndex + size_left r) r middle
-        else middle
+        if start < curIndex
+        then sub (curIndex - string_length l - size_right l) l middle
+        else middle 
   in
-  sub (size_left buffer) buffer ""
+  let strList = sub (size_left buffer) buffer [] in
+  String.concat "" strList
 
