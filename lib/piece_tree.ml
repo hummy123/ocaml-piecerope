@@ -93,8 +93,8 @@ let try_find_index (predicate: int -> bool) (lines: int array) =
 let split_lines rStart (lines: int array) =
   match try_find_index (fun x -> x >= rStart) lines with
   | Some splitPoint ->
-      let arrLeft = Array.sub lines 0 (splitPoint - 1) in
-      let arrRight = Array.sub lines splitPoint (Array.length lines - splitPoint - 1) in
+      let arrLeft = Array.sub lines 0 splitPoint in
+      let arrRight = Array.sub lines splitPoint (Array.length lines - splitPoint) in
       arrLeft, arrRight
   | None ->
       lines, Array.make 0 0

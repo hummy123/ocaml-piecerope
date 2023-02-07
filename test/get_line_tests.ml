@@ -20,7 +20,7 @@ let test_get_line_returns_line_when_we_insert_line_break_at_middle _ =
   let str = "abcdefghij" in
   let rope = Piece_rope.create str 
   |> Piece_rope.insert 4 "\n" in
-  let str = "abcd\nefgij" in
+  let str = "abcd\nefghij" in
   let str_lines = String.split_on_char '\n' str in
   let _ = assert_equal ~printer:print (List.nth str_lines 0 ^ "\n") (Piece_rope.get_line 0 rope) in
   assert_equal ~printer:print (List.nth str_lines 1) (Piece_rope.get_line 1 rope) |> ignore
@@ -38,10 +38,10 @@ let test_get_line_splits_correctly_when_we_insert_into_middle_of_piece _ =
     let split_string = String.split_on_char '\n' full_string in
 
     (* Test last line is same first. *)
-    (* let last_line_idx = List.length split_string - 1 in *)
-    (* let last_split_line = List.nth split_string last_line_idx in *)
-    (* let last_rope_line = Piece_rope.get_line last_line_idx testRope in *)
-    (* let _ = assert_equal ~printer:print last_split_line last_rope_line in *)
+    let last_line_idx = List.length split_string - 1 in
+    let last_split_line = List.nth split_string last_line_idx in
+    let last_rope_line = Piece_rope.get_line last_line_idx testRope in
+    let _ = assert_equal ~printer:print last_split_line last_rope_line in
 
     (* Test all lines before last are same. *)
     for i = 0 to List.length split_string - 2 do
