@@ -102,7 +102,7 @@ let split_lines rStart (lines: int array) =
 let delete_lines_in_range p1Length p2Start lines =
   let p1Lines =
     match try_find_index (fun x -> x >= p1Length) lines with
-    | Some x -> Array.sub lines 0 (x - 1)
+    | Some x -> Array.sub lines 0 (x)
     | None -> Array.make 0 0
   in
   let p2Lines =

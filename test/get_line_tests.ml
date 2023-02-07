@@ -57,7 +57,7 @@ let test_get_line_returns_whole_string_when_we_delete_line_break_in_middle _ =
   
   let testRope = Piece_rope.delete 5 1 initRope in
   
-  let expected = "acbdefghij" in 
+  let expected = "abcdefghij" in 
   let line = Piece_rope.get_line 0 testRope in
   assert_equal ~printer:print expected line
 
