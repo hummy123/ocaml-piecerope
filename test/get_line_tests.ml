@@ -50,3 +50,79 @@ let test_get_line_splits_correctly_when_we_insert_into_middle_of_piece _ =
       assert_equal cur_split_string cur_rope_line
     done
 
+(* Get line under delete tests. *)
+let test_get_line_returns_whole_string_when_we_delete_line_break_in_middle _ =
+  let initString = "abcde\nfghij" in
+  let initRope = Piece_rope.create initString in
+  
+  let testRope = Piece_rope.delete 5 1 initRope in
+  
+  let expected = "acbdefghij" in 
+  let line = Piece_rope.get_line 0 testRope in
+  assert_equal expected line
+
+let test_get_line_returns_correct_segments_when_we_delete_line_breaks_in_complex_string _ =
+  let initString = 
+    "Lorem ipsum\ndolor sit amet,\nconsectetur\nadipiscing elit. \nAenean ornare, \nlacus vitae \ntempor pretium,\nleo nulla\nsollicitudin elit,\nin ultrices mi dui et\nipsum. Cras condimentum\npurus in metus \nsodales tincidunt. Praesent"
+  in
+  let rope = Piece_rope.create initString in
+
+  let rope = Piece_rope.delete 11 1 rope in
+  let line1 = Piece_rope.get_line 0 rope in
+  let line2 = Piece_rope.get_line 1 rope in
+  let _ = assert_equal "Lorem ipsumdolor sit amet,\n" line1 in
+  let _ = assert_equal "consectetur\n" line2 in
+
+  let rope = Piece_rope.delete 38 1 rope in
+  let line1 = Piece_rope.get_line 0 rope in
+  let line2 = Piece_rope.get_line 1 rope in
+  let _ = assert_equal "Lorem ipsumdolor sit amet,\n" line1 in
+  let _ = assert_equal "consecteturadipiscing elit. \n" line2 in 
+
+  let rope = Piece_rope.delete 71 1 rope in
+  let line1 = Piece_rope.get_line 0 rope in
+  let line2 = Piece_rope.get_line 1 rope in
+  let line3 = Piece_rope.get_line 2 rope in
+  let _ = assert_equal "Lorem ipsumdolor sit amet,\n" line1 in
+  let _ = assert_equal "consecteturadipiscing elit. \n" line2 in
+  assert_equal "Aenean ornare, lacus vitae \n" line3
+
+let test_get_line_returns_correct_segments_when_we_delete_line_breaks_in_first_half _ =
+  let initString = 
+    "Lorem ipsum\ndolor sit amet,\nconsectetur\nadipiscing elit. \nAenean ornare, \nlacus vitae \ntempor pretium,\nleo nulla\nsollicitudin elit,\nin ultrices mi dui et\nipsum. Cras condimentum\npurus in metus \nsodales tincidunt. Praesent"
+  in
+  let rope = Piece_rope.create initString in
+
+  let rope = Piece_rope.delete 11 17 rope in
+  let line1 = Piece_rope.get_line 0 rope in
+  let line2 = Piece_rope.get_line 1 rope in
+  let _ = assert_equal "Lorem ipsumconsectetur\n" line1 in
+  let _ = assert_equal "adipiscing elit. \n" line2 in
+
+  let rope = Piece_rope.delete 57 29 rope in
+  (* CHeck previous assertsions to see they still work. *)
+  let line1 = Piece_rope.get_line 0 rope in
+  let line2 = Piece_rope.get_line 1 rope in
+  let _ = assert_equal "Lorem ipsumconsectetur\n" line1 in
+  let _ = assert_equal "adipiscing elit. \n" line2 in
+
+  (* Current assertions. *)
+  let line3 = Piece_rope.get_line 2 rope in 
+  let line4 = Piece_rope.get_line 3 rope in
+  let _ = assert_equal "Aenean ornare, \n" line3 in
+  let _ = assert_equal "leo nulla\n" line4 in
+
+  (* Assertions for subsequent lines to check they still work *)
+  let line5 = Piece_rope.get_line 4 rope in
+  let line6 = Piece_rope.get_line 5 rope in
+  let line7 = Piece_rope.get_line 6 rope in
+  let line8 = Piece_rope.get_line 7 rope in
+  let line9 = Piece_rope.get_line 8 rope in
+
+  let _ = assert_equal "sollicitudin elit,\n" line5 in
+  let _ = assert_equal "in ultrices mi dui et\n" line6 in
+  let _ = assert_equal "ipsum. Cras condimentum\n" line7 in
+  let _ = assert_equal "purus in metus \n" line8 in
+  assert_equal "sodales tincidunt. Praesent" line9
+
+
