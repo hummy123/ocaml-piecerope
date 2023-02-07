@@ -469,42 +469,43 @@ let middle_is_in_line nodeStartLine searchLine nodeEndLine =
   nodeStartLine < searchLine && nodeEndLine > searchLine
 
 let get_line line (tree: t) buffer =
-  let rec get curLine node acc =
+  let rec get curLine node (acc: string list) =
       match node with
       | PE -> acc
       | PT(_, l, v, r) ->
-          let left = 
-              if line <= curLine
-              then get (curLine - n_lines l - lines_right l) l acc
+          let nodeEndLine = curLine + (Array.length v.lines) in
+          let right = 
+              if line >= nodeEndLine
+              then get (nodeEndLine + lines_left r) r acc
               else acc
           in
 
-          let nodeEndLine = curLine + (Array.length v.lines) in
           let middle =
               if line_in_range curLine line nodeEndLine then
-                  left ^ text v buffer
+                  (text v buffer)::right
               else if start_is_in_line curLine line nodeEndLine then
                   (* + 1 gives us \n in string and - v.Start takes us to piece offset *)
                   let length: int = (Array.get v.lines 0) + 1 - v.start in
-                  left ^ at_start_and_length v.start length buffer
+                  (at_start_and_length v.start length buffer)::right
               else if end_is_in_line curLine line nodeEndLine then
                   let start = (Array.get v.lines (Array.length v.lines - 1)) + 1 in
                   let length = v.length - start + v.start in
-                  left ^ at_start_and_length start length buffer
+                  (at_start_and_length start length buffer)::right
               else if middle_is_in_line curLine line nodeEndLine then
                   let lineDifference = line - curLine in
                   let lineStart = (Array.get v.lines (lineDifference - 1)) + 1 in
                   let lineLength = (Array.get v.lines lineDifference) - lineStart + 1 in
-                  left ^ at_start_and_length lineStart lineLength buffer
+                  (at_start_and_length lineStart lineLength buffer)::right
               else
-                  left
+                  right
           in
 
-          if line >= nodeEndLine
-          then get (nodeEndLine + lines_left r) r middle
+          if line <= curLine
+          then get (curLine - n_lines l - lines_right l) l middle
           else middle
   in
-  get (lines_left tree) tree ""
+  let lst = get (lines_left tree) tree [] in
+  String.concat "" lst
 
 let empty = PE
 
