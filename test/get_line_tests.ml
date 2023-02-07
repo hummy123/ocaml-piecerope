@@ -25,4 +25,28 @@ let test_get_line_returns_line_when_we_insert_line_break_at_middle _ =
   let _ = assert_equal (List.nth str_lines 0 ^ "\n") (Piece_rope.get_line 0 rope) in
   assert_equal (List.nth str_lines 1) (Piece_rope.get_line 1 rope) |> ignore
 
+let test_get_line_splits_correctly_when_we_insert_into_middle_of_piece _ =
+    let initString = 
+      "Lorem ipsum\ndolor sit amet,\nconsectetur\nadipiscing elit. \nAenean ornare, \nlacus vitae \ntempor pretium,\nleo nulla\nsollicitudin elit,\nin ultrices mi dui et\nipsum. Cras condimentum\npurus in metus \nsodales tincidunt. Praesent"
+    in
+    let initRope = Piece_rope.create initString in
+
+    let testRope = Piece_rope.insert 27 "\n" initRope
+    |> Piece_rope.insert 207 "\n" in
+
+    let full_string = Piece_rope.get_text testRope in
+    let split_string = String.split_on_char '\n' full_string in
+
+    (* Test last line is same first. *)
+    let last_line_idx = List.length split_string - 1 in
+    let last_split_line = List.nth split_string last_line_idx in
+    let last_rope_line = Piece_rope.get_line last_line_idx testRope in
+    let _ = assert_equal last_split_line last_rope_line in
+
+    (* Test all lines before last are same. *)
+    for i = 0 to List.length split_string - 2 do
+      let cur_split_string = List.nth split_string i ^ "\n" in
+      let cur_rope_line = Piece_rope.get_line i testRope in
+      assert_equal cur_split_string cur_rope_line
+    done
 
