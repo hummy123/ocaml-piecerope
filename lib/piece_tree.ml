@@ -440,16 +440,13 @@ let substring start length tree buffer =
         let nodeEndIndex = curIndex + v.length in
         let nodeText = text v buffer in
 
-        let wantBeforeStart = start < curIndex in
-        let wantAfterStart = finish > nodeEndIndex in
-
         (* Four sub-cases:
          * The substring range starts before and ends after this node.
          * The substring range starts before this node and includes this node.
          * The substring range includes this node and ends after this node.
          * The substring range just includes this node and nothing else.
          *)
-        (match wantBeforeStart, wantAfterStart with
+        (match start < curIndex, finish > nodeEndIndex with
         | true, true ->
           sub nodeEndIndex r acc (fun right ->
             let middle = nodeText::right in
@@ -468,6 +465,7 @@ let substring start length tree buffer =
     | PT(_, _, v, _) when middle_is_in_range start curIndex finish (curIndex + v.length) ->
         [text_in_range curIndex start finish v buffer]
     | PT(_, _, _, _) -> 
+        (* Unreachable case. *)
         acc
  in
  String.concat "" (sub (size_left tree) tree [] top_level_cont)
