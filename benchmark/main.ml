@@ -1,8 +1,11 @@
-let ig _ = ()
-
 let () = 
-  let _ = Sveltecomponent.run() in
-  let _ = Rustcode.run() in
-  let _ = Sephblog.run() in
-  let _ = Automerge.run() in
-  ig ()
+  let svelte = Utils.run_txns "Svelete" Sveltecomponent.data in
+  let rust = Utils.run_txns "Rustcode" Rustcode.data in
+  let seph = Utils.run_txns "Sephblog" Sephblog.data in
+  let merge = Utils.run_txns "Automerge" Automerge.data in
+
+  let _ = Utils.run_substring "Svelte Substring" svelte in
+  let _ = Utils.run_substring "Rust Substring" rust in
+  let _ = Utils.run_substring "Seph Substring" seph in
+  let _ = Utils.run_substring "Automerge Substring" merge in
+  ()

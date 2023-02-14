@@ -1,7 +1,5 @@
 
-open Piecerope
-
-let lst = [|
+let data = [|
   (0, 0, "%3Cscript%3E%0A%20%20import%20%7BonMount%7D%20from%20%27svelte%27%3B%0A%20%20let%20count%20%3D%200%3B%0A%20%20onMount%28%28%29%20%3D%3E%20%7B%0A%20%20%20%20const%20interval%20%3D%20setInterval%28%28%29%20%3D%3E%20count++%2C%201000%29%3B%0A%20%20%20%20return%20%28%29%20%3D%3E%20%7B%0A%20%20%20%20%20%20clearInterval%28interval%29%3B%0A%20%20%20%20%7D%3B%0A%20%20%7D%29%3B%0A%3C/script%3E%0A%0A%3Cstyle%3E%0A%20%20%3Aglobal%28body%29%20%7B%0A%20%20%20%20margin%3A%200%3B%0A%20%20%20%20font-family%3A%20Arial%2C%20Helvetica%2C%20sans-serif%3B%0A%20%20%7D%0A%20%20.App%20%7B%0A%20%20%20%20text-align%3A%20center%3B%0A%20%20%7D%0A%20%20.App%20code%20%7B%0A%20%20%20%20background%3A%20%230002%3B%0A%20%20%20%20padding%3A%204px%208px%3B%0A%20%20%20%20border-radius%3A%204px%3B%0A%20%20%7D%0A%20%20.App%20p%20%7B%0A%20%20%20%20margin%3A%200.4rem%3B%0A%20%20%7D%0A%0A%20%20.App-header%20%7B%0A%20%20%20%20background-color%3A%20%23f9f6f6%3B%0A%20%20%20%20color%3A%20%23333%3B%0A%20%20%20%20min-height%3A%20100vh%3B%0A%20%20%20%20display%3A%20flex%3B%0A%20%20%20%20flex-direction%3A%20column%3B%0A%20%20%20%20align-items%3A%20center%3B%0A%20%20%20%20justify-content%3A%20center%3B%0A%20%20%20%20font-size%3A%20calc%2810px%20+%202vmin%29%3B%0A%20%20%7D%0A%20%20.App-link%20%7B%0A%20%20%20%20color%3A%20%23ff3e00%3B%0A%20%20%7D%0A%20%20.App-logo%20%7B%0A%20%20%20%20height%3A%2036vmin%3B%0A%20%20%20%20pointer-events%3A%20none%3B%0A%20%20%20%20margin-bottom%3A%203rem%3B%0A%20%20%20%20animation%3A%20App-logo-spin%20infinite%201.6s%20ease-in-out%20alternate%3B%0A%20%20%7D%0A%20%20@keyframes%20App-logo-spin%20%7B%0A%20%20%20%20from%20%7B%0A%20%20%20%20%20%20transform%3A%20scale%281%29%3B%0A%20%20%20%20%7D%0A%20%20%20%20to%20%7B%0A%20%20%20%20%20%20transform%3A%20scale%281.06%29%3B%0A%20%20%20%20%7D%0A%20%20%7D%0A%3C/style%3E%0A%0A%3Cdiv%20class%3D%22App%22%3E%0A%20%20%3Cheader%20class%3D%22App-header%22%3E%0A%20%20%20%20%3Cimg%20src%3D%22/logo.svg%22%20class%3D%22App-logo%22%20alt%3D%22logo%22%20/%3E%0A%20%20%20%20%3Cp%3EEdit%20%3Ccode%3Esrc/App.svelte%3C/code%3E%20and%20save%20to%20reload.%3C/p%3E%0A%20%20%20%20%3Cp%3EPage%20has%20been%20open%20for%20%3Ccode%3E%7Bcount%7D%3C/code%3E%20seconds.%3C/p%3E%0A%20%20%20%20%3Cp%3E%0A%20%20%20%20%20%20%3Ca%20class%3D%22App-link%22%20href%3D%22https%3A//svelte.dev%22%20target%3D%22_blank%22%20rel%3D%22noopener%20noreferrer%22%3E%0A%20%20%20%20%20%20%20%20Learn%20Svelte%0A%20%20%20%20%20%20%3C/a%3E%0A%20%20%20%20%3C/p%3E%0A%20%20%3C/header%3E%0A%3C/div%3E%0A");
   (7, 0, "%20");
   (8, 0, "l");
@@ -19753,25 +19751,3 @@ let lst = [|
   (2361, 1, "");
 
   |]
-  
-let run() =
-  Printf.printf "
-Starting sveltecomponent...";
-  let t = Sys.time() in
-  let _ = Array.fold_left (fun acc (pos, delNum, insStr) ->
-    let rope = 
-      if delNum > 0 then
-        Piece_rope.delete pos delNum acc
-      else
-        acc
-    in
-    let rope =
-      if insStr <> String.empty then
-        Piece_rope.insert pos insStr rope
-      else
-        rope
-    in
-    rope) Piece_rope.empty lst in
-  let endTime = (Sys.time() -. t) *. 1000.0 in
-  Printf.printf "Execution time: %f ms
-" endTime ;

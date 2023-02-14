@@ -425,35 +425,48 @@ let delete_tree start length tree =
 
 let substring start length tree buffer =
   let finish = start + length in
-  let rec sub curIndex node acc =
+  let rec sub curIndex node acc cont =
     match node with
-    | PE -> acc
-    | PT(_, l, v, r) ->
+    | PE -> 
+        acc |> cont
+    (* Below two cases navigate to the next node when the substring range is outside the current node. *)
+    (* When the current node is after the substring's end range. *)
+    | PT(_, l, v, _) when curIndex >= finish ->
+        (* Short-circuit if we can. If we won't find any part of the substring range to the left, don't recurse. *)
+        if curIndex - v.left_idx > finish then
+          acc |> cont
+        else
+          sub (curIndex - n_length l - size_right l) l acc (fun x -> x |> cont)
+    (* When the current node is before the substring's start range. *)
+    | PT(_, _, v, r) when curIndex + v.length <= start ->
+        if curIndex + v.right_idx < start then
+          acc |> cont
+        else
+          sub (curIndex + v.length + size_left r) r acc (fun x -> x |> cont)
+    (* Cases when the current node is at least partially in the substring range. *)
+    (* The currennt node is |fully| within the substring range. *)
+    | PT(_, l, v, r) when in_range start curIndex finish (curIndex + v.length) ->
         let nodeEndIndex = curIndex + v.length in
-        let right =
-          if finish > curIndex
-          then sub (nodeEndIndex + size_left r) r acc
-          else acc
-        in
-        
-        let middle =
-          if in_range start curIndex finish nodeEndIndex then
-            (text v buffer)::right
-          else if start_is_in_range start curIndex finish nodeEndIndex then
-            (text_at_start curIndex finish v buffer)::right
-          else if end_is_in_range start curIndex finish nodeEndIndex then
-            (text_at_end curIndex start v buffer)::right
-          else if middle_is_in_range start curIndex finish nodeEndIndex then
-            (text_in_range curIndex start finish v buffer)::right
-          else
-            right
-        in
+        let nodeText = text v buffer in
 
-        if start < curIndex
-        then sub (curIndex - n_length l - size_right l) l middle
-        else middle
-  in
-  String.concat "" (sub (size_left tree) tree [])
+        sub (nodeEndIndex + size_left r) r acc (fun right ->
+          let middle = nodeText::right in
+          sub (curIndex - n_length l - size_right l) l middle (fun x -> x |> cont)
+        )
+    (* The |st|art of the current node is in the substring range. *)
+    | PT(_, l, v, _) when start_is_in_range start curIndex finish (curIndex + v.length) ->
+        sub (curIndex - n_length l - size_right l) l ((text_at_start curIndex finish v buffer)::acc) (fun x -> x |> cont)
+    (* The en|d| of the current node is in the substring range. *)
+    | PT(_, _, v, r) when end_is_in_range start curIndex finish (curIndex + v.length) ->
+        sub (curIndex + v.length + size_left r) r ((text_at_end curIndex start v buffer)::acc) (fun x -> x |> cont)
+    (* The mi|d|dle of the current node is in the substring range. *)
+    | PT(_, _, v, _) when middle_is_in_range start curIndex finish (curIndex + v.length) ->
+        [text_in_range curIndex start finish v buffer]
+    | PT(_, _, _, _) -> 
+        (* Unreachable case. *)
+        acc |> cont
+ in
+ String.concat "" (sub (size_left tree) tree [] top_level_cont)
 
 (* Delete/substring if-statements adapted to work with lines. *)
 let line_in_range nodeStartLine searchLine nodeEndLine =

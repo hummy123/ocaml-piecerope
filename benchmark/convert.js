@@ -1,7 +1,7 @@
 const fs = require("fs")
 const path = require("path")
 
-const filename = "rustcode"
+const filename = "sephblog"
 
 const inputPath = path.resolve(`./${filename}.json`)
 
@@ -10,9 +10,7 @@ const {
 } = JSON.parse(fs.readFileSync(inputPath, 'utf-8'))
 
 let content = `
-open Piecerope
-
-let lst = [|
+let data = [|
 `
 
 for (const entry of txns) {
@@ -23,26 +21,6 @@ for (const entry of txns) {
 
 content += `
   |]
-  
-let run() =
-  Printf.printf "\nStarting ${filename}...";
-  let t = Sys.time() in
-  let _ = Array.fold_left (fun acc (pos, delNum, insStr) ->
-    let rope = 
-      if delNum > 0 then
-        Piece_rope.delete pos delNum acc
-      else
-        acc
-    in
-    let rope =
-      if insStr <> String.empty then
-        Piece_rope.insert pos insStr rope
-      else
-        rope
-    in
-    rope) Piece_rope.empty lst in
-  let endTime = (Sys.time() -. t) *. 1000.0 in
-  Printf.printf "Execution time: %f ms\n" endTime ;
 `
 
 let outputPath = `${filename}.ml`
