@@ -17,14 +17,19 @@ let test_can_get_a_substring_from_start_of_original_buffer _ =
   assert_equal ~printer:print_text "Du" substring
 
 let test_can_get_a_substring_from_the_whole_of_a_table's_add_buffer _ =
-  let tableText = Piece_rope.insert 5 insText initialTable 
+  let substring = Piece_rope.insert 5 insText initialTable 
   |> Piece_rope.substring 5 (String.length insText) in
-  assert_equal ~printer:print_text insText tableText
+  assert_equal ~printer:print_text insText substring
+
+let test_can_get_a_substring_from_around_a_table's_add_buffer _ =
+  let substring = Piece_rope.insert 5 insText initialTable
+  |> Piece_rope.substring 4 (String.length insText + 2) in
+  assert_equal ~printer:print_text "nTEST!g" substring
 
 (* List of test suites to export. *)
 let test_suite = 
   "Substring_tests" >::: [
     "test_can_get_a_substring_from_start_of_original_buffer " >:: test_can_get_a_substring_from_start_of_original_buffer ;
     "test_can_get_a_substring_from_the_whole_of_a_table's_add_buffer " >:: test_can_get_a_substring_from_the_whole_of_a_table's_add_buffer;
-
+    "test_can_get_a_substring_from_around_a_table's_add_buffer" >:: test_can_get_a_substring_from_around_a_table's_add_buffer ;
 ]
