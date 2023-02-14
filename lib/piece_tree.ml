@@ -437,8 +437,9 @@ let substring start length tree buffer =
         sub (curIndex + v.length + size_left r) r acc
     (* Cases when the current node is at least partially in the substring range. *)
     | PT(_, _, v, r) when in_range start curIndex finish (curIndex + v.length) ->
-            (* (text v buffer)::right *)
-        "" (* To do. *)
+        let left = sub (curIndex - n_length l - size_right l) l acc
+        let middle = (text v buffer)::left
+        sub (curIndex + v.length) r middle
     | PT(_, _, v, r) when start_is_in_range start curIndex finish (curIndex + v.length) ->
         sub (nodeEndIndex + size_left r) r ((text_at_start curIndex finish v buffer)::acc)
     | PT(_, l, v, _) when end_is_in_range start curIndex finish (curIndex + v.length) ->
