@@ -78,6 +78,11 @@ let substring start length buffer =
             (* End of node is within range. *)
             let strStart = start - curIndex in
             let len = String.length v - strStart - 1 in
+
+            (* We "clip" len to 0 because there's a chance of failure otherwise
+               where we are asked for a substring with length of -1.
+               Unsure if the failure is because of an error elsewhere; should check. *)
+            let len = if len > 0 then len else 0 in
             (String.sub v strStart len)::right
           else
             right

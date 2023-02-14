@@ -473,7 +473,7 @@ let substring start length tree buffer =
         [text_in_range curIndex start finish v buffer]
     | PT(_, _, _, _) -> 
         (* Unreachable case. *)
-        acc
+        acc |> cont
  in
  String.concat "" (sub (size_left tree) tree [] top_level_cont)
 
