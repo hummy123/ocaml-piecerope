@@ -430,11 +430,18 @@ let substring start length tree buffer =
     | PE -> acc |> cont
     (* Below two cases navigate to the next node when the substring range is outside the current node. *)
     (* When the current node is after the substring's end range. *)
-    | PT(_, l, _, _) when curIndex > finish ->
-        sub (curIndex - n_length l - size_right l) l acc (fun x -> x |> cont)
+    | PT(_, l, v, _) when curIndex > finish ->
+        (* Short-circuit if we can. If we won't find any part of the substring range to the left, don't recurse. *)
+        if curIndex - v.left_idx > finish then
+          acc |> cont
+        else
+          sub (curIndex - n_length l - size_right l) l acc (fun x -> x |> cont)
     (* When the current node is before the substring's start range. *)
     | PT(_, _, v, r) when curIndex + v.length < start ->
-        sub (curIndex + v.length + size_left r) r acc (fun x -> x |> cont)
+        if curIndex + v.right_idx < start then
+          acc |> cont
+        else
+          sub (curIndex + v.length + size_left r) r acc (fun x -> x |> cont)
     (* Cases when the current node is at least partially in the substring range. *)
     | PT(_, l, v, r) when in_range start curIndex finish (curIndex + v.length) ->
         let nodeEndIndex = curIndex + v.length in
