@@ -1,7 +1,5 @@
 
-open Piecerope
-
-let lst = [|
+let data = [|
   (0, 0, "Automerge%20is%20too%20slow%20and%20clunky.%20Martin%20%28its%20principle%20architect%20and%20programmer%29%20recorded%20himself%20typing%20an%20academic%20paper.%20Running%20his%20editing%20history%20through%20automerge%20%28his%20own%20code%29%20takes%20490%20seconds%2C%20which%20is%20a%20bit%20less%20than%2010%20minutes.%20Once%20processed%2C%20the%20editing%20trace%20sits%20on%201.1%20GB%20of%20RAM.%20The%20newly%20merged%20performance%20branch%20%28designed%20to%20fix%20a%20lot%20of%20these%20problems%29%20is%20even%20slower%20-%20taking%20750%20seconds%20%2812.5%20minutes%29%20to%20process%20the%20same%20editing%20trace.%0AI%20managed%20to%20get%20that%2010%20minute%20time%20down%20to%2070ms%20%280.07%20seconds%29.%20Thats%20the%20best%20result%20I%27ve%20ever%20gotten%20from%20optimization%20work%2C%20and%20I%27m%20delighted%20by%20it.%20Let%20me%20tell%20you%20what%20I%20did%21%0AWhat%20does%20automerge%20do%3F%0ABefore%20we%20can%20go%20into%20detail%20about%20how%20I%20made%20automerge%20fast%2C%20we%20have%20to%20spend%20a%20moment%20talking%20about%20how%20automerge%20itself%20works.%0AAn%20automerge%20document%20is%20actually%20a%20tree%20of%20inserted%20characters.%20Each%20character%20in%20the%20document%20has%20the%20following%20properties%3A%0AA%20unique%20ID%2C%20made%20up%20of%20a%20tuple%20of%20%28client%20ID%2C%20sequence%20number%29%0AThe%20ID%20%28or%20a%20pointer%20to%29%20its%20parent%20item%2C%20which%20is%20the%20item%20directly%20before%20that%20character%20when%20it%20was%20inserted.%0AThe%20character%20itself%20%28%27A%27%29%0AThere%27s%20a%20couple%20more%20fields%20%28eg%20to%20mark%20when%20characters%20have%20been%20deleted%29%2C%20but%20essentially%20thats%20it.%20When%20a%20character%20is%20inserted%20in%20the%20document%2C%20automerge%20figures%20out%20the%20ID%20of%20the%20character%20immediately%20before%20the%20new%20character%2C%20and%20inserts%20the%20new%20character%20as%20one%20of%20its%20predecessor%27s%20*children*.%20If%20you%20just%20type%20a%20linear%20sequence%20of%20characters%20%28as%20I%27m%20doing%20right%20now%29%2C%20you%27ll%20end%20up%20with%20a%20big%20long%20chain%20of%20characters%20going%20down%20like%20a%20linked%20list.%0ASo%20why%20is%20automerge%20so%20slow%3F%0AWhen%20optimizing%2C%20I%20imagine%20myself%20manually%20doing%20all%20the%20work%20the%20computer%20is%20doing%2C%20one%20step%20at%20a%20time.%20Then%20I%20imagine%20asking%3A%20%22When%20I%20get%20bored%2C%20how%20would%20I%20speed%20this%20job%20up%3F%22.%0AAutomerge%20is%20slow%20for%203%20main%20reasons%3A%0AIts%20written%20in%20javascript%20and%20uses%20complex%20data%20structures.%20Javascript%20is%20reasonably%20fast%20for%20math%2C%20but%20slow%20and%20inefficient%20when%20using%20complex%20data%20structures.%0AAutomerge%20uses%20a%20complex%20and%20inefficient%20data%20structure%0AAutomerge%20makes%20extremely%20heavy%20use%20of%20immutablejs%0AEach%20of%20these%20issues%20accounts%20for%20about%20an%20order%20of%20magnitude%20slowdown%20in%20performance.%20You%20can%20see%20all%203%20issues%20showing%20up%20in%20this%20method%20from%20the%20automerge%20source%20tree%2C%20which%20is%20called%20on%20each%20keystroke.%20Automerge%20uses%20this%20method%20to%20figure%20out%20where%20each%20new%20character%20should%20be%20placed%20in%20the%20resulting%20document%3A%0Afunction%20insertionsAfter%28opSet%2C%20objectId%2C%20parentId%2C%20childId%29%20%7B%0A%20%20let%20childKey%20%3D%20null%0A%20%20if%20%28childId%29%20childKey%20%3D%20Map%28%7BopId%3A%20childId%7D%29%0A%0A%20%20return%20opSet%0A%20%20%20%20.getIn%28%5B%27byObject%27%2C%20objectId%2C%20%27_following%27%2C%20parentId%5D%2C%20List%28%29%29%0A%20%20%20%20.filter%28op%20%3D%3E%20op.get%28%27insert%27%29%20%26%26%20%28%21childKey%20%7C%7C%20lamportCompare%28op%2C%20childKey%29%20%3C%200%29%29%0A%20%20%20%20.sort%28lamportCompare%29%0A%20%20%20%20.reverse%28%29%20//%20descending%20order%0A%20%20%20%20.map%28op%20%3D%3E%20op.get%28%27opId%27%29%29%0A%7D%0AWhats%20wrong%20with%20this%20method%3F%0AThis%20method%20allocates%20all%20over%20the%20place.%20I%20can%20spot%205%20allocations%2C%20not%20counting%20any%20extra%20nonsense%20immutablejs%20is%20doing.%20The%20call%20to%20List%28%29%20has%20no%20effect%20as%20far%20as%20I%20can%20tell%20from%20reading%20immutablejs%27s%20documentation.%0AThe%20document%20is%20always%20kept%20in%20a%20sorted%20order%20anyway%2C%20so%20the%20calls%20to%20sort%28%29%20and%20reverse%28%29%20are%20unnecessary.%20The%20algorithm%20only%20needs%20to%20figure%20out%20where%20the%20new%20child%20should%20be%20inserted.%20Re-sorting%20all%20children%20is%20entirely%20avoidable.%20Sort%20functions%20are%20often%20fast%20when%20the%20input%20is%20sorted%20already%2C%20but%20in%20this%20case%20because%20the%20sorting%20function%20is%20inverted%2C%20the%20computer%20always%20has%20to%20sort%20the%20entire%20list.%0AYou%20can%27t%20tell%20from%20looking%20at%20this%20method%2C%20but%20insertionsAfter%20%0ADespite%20CRDTs%20being%20the%20%22new%20hotness%22%20in%20the%20collaborative%20editing%20game%20for%20years%2C%20I%27ve%20been%20resisting%20them.%20As%20I%20said%20in%20my%20%5Brecent%20blog%20post%20about%20CRDTs%5D%28https%3A//josephg.com/blog/crdts-are-the-future/%29%2C%20they%27ve%20been%20generally%20unworkable%20for%20real%20world%20collaborative%20editing%20because%3A%0AThey%20take%20up%20too%20much%20space%20on%20disk%20and%20in%20memory.%20%28Automerge%20takes%201.1GB%20in%20RAM%20to%20store%20a%20100kb%20document%29%0AThey%20consume%20way%20too%20much%20CPU%20to%20process%20edits%0AUntil%20these%20issues%20are%20addressed%2C%20I%20can%27t%20recommend%20CRDTs%20for%20use%20in%20general%20computing.%0A");
   (0, 0, "%0A");
   (1, 0, "%0A");
@@ -137997,25 +137995,3 @@ let lst = [|
   (20698, 1, "");
 
   |]
-  
-let run() =
-  Printf.printf "
-Starting sephblog...";
-  let t = Sys.time() in
-  let _ = Array.fold_left (fun acc (pos, delNum, insStr) ->
-    let rope = 
-      if delNum > 0 then
-        Piece_rope.delete pos delNum acc
-      else
-        acc
-    in
-    let rope =
-      if insStr <> String.empty then
-        Piece_rope.insert pos insStr rope
-      else
-        rope
-    in
-    rope) Piece_rope.empty lst in
-  let endTime = (Sys.time() -. t) *. 1000.0 in
-  Printf.printf "Execution time: %f ms
-" endTime ;
