@@ -428,31 +428,26 @@ let substring start length tree buffer =
   let rec sub curIndex node acc =
     match node with
     | PE -> acc
-    | PT(_, l, v, r) ->
-        let nodeEndIndex = curIndex + v.length in
-        let right =
-          if finish > curIndex
-          then sub (nodeEndIndex + size_left r) r acc
-          else acc
-        in
-        
-        let middle =
-          if in_range start curIndex finish nodeEndIndex then
-            (text v buffer)::right
-          else if start_is_in_range start curIndex finish nodeEndIndex then
-            (text_at_start curIndex finish v buffer)::right
-          else if end_is_in_range start curIndex finish nodeEndIndex then
-            (text_at_end curIndex start v buffer)::right
-          else if middle_is_in_range start curIndex finish nodeEndIndex then
-            (text_in_range curIndex start finish v buffer)::right
-          else
-            right
-        in
-
-        if start < curIndex
-        then sub (curIndex - n_length l - size_right l) l middle
-        else middle
-  in
+    (* Below two cases navigate to the next node when the substring range is outside the current node. *)
+    (* When the current node is after the substring's end range. *)
+    | PT(_, l, v, _) when curIndex > finish ->
+        sub (curIndex - n_length l - size_right l) l acc
+    (* When the current node is before the substring's start range. *)
+    | PT(_, _, v, r) when curIndex + v.length < start ->
+        sub (curIndex + v.length + size_left r) r acc
+    (* Cases when the current node is at least partially in the substring range. *)
+    | PT(_, _, v, r) when in_range start curIndex finish (curIndex + v.length) ->
+            (* (text v buffer)::right *)
+        "" (* To do. *)
+    | PT(_, _, v, r) when start_is_in_range start curIndex finish (curIndex + v.length) ->
+        sub (nodeEndIndex + size_left r) r ((text_at_start curIndex finish v buffer)::acc)
+    | PT(_, l, v, _) when end_is_in_range start curIndex finish (curIndex + v.length) ->
+        sub (curIndex - n_length l - size_right l) l ((text_at_end curIndex start v buffer)::acc)
+    | PT(_, l, v, _) when middle_is_in_line start curIndex finish (curIndex + v.length) ->
+        text_in_range curIndex start finish v buffer
+    | PT(_, l, v, r) -> 
+        acc
+ in
   String.concat "" (sub (size_left tree) tree [])
 
 (* Delete/substring if-statements adapted to work with lines. *)
