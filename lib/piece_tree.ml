@@ -427,7 +427,7 @@ let substring start length tree buffer =
   let finish = start + length in
   let rec sub curIndex node acc cont =
     match node with
-    | PE -> acc
+    | PE -> acc |> cont
     (* Below two cases navigate to the next node when the substring range is outside the current node. *)
     (* When the current node is after the substring's end range. *)
     | PT(_, l, _, _) when curIndex > finish ->
