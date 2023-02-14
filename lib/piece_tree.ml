@@ -425,31 +425,32 @@ let delete_tree start length tree =
 
 let substring start length tree buffer =
   let finish = start + length in
-  let rec sub curIndex node acc =
+  let rec sub curIndex node acc cont =
     match node with
     | PE -> acc
     (* Below two cases navigate to the next node when the substring range is outside the current node. *)
     (* When the current node is after the substring's end range. *)
-    | PT(_, l, v, _) when curIndex > finish ->
-        sub (curIndex - n_length l - size_right l) l acc
+    | PT(_, l, _, _) when curIndex > finish ->
+        sub (curIndex - n_length l - size_right l) l acc (fun x -> x |> cont)
     (* When the current node is before the substring's start range. *)
     | PT(_, _, v, r) when curIndex + v.length < start ->
-        sub (curIndex + v.length + size_left r) r acc
+        sub (curIndex + v.length + size_left r) r acc (fun x -> x |> cont)
     (* Cases when the current node is at least partially in the substring range. *)
-    | PT(_, _, v, r) when in_range start curIndex finish (curIndex + v.length) ->
-        let left = sub (curIndex - n_length l - size_right l) l acc
-        let middle = (text v buffer)::left
-        sub (curIndex + v.length) r middle
+    | PT(_, l, v, r) when in_range start curIndex finish (curIndex + v.length) ->
+        sub (curIndex - n_length l - size_right l) l acc (fun left ->
+          let middle = (text v buffer)::left in
+          sub (curIndex + v.length) r middle (fun x -> x |> cont)
+        )
     | PT(_, _, v, r) when start_is_in_range start curIndex finish (curIndex + v.length) ->
-        sub (nodeEndIndex + size_left r) r ((text_at_start curIndex finish v buffer)::acc)
+        sub (curIndex + v.length + size_left r) r ((text_at_start curIndex finish v buffer)::acc) (fun x -> x |> cont)
     | PT(_, l, v, _) when end_is_in_range start curIndex finish (curIndex + v.length) ->
-        sub (curIndex - n_length l - size_right l) l ((text_at_end curIndex start v buffer)::acc)
-    | PT(_, l, v, _) when middle_is_in_line start curIndex finish (curIndex + v.length) ->
-        text_in_range curIndex start finish v buffer
-    | PT(_, l, v, r) -> 
+        sub (curIndex - n_length l - size_right l) l ((text_at_end curIndex start v buffer)::acc) (fun x -> x |> cont)
+    | PT(_, _, v, _) when middle_is_in_range start curIndex finish (curIndex + v.length) ->
+        [text_in_range curIndex start finish v buffer]
+    | PT(_, _, _, _) -> 
         acc
  in
-  String.concat "" (sub (size_left tree) tree [])
+ String.concat "" (sub (size_left tree) tree [] top_level_cont)
 
 (* Delete/substring if-statements adapted to work with lines. *)
 let line_in_range nodeStartLine searchLine nodeEndLine =
