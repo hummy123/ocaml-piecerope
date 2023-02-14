@@ -460,7 +460,7 @@ let substring start length tree buffer =
         | false, true ->
           sub nodeEndIndex r acc (fun right -> nodeText::right |> cont)
         | false, false ->
-          nodeText::acc)
+          nodeText::acc |> cont)
     | PT(_, _, v, r) when start_is_in_range start curIndex finish (curIndex + v.length) ->
         sub (curIndex + v.length + size_left r) r ((text_at_start curIndex finish v buffer)::acc) (fun x -> x |> cont)
     | PT(_, l, v, _) when end_is_in_range start curIndex finish (curIndex + v.length) ->
