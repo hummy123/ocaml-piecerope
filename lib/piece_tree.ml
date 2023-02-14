@@ -447,24 +447,10 @@ let substring start length tree buffer =
         let nodeEndIndex = curIndex + v.length in
         let nodeText = text v buffer in
 
-        (* Four sub-cases:
-         * The substring range starts before and ends after this node.
-         * The substring range starts before this node and includes this node.
-         * The substring range includes this node and ends after this node.
-         * The substring range just includes this node and nothing else.
-         *)
-        (match start < curIndex, finish > nodeEndIndex with
-        | true, true ->
-          sub nodeEndIndex r acc (fun right ->
-            let middle = nodeText::right in
-            sub (curIndex - n_length l - size_right l) l middle (fun x -> x |> cont)
-          )
-        | true, false ->
-          sub (curIndex - n_length l - size_right l) l (nodeText::acc) (fun x -> x |> cont)
-        | false, true ->
-          sub nodeEndIndex r acc (fun right -> nodeText::right |> cont)
-        | false, false ->
-          nodeText::acc |> cont)
+        sub (nodeEndIndex + size_left r) r acc (fun right ->
+          let middle = nodeText::right in
+          sub (curIndex - n_length l - size_right l) l middle (fun x -> x |> cont)
+        )
     | PT(_, _, v, r) when start_is_in_range start curIndex finish (curIndex + v.length) ->
         sub (curIndex + v.length + size_left r) r ((text_at_start curIndex finish v buffer)::acc) (fun x -> x |> cont)
     | PT(_, l, v, _) when end_is_in_range start curIndex finish (curIndex + v.length) ->
