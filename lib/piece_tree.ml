@@ -52,6 +52,11 @@ let tree_size node =
   | PE -> 0
   | PT(_, _, v, _) -> v.left_idx + v.right_idx + v.length
 
+let tree_lines node =
+  match node with
+  | PE -> 0
+  | PT(_, _, v, _) -> v.right_lns + v.left_lns + Array.length v.lines
+
 let idx_ln_size node =
   match node with
   | PE -> 0, 0
@@ -284,7 +289,6 @@ let ins_max pcStart pcLength (pcLines: int array) tree =
   in
   max tree top_level_cont
 
-
 let insert_tree insIndex pcStart pcLength pcLines tree =
   let rec ins curIndex node cont =
     match node with
@@ -358,8 +362,9 @@ let delete_tree start length tree =
           node |> cont
         else
           del (curIndex - n_length l -size_right l) l (fun l' -> 
-            let (l'size, l'lines) = idx_ln_size l' in
-            let v' = {v with left_idx = l'size; left_lns = l'lines} in
+            let v' = { v with 
+                       left_idx = tree_size l'; 
+                       left_lns = tree_lines l'} in
             PT(h, l', v', r) |> adjust |> cont
           )
     | PT(h, l, v, r) as node when curIndex + v.length <= start ->
@@ -367,8 +372,9 @@ let delete_tree start length tree =
           node |> cont
         else
           del (curIndex + v.length + size_left r) r (fun r' -> 
-            let (r'size, r'lines) = idx_ln_size r' in
-            let v' = {v with right_idx = r'size; right_lns = r'lines} in
+            let v' = { v with 
+                       right_idx = tree_size r'; 
+                       right_lns = tree_lines r'} in
             PT(h, l, v', r') |> adjust |> cont
           )
     | PT(h, l, v, r) when in_range start curIndex finish (curIndex + v.length) ->
@@ -378,39 +384,35 @@ let delete_tree start length tree =
               r' |> cont
             else
               let (newLeft, newVal) = split_max l' in
-              let (l'size, l'lines) = idx_ln_size newLeft in
-              let (r'size, r'lines) = idx_ln_size r' in
               let newVal = { newVal with 
-                             left_idx = l'size;
-                             left_lns = l'lines;
-                             right_idx = r'size;
-                             right_lns = r'lines; } in
+                             left_idx = tree_size l';
+                             left_lns = tree_lines l';
+                             right_idx = tree_size r';
+                             right_lns = tree_lines r'; } in
               PT(h, newLeft, newVal, r') |> adjust |> cont
           )
         )
     | PT(h, l, v, r) when start_is_in_range start curIndex finish (curIndex + v.length) ->
         del (curIndex - n_length l - size_right l) l (fun l' -> 
-          let (l'size, l'lines) = idx_ln_size l' in
           let (newStart, newLength, newLines) = delete_at_start curIndex finish v in
           let v' =  { v with
                       start = newStart;
                       length = newLength;
                       lines = newLines;
-                      left_lns = l'lines;
-                      left_idx = l'size;
+                      left_lns = tree_size l';
+                      left_idx = tree_lines l';
                     } in
           PT(h, l', v', r) |> skew |> split |> cont
         )
     | PT(h, l, v, r) when end_is_in_range start curIndex finish (curIndex + v.length) ->
         del (curIndex + v.length + size_left r) r (fun r' ->
-          let (r'size, r'lines) = idx_ln_size r in
           let (length, lines) = delete_at_end curIndex start v in
           let v' =  {
                       v with
                       length = length;
                       lines = lines;
-                      right_idx = r'size;
-                      right_lns = r'lines;
+                      right_idx = tree_size r';
+                      right_lns = tree_lines r';
                     } in
           PT(h, l, v', r') |> adjust |> cont
         )
@@ -418,13 +420,12 @@ let delete_tree start length tree =
         let (p1Length, p1Lines, p2Start, p2Length, p2Lines) =
           delete_in_range curIndex start finish v in
         let newRight = prepend p2Start p2Length p2Lines r in
-        let (rightidx, rightlns) = idx_ln_size newRight in
         let v' =  {
                     v with
                     length = p1Length;
                     lines = p1Lines;
-                    right_idx = rightidx;
-                    right_lns = rightlns;
+                    right_idx = tree_size newRight;
+                    right_lns = tree_lines newRight;
                   } in
         PT(h, l, v', newRight) |> skew |> split |> cont
     | PT(h, l, v, r) ->
