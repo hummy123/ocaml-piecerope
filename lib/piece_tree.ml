@@ -12,31 +12,7 @@ type t =
   | PE
   | PT of int * t * node * t
 
-let top_level_cont x = x
-
-let create start length lines = { 
-  start = start; 
-  length = length; 
-  left_idx = 0; 
-  right_idx = 0;
-  left_lns = 0;
-  right_lns = 0; 
-  lines = lines; 
-}
-
-let plus_left idxDelta lnDelta node =
-  { node with left_idx = node.left_idx + idxDelta; left_lns = node.left_lns + lnDelta }
-
-let plus_right idxDelta lnDelta node =
-  { node with right_idx = node.right_idx + idxDelta; right_lns = node.right_lns + lnDelta }
-
-let set_data (leftSize, leftLines) (rightSize, rightLines) node =
-  { node with 
-      left_idx = leftSize;
-      left_lns = leftLines; 
-      right_idx = rightSize;
-      right_lns = rightLines; }
-  
+(* Getting narious node data. *)
 let n_length node = 
   match node with
   | PE -> 0
@@ -56,12 +32,6 @@ let tree_lines node =
   match node with
   | PE -> 0
   | PT(_, _, v, _) -> v.right_lns + v.left_lns + Array.length v.lines
-
-let idx_ln_size node =
-  match node with
-  | PE -> 0, 0
-  | PT(_, _, v, _) -> v.left_idx + v.right_idx + v.length,
-                      v.left_lns + v.right_lns + Array.length v.lines
 
 let size_left node = 
   match node with 
@@ -83,6 +53,32 @@ let lines_right node =
   | PE -> 0
   | PT(_, _, v, _) -> v.right_lns
 
+let top_level_cont x = x
+
+(* Creating and editing node data. *)
+let create start length lines = { 
+  start = start; 
+  length = length; 
+  left_idx = 0; 
+  right_idx = 0;
+  left_lns = 0;
+  right_lns = 0; 
+  lines = lines; 
+}
+
+let plus_left idxDelta lnDelta node =
+  { node with left_idx = node.left_idx + idxDelta; left_lns = node.left_lns + lnDelta }
+
+let plus_right idxDelta lnDelta node =
+  { node with right_idx = node.right_idx + idxDelta; right_lns = node.right_lns + lnDelta }
+
+let set_data leftTree rightTree node =
+  { node with 
+      left_idx = tree_size leftTree;
+      left_lns = tree_lines leftTree; 
+      right_idx = tree_size rightTree;
+      right_lns = tree_lines rightTree; }
+  
 (* Logic for handling piece nodes; not using a separate module because more work due to defining interface. *)
 
 (* tryFindIndex function ported from F#: https://github.com/dotnet/fsharp/blob/main/src/FSharp.Core/array.fs#L1558 *)
@@ -176,18 +172,18 @@ let lvl = function
 
 let skew = function
   | PT(lvx, PT(lvy, a, ky, b), kx, c) when lvx = lvy ->
-      let kx = set_data (idx_ln_size b) (idx_ln_size c) kx in
+      let kx = set_data b c kx in
       let innerNode = PT(lvx, b, kx, c) in
-      let ky = set_data (idx_ln_size a) (idx_ln_size innerNode) ky in
+      let ky = set_data a innerNode ky in
       PT(lvx, a, ky, innerNode)
   | t -> t
 
 let split = function
   | PT(lvx, a, kx, PT(lvy, b, ky, PT(lvz, c, kz, d))) when lvx = lvy && lvy = lvz ->
       let right = PT(lvx, c, kz, d) in
-      let kx = set_data (idx_ln_size a) (idx_ln_size b) kx in
+      let kx = set_data a b kx in
       let left = PT(lvx, a, kx, b) in
-      let ky = set_data (idx_ln_size left) (idx_ln_size right) ky in
+      let ky = set_data left  right ky in
       PT(lvx + 1, left, ky, right)
   | t -> t
 
@@ -201,34 +197,34 @@ let adjust = function
   | PT(lvt, lt, kt, rt) when lvl rt < lvt - 1 && sngl lt -> 
       PT(lvt - 1, lt, kt, rt) |> skew
   | PT(lvt, PT(lv1, a, kl, PT(lvb, lb, kb, rb)), kt, rt) when lvl rt < lvt - 1 -> 
-      let kl = set_data (idx_ln_size a) (idx_ln_size lb) kl in
+      let kl = set_data a lb kl in
       let leftNode = PT(lv1, a, kl, lb) in
-      let kt = set_data (idx_ln_size rb) (idx_ln_size rt) kt in
+      let kt = set_data rb rt kt in
       let rightNode = PT(lvt - 1, rb, kt, rt) in
-      let kb = set_data (idx_ln_size leftNode) (idx_ln_size rightNode) kb in
+      let kb = set_data leftNode rightNode kb in
       PT(lvb + 1, leftNode, kb, rightNode)
   | PT(lvt, lt, kt, rt) when lvl rt < lvt -> 
       PT(lvt - 1, lt, kt, rt) |> split
   | PT(lvt, lt, kt, PT(_, (PT(lva, c, ka, d) as a), kr, b)) ->
-      let kt = set_data (idx_ln_size lt) (idx_ln_size c) kt in
+      let kt = set_data lt c kt in
       let leftNode = PT(lvt - 1, lt, kt, c) in
-      let kr = set_data (idx_ln_size d) (idx_ln_size b) kr in
+      let kr = set_data d b kr in
       let rightNode = PT(nlvl a, d, kr, b) |> split in
-      let ka = set_data (idx_ln_size leftNode) (idx_ln_size rightNode) ka in
+      let ka = set_data leftNode rightNode ka in
       PT(lva + 1, leftNode, ka, rightNode)
   | t -> t
 
 let rec split_max = function
-  | PT(_, l, v, PE) ->
-      let v' = set_data (idx_ln_size l) (0, 0) v in
+  | PT(_, l, v, (PE as r)) ->
+      let v' = set_data l r v in
       l, v'
   | PT(h, l, v, r) -> 
       let (r', b) = split_max r in
-      let (r'Size, r'Lines) = idx_ln_size r' in
-      let v' = {v with right_idx = r'Size; right_lns = r'Lines} in
+      let v' = { v with 
+                 right_idx = tree_size r'; 
+                 right_lns = tree_lines r'; } in
       let newLeft = PT(h, l, v', r') in
-      let (leftSize, leftLines) = idx_ln_size newLeft in
-      let b' = {b with left_idx = leftSize; left_lns = leftLines} in
+      let b' = {b with left_idx = tree_size newLeft; left_lns = tree_lines newLeft} in
       newLeft, b'
   | PE -> failwith "unexpected splitMax case"
 
