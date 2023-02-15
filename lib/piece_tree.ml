@@ -350,53 +350,70 @@ let middle_is_in_range start curIndex finish nodeEndIndex =
 
 let delete_tree start length tree =
   let finish = start + length in
-  let rec del curIndex node =
+  let rec del curIndex node cont =
     match node with
-    | PE -> PE
+    | PE -> PE |> cont
     | PT(h, l, v, r) as node when curIndex >= finish ->
         if curIndex - v.left_idx > finish then
-          node
+          node |> cont
         else
-          let l' = del (curIndex - n_length l -size_right l) l in
-          let (l'size, l'lines) = idx_ln_size l' in
-          let v' = {v with left_idx = l'size; left_lns = l'lines} in
-          PT(h, l', v', r) |> adjust
+          del (curIndex - n_length l -size_right l) l (fun l' -> 
+            let (l'size, l'lines) = idx_ln_size l' in
+            let v' = {v with left_idx = l'size; left_lns = l'lines} in
+            PT(h, l', v', r) |> adjust |> cont
+          )
     | PT(h, l, v, r) as node when curIndex + v.length <= start ->
         if curIndex + v.right_idx < start then
-          node
+          node |> cont
         else
-          let r' = del (curIndex + v.length + size_left r) r in
-          let (r'size, r'lines) = idx_ln_size r' in
-          let v' = {v with right_idx = r'size; right_lns = r'lines} in
-          PT(h, l, v', r') |> adjust
+          del (curIndex + v.length + size_left r) r (fun r' -> 
+            let (r'size, r'lines) = idx_ln_size r' in
+            let v' = {v with right_idx = r'size; right_lns = r'lines} in
+            PT(h, l, v', r') |> adjust |> cont
+          )
     | PT(h, l, v, r) when in_range start curIndex finish (curIndex + v.length) ->
-        let l' = del (curIndex - n_length l -size_right l) l in
-        let r' = del (curIndex + v.length + size_left r) r in
-        if l' = PE then
-          r'
-        else
-          let (newLeft, newVal) = split_max l' in
-          let (r'size, r'lines) = idx_ln_size r' in
-          let newVal = { newVal with right_idx = r'size; right_lns = r'lines; } in
-          PT(h, newLeft, newVal, r') |> adjust
+        del (curIndex - n_length l -size_right l) l (fun l' ->
+          del (curIndex + v.length + size_left r) r (fun r' -> 
+            if l' = PE then
+              r' |> cont
+            else
+              let (newLeft, newVal) = split_max l' in
+              let (l'size, l'lines) = idx_ln_size newLeft in
+              let (r'size, r'lines) = idx_ln_size r' in
+              let newVal = { newVal with 
+                             left_idx = l'size;
+                             left_lns = l'lines;
+                             right_idx = r'size;
+                             right_lns = r'lines; } in
+              PT(h, newLeft, newVal, r') |> adjust |> cont
+          )
+        )
     | PT(h, l, v, r) when start_is_in_range start curIndex finish (curIndex + v.length) ->
-        let l' = del (curIndex - n_length l - size_right l) l in
-        let (newStart, newLength, newLines) = delete_at_start curIndex finish v in
-        let v' =  { v with
-                    start = newStart;
-                    length = newLength;
-                    lines = newLines;
-                  } in
-        PT(h, l', v', r) |> skew |> split
+        del (curIndex - n_length l - size_right l) l (fun l' -> 
+          let (l'size, l'lines) = idx_ln_size l' in
+          let (newStart, newLength, newLines) = delete_at_start curIndex finish v in
+          let v' =  { v with
+                      start = newStart;
+                      length = newLength;
+                      lines = newLines;
+                      left_lns = l'lines;
+                      left_idx = l'size;
+                    } in
+          PT(h, l', v', r) |> skew |> split |> cont
+        )
     | PT(h, l, v, r) when end_is_in_range start curIndex finish (curIndex + v.length) ->
-        let r' = del (curIndex + v.length + size_left r) r in
-        let (length, lines) = delete_at_end curIndex start v in
-        let v' =  {
-                    v with
-                    length = length;
-                    lines = lines;
-                  } in
-        PT(h, l, v', r') |> adjust
+        del (curIndex + v.length + size_left r) r (fun r' ->
+          let (r'size, r'lines) = idx_ln_size r in
+          let (length, lines) = delete_at_end curIndex start v in
+          let v' =  {
+                      v with
+                      length = length;
+                      lines = lines;
+                      right_idx = r'size;
+                      right_lns = r'lines;
+                    } in
+          PT(h, l, v', r') |> adjust |> cont
+        )
     | PT(h, l, v, r) when middle_is_in_range start curIndex finish (curIndex + v.length) ->
         let (p1Length, p1Lines, p2Start, p2Length, p2Lines) =
           delete_in_range curIndex start finish v in
@@ -409,11 +426,12 @@ let delete_tree start length tree =
                     right_idx = rightidx;
                     right_lns = rightlns;
                   } in
-        PT(h, l, v', newRight) |> skew |> split
+        PT(h, l, v', newRight) |> skew |> split |> cont
     | PT(h, l, v, r) ->
+        (* Unreachable case. *)
         PT(h, l, v, r) |> adjust
   in
-  del (size_left tree) tree
+  del (size_left tree) tree top_level_cont
 
 let substring start length tree buffer =
   let finish = start + length in
