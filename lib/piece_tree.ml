@@ -375,10 +375,18 @@ let delete_tree start length tree =
         let _ = Printf.printf "\nin range" in
           (* To do: if in range, there is chance we may need to recurse. *)
         if l = PE then 
+
+          let _ = Printf.printf "\n return r case" in
           r
         else
-          let (newLeft, newVal) = split_max l in
-          PT(h, newLeft, newVal, r) |> adjust
+          let l' = del (curIndex - n_length l -size_right l) l in
+          let r' = del (curIndex + v.length + size_left r) r in
+          let _ = Printf.printf "\n newLeft case" in
+          let (newLeft, newVal) = split_max l' in
+          let (r'size, r'lines) = idx_ln_size r' in
+          let newVal = { newVal with right_idx = r'size; right_lns = r'lines; } in
+          let _ = Printf.printf "\n v start: %i; v length: %i \n v'start: %i; v'length: %i" v.start v.length newVal.start newVal.length in
+          PT(h, newLeft, newVal, r') |> adjust
   | PT(h, l, v, r) when start_is_in_range start curIndex finish (curIndex + v.length) ->
         let _ = Printf.printf "\nstart is in range" in
         let (newStart, newLength, newLines) = delete_at_start curIndex finish v in
