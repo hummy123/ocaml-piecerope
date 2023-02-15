@@ -224,8 +224,7 @@ let rec split_max = function
                  right_idx = tree_size r'; 
                  right_lns = tree_lines r'; } in
       let newLeft = PT(h, l, v', r') in
-      let b' = {b with left_idx = tree_size newLeft; left_lns = tree_lines newLeft} in
-      newLeft, b'
+      newLeft, b
   | PE -> failwith "unexpected splitMax case"
 
 let rec fold f x t =
@@ -381,8 +380,8 @@ let delete_tree start length tree =
             else
               let (newLeft, newVal) = split_max l' in
               let newVal = { newVal with 
-                             left_idx = tree_size l';
-                             left_lns = tree_lines l';
+                             left_idx = tree_size newLeft;
+                             left_lns = tree_lines newLeft;
                              right_idx = tree_size r';
                              right_lns = tree_lines r'; } in
               PT(h, newLeft, newVal, r') |> adjust |> cont
