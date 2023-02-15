@@ -354,7 +354,6 @@ let delete_tree start length tree =
     match node with
     | PE -> PE
     | PT(h, l, v, r) as node when curIndex >= finish ->
-        let _ = Printf.printf "\ncurIndex >= finish" in
         if curIndex - v.left_idx > finish then
           node
         else
@@ -363,7 +362,6 @@ let delete_tree start length tree =
           let v' = {v with left_idx = l'size; left_lns = l'lines} in
           PT(h, l', v', r) |> adjust
     | PT(h, l, v, r) as node when curIndex + v.length <= start ->
-        let _ = Printf.printf "\nnodeEndIndex <= start" in
         if curIndex + v.right_idx < start then
           node
         else
@@ -372,41 +370,34 @@ let delete_tree start length tree =
           let v' = {v with right_idx = r'size; right_lns = r'lines} in
           PT(h, l, v', r') |> adjust
     | PT(h, l, v, r) when in_range start curIndex finish (curIndex + v.length) ->
-        let _ = Printf.printf "\nin range" in
-          (* To do: if in range, there is chance we may need to recurse. *)
-        if l = PE then 
-
-          let _ = Printf.printf "\n return r case" in
-          r
+        let l' = del (curIndex - n_length l -size_right l) l in
+        let r' = del (curIndex + v.length + size_left r) r in
+        if l' = PE then
+          r'
         else
-          let l' = del (curIndex - n_length l -size_right l) l in
-          let r' = del (curIndex + v.length + size_left r) r in
-          let _ = Printf.printf "\n newLeft case" in
           let (newLeft, newVal) = split_max l' in
           let (r'size, r'lines) = idx_ln_size r' in
           let newVal = { newVal with right_idx = r'size; right_lns = r'lines; } in
-          let _ = Printf.printf "\n v start: %i; v length: %i \n v'start: %i; v'length: %i" v.start v.length newVal.start newVal.length in
           PT(h, newLeft, newVal, r') |> adjust
-  | PT(h, l, v, r) when start_is_in_range start curIndex finish (curIndex + v.length) ->
-        let _ = Printf.printf "\nstart is in range" in
+    | PT(h, l, v, r) when start_is_in_range start curIndex finish (curIndex + v.length) ->
+        let l' = del (curIndex - n_length l - size_right l) l in
         let (newStart, newLength, newLines) = delete_at_start curIndex finish v in
         let v' =  { v with
                     start = newStart;
                     length = newLength;
                     lines = newLines;
                   } in
-        PT(h, l, v', r) |> skew |> split
+        PT(h, l', v', r) |> skew |> split
     | PT(h, l, v, r) when end_is_in_range start curIndex finish (curIndex + v.length) ->
-        let _ = Printf.printf "\nend is in range" in
+        let r' = del (curIndex + v.length + size_left r) r in
         let (length, lines) = delete_at_end curIndex start v in
         let v' =  {
                     v with
                     length = length;
                     lines = lines;
                   } in
-        PT(h, l, v', r) |> adjust
+        PT(h, l, v', r') |> adjust
     | PT(h, l, v, r) when middle_is_in_range start curIndex finish (curIndex + v.length) ->
-        let _ = Printf.printf "\nmiddle is in range" in
         let (p1Length, p1Lines, p2Start, p2Length, p2Lines) =
           delete_in_range curIndex start finish v in
         let newRight = prepend p2Start p2Length p2Lines r in
@@ -420,7 +411,6 @@ let delete_tree start length tree =
                   } in
         PT(h, l, v', newRight) |> skew |> split
     | PT(h, l, v, r) ->
-        let _ = Printf.printf "\nunreachable" in
         PT(h, l, v, r) |> adjust
   in
   del (size_left tree) tree
