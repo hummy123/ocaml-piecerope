@@ -1,4 +1,0 @@
-(executable
- (public_name benchmark)
- (name main)
- (libraries piecerope))

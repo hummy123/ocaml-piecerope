@@ -404,20 +404,19 @@ let delete_tree start length tree =
                   } in
         PT(h, l, v', newRight) |> skew |> split |> cont
     | PT(h, l, v, r) when start < curIndex ->
-          del (curIndex - n_length l - size_right l) l (fun l' -> 
-            let v' = { v with 
-                       left_idx = tree_size l'; 
-                       left_lns = tree_lines l'} in
-            PT(h, l', v', r) |> adjust |> cont
-          )
+        del (curIndex - n_length l - size_right l) l (fun l' -> 
+          let v' = { v with 
+                     left_idx = tree_size l'; 
+                     left_lns = tree_lines l'} in
+          PT(h, l', v', r) |> adjust |> cont
+        )
     | PT(h, l, v, r) when finish > curIndex + v.length ->
-          del (curIndex + v.length + size_left r) r (fun r' -> 
-            let v' = { v with 
-                       right_idx = tree_size r'; 
-                       right_lns = tree_lines r'} in
-            PT(h, l, v', r') |> adjust |> cont
-          )
-
+        del (curIndex + v.length + size_left r) r (fun r' -> 
+          let v' = { v with 
+                     right_idx = tree_size r'; 
+                     right_lns = tree_lines r'} in
+          PT(h, l, v', r') |> adjust |> cont
+        )
     | PT(h, l, v, r) ->
         (* Unreachable case. *)
         PT(h, l, v, r) |> adjust |> cont
@@ -430,20 +429,6 @@ let substring start length tree buffer =
     match node with
     | PE -> 
         acc |> cont
-    (* Below two cases navigate to the next node when the substring range is outside the current node. *)
-    (* When the current node is after the substring's end range. *)
-    | PT(_, l, v, _) when curIndex >= finish ->
-        (* Short-circuit if we can. If we won't find any part of the substring range to the left, don't recurse. *)
-        if curIndex - v.left_idx > finish then
-          acc |> cont
-        else
-          sub (curIndex - n_length l - size_right l) l acc (fun x -> x |> cont)
-    (* When the current node is before the substring's start range. *)
-    | PT(_, _, v, r) when curIndex + v.length <= start ->
-        if curIndex + v.right_idx < start then
-          acc |> cont
-        else
-          sub (curIndex + v.length + size_left r) r acc (fun x -> x |> cont)
     (* Cases when the current node is at least partially in the substring range. *)
     (* The currennt node is |fully| within the substring range. *)
     | PT(_, l, v, r) when in_range start curIndex finish (curIndex + v.length) ->
@@ -463,6 +448,13 @@ let substring start length tree buffer =
     (* The mi|d|dle of the current node is in the substring range. *)
     | PT(_, _, v, _) when middle_is_in_range start curIndex finish (curIndex + v.length) ->
         [text_in_range curIndex start finish v buffer]
+    (* Below two cases navigate to the next node when the substring range is outside the current node. *)
+    (* When the current node is after the substring's end range. *)
+    | PT(_, l, _, _) when start < curIndex ->
+        sub (curIndex - n_length l - size_right l) l acc (fun x -> x |> cont)
+    (* When the current node is before the substring's start range. *)
+    | PT(_, _, v, r) when finish > curIndex + v.length ->
+        sub (curIndex + v.length + size_left r) r acc (fun x -> x |> cont)
     | PT(_, _, _, _) -> 
         (* Unreachable case. *)
         acc |> cont

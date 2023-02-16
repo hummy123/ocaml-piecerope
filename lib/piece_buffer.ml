@@ -50,31 +50,23 @@ let append str buffer =
   in
   ins_max buffer top_level_cont
 
-let in_range start curIndex finish nextIndex = start <= curIndex && finish >= nextIndex 
+let in_range start curIndex finish nodeEndIndex =
+  start <= curIndex && finish >= nodeEndIndex
 
-let range_in_node start curIndex finish nextIndex = start >= curIndex && finish <= nextIndex 
+let start_is_in_range start curIndex finish nodeEndIndex =
+  start <= curIndex && finish < nodeEndIndex && curIndex < finish
 
-let start_in_range curIndex finish nextIndex = finish < nextIndex && finish >= curIndex 
+let end_is_in_range start curIndex finish nodeEndIndex =
+  start > curIndex && finish >= nodeEndIndex && start <= nodeEndIndex
 
-let end_in_range start curIndex nextIndex = start > curIndex && start <= nextIndex 
+let middle_is_in_range start curIndex finish nodeEndIndex =
+  start >= curIndex && finish <= nodeEndIndex
 
 let substring start length buffer =
   let finish = start + length in
   let rec sub (curIndex: int) node (acc: string list) cont =
     match node with
     | BE -> acc |> cont
-    | BT(_, l, lm, _, _, _) when curIndex >= finish -> 
-        if curIndex - lm > finish then
-          acc |> cont
-        else
-          sub (curIndex - string_length l - size_right l) l acc (fun x -> x |> cont)
-
-    | BT(_, _, _, v, rm, r) when curIndex + String.length v <= start ->
-        if curIndex + rm < start then
-          acc |> cont
-        else
-          sub (curIndex + String.length v + size_left r) r acc (fun x -> x |> cont)
-
     | BT(_, l, _, v, _, r) when in_range start curIndex finish (curIndex + String.length v) ->
         let nodeEndIndex = curIndex + String.length v in
 
@@ -83,16 +75,16 @@ let substring start length buffer =
           sub (curIndex - string_length l - size_right l) l middle (fun x -> x |> cont)
         )
 
-    | BT(_, _, _, v, _, _) when range_in_node start curIndex finish (curIndex + String.length v) ->
+    | BT(_, _, _, v, _, _) when middle_is_in_range start curIndex finish (curIndex + String.length v) ->
         let strStart = start - curIndex in
         (String.sub v strStart length)::acc |> cont
 
-    | BT(_, l, _, v, _, _) when start_in_range curIndex finish (curIndex + String.length v) ->
+    | BT(_, l, _, v, _, _) when start_is_in_range start curIndex finish (curIndex + String.length v) ->
         let length = finish - curIndex in
         let acc = (String.sub v 0 length)::acc in
         sub (curIndex - string_length l - size_right l) l acc (fun x -> x |> cont)
 
-    | BT(_, _, _, v, _, r) when end_in_range start curIndex (curIndex + String.length v) ->
+    | BT(_, _, _, v, _, r) when end_is_in_range start curIndex finish (curIndex + String.length v) ->
         let strStart = start - curIndex in
         let len = String.length v - strStart - 1 in
 
@@ -102,6 +94,12 @@ let substring start length buffer =
         let len = if len > 0 then len else 0 in
         let acc = (String.sub v strStart len)::acc in
         sub (curIndex + String.length v + size_left r) r acc (fun x -> x |> cont)
+    | BT(_, l, _, _, _, _) when curIndex >= finish -> 
+        sub (curIndex - string_length l - size_right l) l acc (fun x -> x |> cont)
+
+    | BT(_, _, _, v, _, r) when curIndex + String.length v <= start ->
+        sub (curIndex + String.length v + size_left r) r acc (fun x -> x |> cont)
+
 
     | BT(_, _, _, _, _, _) -> 
         acc
