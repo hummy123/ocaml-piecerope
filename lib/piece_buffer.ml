@@ -50,47 +50,61 @@ let append str buffer =
   in
   ins_max buffer top_level_cont
 
+let in_range start curIndex finish nextIndex = start <= curIndex && finish >= nextIndex 
+
+let range_in_node start curIndex finish nextIndex = start >= curIndex && finish <= nextIndex 
+
+let start_in_range curIndex finish nextIndex = finish < nextIndex && finish >= curIndex 
+
+let end_in_range start curIndex nextIndex = start > curIndex && start <= nextIndex 
+
 let substring start length buffer =
   let finish = start + length in
-  let rec sub (curIndex: int) node (acc: string list) =
+  let rec sub (curIndex: int) node (acc: string list) cont =
     match node with
-    | BE -> acc
-    | BT(_, l, _, v, _, r) ->
-        let nextIndex = curIndex + String.length v in
-        let right =
-          if finish > nextIndex
-          then sub (nextIndex + size_left r) r acc
-          else acc
-        in
-        let middle = 
-          if start <= curIndex && finish >= nextIndex then 
-            (* Node is fully in range. *)
-            v::right
-          else if start >= curIndex && finish <= nextIndex then
-            (* Range is within node. *)
-            let strStart = start - curIndex in
-            (String.sub v strStart length)::right
-          else if finish < nextIndex && finish >= curIndex then
-            (* Start of node is within range. *)
-            let length = finish - curIndex in
-            (String.sub v 0 length)::right
-          else if start > curIndex && start <= nextIndex then
-            (* End of node is within range. *)
-            let strStart = start - curIndex in
-            let len = String.length v - strStart - 1 in
+    | BE -> acc |> cont
+    | BT(_, l, lm, _, _, _) when curIndex >= finish -> 
+        if curIndex - lm > finish then
+          acc |> cont
+        else
+          sub (curIndex - string_length l - size_right l) l acc (fun x -> x |> cont)
 
-            (* We "clip" len to 0 because there's a chance of failure otherwise
-               where we are asked for a substring with length of -1.
-               Unsure if the failure is because of an error elsewhere; should check. *)
-            let len = if len > 0 then len else 0 in
-            (String.sub v strStart len)::right
-          else
-            right
-        in
-        if start < curIndex
-        then sub (curIndex - string_length l - size_right l) l middle
-        else middle 
+    | BT(_, _, _, v, rm, r) when curIndex + String.length v <= start ->
+        if curIndex - rm < start then
+          acc |> cont
+        else
+          sub (curIndex + String.length v + size_left r) r acc (fun x -> x |> cont)
+
+    | BT(_, l, _, v, _, r) when in_range start curIndex finish (curIndex + String.length v) ->
+        let nodeEndIndex = curIndex + String.length v in
+
+        sub (nodeEndIndex + size_left r) r acc (fun right ->
+          let middle = v::right in
+          sub (curIndex - string_length l - size_right l) l middle (fun x -> x |> cont)
+        )
+
+    | BT(_, _, _, v, _, _) when range_in_node start curIndex finish (curIndex + String.length v) ->
+        let strStart = start - curIndex in
+        [String.sub v strStart length]
+
+    | BT(_, l, _, v, _, _) when start_in_range curIndex finish (curIndex + String.length v) ->
+        let length = finish - curIndex in
+        let acc = (String.sub v 0 length)::acc in
+        sub (curIndex - string_length l - size_right l) l acc (fun x -> x |> cont)
+
+    | BT(_, _, _, v, _, r) when end_in_range start curIndex (curIndex + String.length v) ->
+        let strStart = start - curIndex in
+        let len = String.length v - strStart - 1 in
+
+        (* We "clip" len to 0 because there's a chance of failure otherwise
+           where we are asked for a substring with length of -1.
+           Unsure if the failure is because of an error elsewhere; should check. *)
+        let len = if len > 0 then len else 0 in
+        let acc = (String.sub v strStart len)::acc in
+        sub (curIndex + String.length v + size_left r) r acc (fun x -> x |> cont)
+
+    | BT(_, _, _, _, _, _) -> acc
   in
-  let strList = sub (size_left buffer) buffer [] in
+  let strList = sub (size_left buffer) buffer [] top_level_cont in
   String.concat "" strList
 
