@@ -75,10 +75,6 @@ let substring start length buffer =
           sub (curIndex - string_length l - size_right l) l middle (fun x -> x |> cont)
         )
 
-    | BT(_, _, _, v, _, _) when middle_is_in_range start curIndex finish (curIndex + String.length v) ->
-        let strStart = start - curIndex in
-        (String.sub v strStart length)::acc |> cont
-
     | BT(_, l, _, v, _, _) when start_is_in_range start curIndex finish (curIndex + String.length v) ->
         let length = finish - curIndex in
         let acc = (String.sub v 0 length)::acc in
@@ -86,14 +82,14 @@ let substring start length buffer =
 
     | BT(_, _, _, v, _, r) when end_is_in_range start curIndex finish (curIndex + String.length v) ->
         let strStart = start - curIndex in
-        let len = String.length v - strStart - 1 in
-
-        (* We "clip" len to 0 because there's a chance of failure otherwise
-           where we are asked for a substring with length of -1.
-           Unsure if the failure is because of an error elsewhere; should check. *)
-        let len = if len > 0 then len else 0 in
+        let len = String.length v - strStart in
         let acc = (String.sub v strStart len)::acc in
         sub (curIndex + String.length v + size_left r) r acc (fun x -> x |> cont)
+
+    | BT(_, _, _, v, _, _) when middle_is_in_range start curIndex finish (curIndex + String.length v) ->
+        let strStart = start - curIndex in
+        (String.sub v strStart length)::acc |> cont
+
     | BT(_, l, _, _, _, _) when curIndex >= finish -> 
         sub (curIndex - string_length l - size_right l) l acc (fun x -> x |> cont)
 

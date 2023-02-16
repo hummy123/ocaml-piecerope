@@ -38,8 +38,6 @@ let run_substring_result rope =
   let half_length = Piece_rope.total_length rope / 2 in
   let quarter_length = half_length / 2 in
   let str = Piece_rope.substring quarter_length half_length rope in
-  let _ = Printf.printf "half length: \t%i\n" half_length in
-  let _ = Printf.printf "str length: \t%i\n" (String.length str) in
   str
 
 let run_substring title rope =
