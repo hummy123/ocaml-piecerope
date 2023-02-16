@@ -430,24 +430,29 @@ let substring start length tree buffer =
     | PE -> 
         acc |> cont
     (* Cases when the current node is at least partially in the substring range. *)
+    (* The end of the current substring range is in this node, |whi|ch means the start of this node. *)
+    | PT(_, _, v, r) when end_is_in_range start curIndex finish (curIndex + v.length) ->
+        let nodeText = text_at_end curIndex start v buffer in
+        sub (curIndex + v.length + size_left r) r acc (fun x -> nodeText::x |> cont)
+
     (* The currennt node is |fully| within the substring range. *)
     | PT(_, l, v, r) when in_range start curIndex finish (curIndex + v.length) ->
         let nodeEndIndex = curIndex + v.length in
         let nodeText = text v buffer in
 
         sub (nodeEndIndex + size_left r) r acc (fun right ->
-          let middle = nodeText::right in
-          sub (curIndex - n_length l - size_right l) l middle (fun x -> x |> cont)
+          sub (curIndex - n_length l - size_right l) l (nodeText::right) (fun x -> x |> cont)
         )
-    (* The |st|art of the current node is in the substring range. *)
+
+    (* The start of the substring range is in the node, whi|ch| means the end of this node. *)
     | PT(_, l, v, _) when start_is_in_range start curIndex finish (curIndex + v.length) ->
-        sub (curIndex - n_length l - size_right l) l ((text_at_start curIndex finish v buffer)::acc) (fun x -> x |> cont)
-    (* The en|d| of the current node is in the substring range. *)
-    | PT(_, _, v, r) when end_is_in_range start curIndex finish (curIndex + v.length) ->
-        sub (curIndex + v.length + size_left r) r ((text_at_end curIndex start v buffer)::acc) (fun x -> x |> cont)
+        let nodeText = text_at_start curIndex finish v buffer in
+        sub (curIndex - n_length l - size_right l) l (nodeText::acc) (fun x -> x |> cont)
+
     (* The mi|d|dle of the current node is in the substring range. *)
     | PT(_, _, v, _) when middle_is_in_range start curIndex finish (curIndex + v.length) ->
-        [text_in_range curIndex start finish v buffer]
+        [text_in_range curIndex start finish v buffer] |> cont
+
     (* Below two cases navigate to the next node when the substring range is outside the current node. *)
     (* When the current node is after the substring's end range. *)
     | PT(_, l, _, _) when start < curIndex ->
@@ -514,10 +519,11 @@ let get_line line (tree: t) buffer =
 let empty = PE
 
 let get_text tree buffer = 
-  fold (fun (acc: string) pc ->
+  let lst = fold (fun (acc: string list) pc ->
     let text = Piece_buffer.substring pc.start pc.length buffer in
-    acc ^ text
-  ) "" tree
+    text::acc
+  ) [] tree in
+  List.rev lst |> String.concat ""
 
 let fold_text tree buffer state folder =
   fold (fun _ pc ->
