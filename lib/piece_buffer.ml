@@ -90,15 +90,14 @@ let substring start length buffer =
         let strStart = start - curIndex in
         (String.sub v strStart length)::acc |> cont
 
-    | BT(_, l, _, _, _, _) when curIndex >= finish -> 
+    | BT(_, l, _, _, _, _) when start < curIndex ->
         sub (curIndex - string_length l - size_right l) l acc (fun x -> x |> cont)
 
-    | BT(_, _, _, v, _, r) when curIndex + String.length v <= start ->
+    | BT(_, _, _, v, _, r) when finish > curIndex + String.length v ->
         sub (curIndex + String.length v + size_left r) r acc (fun x -> x |> cont)
 
-
     | BT(_, _, _, _, _, _) -> 
-        acc
+        failwith "unreachable Buffer.substring case"
   in
   let strList = sub (size_left buffer) buffer [] top_level_cont in
   String.concat "" strList

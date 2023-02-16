@@ -456,8 +456,7 @@ let substring start length tree buffer =
     | PT(_, _, v, r) when finish > curIndex + v.length ->
         sub (curIndex + v.length + size_left r) r acc (fun x -> x |> cont)
     | PT(_, _, _, _) -> 
-        (* Unreachable case. *)
-        acc |> cont
+        failwith "unreachable Buffer.substring case"
  in
  String.concat "" (sub (size_left tree) tree [] top_level_cont)
 
