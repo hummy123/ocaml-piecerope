@@ -70,7 +70,7 @@ let substring start length buffer =
           sub (curIndex - string_length l - size_right l) l acc (fun x -> x |> cont)
 
     | BT(_, _, _, v, rm, r) when curIndex + String.length v <= start ->
-        if curIndex - rm < start then
+        if curIndex + rm < start then
           acc |> cont
         else
           sub (curIndex + String.length v + size_left r) r acc (fun x -> x |> cont)
@@ -85,7 +85,7 @@ let substring start length buffer =
 
     | BT(_, _, _, v, _, _) when range_in_node start curIndex finish (curIndex + String.length v) ->
         let strStart = start - curIndex in
-        [String.sub v strStart length]
+        (String.sub v strStart length)::acc |> cont
 
     | BT(_, l, _, v, _, _) when start_in_range curIndex finish (curIndex + String.length v) ->
         let length = finish - curIndex in
@@ -103,7 +103,8 @@ let substring start length buffer =
         let acc = (String.sub v strStart len)::acc in
         sub (curIndex + String.length v + size_left r) r acc (fun x -> x |> cont)
 
-    | BT(_, _, _, _, _, _) -> acc
+    | BT(_, _, _, _, _, _) -> 
+        acc
   in
   let strList = sub (size_left buffer) buffer [] top_level_cont in
   String.concat "" strList

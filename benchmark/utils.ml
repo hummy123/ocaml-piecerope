@@ -33,7 +33,10 @@ let run_txns title arr =
 let run_substring_internal rope =
   let half_length = Piece_rope.total_length rope / 2 in
   let quarter_length = half_length / 2 in
-  Piece_rope.substring quarter_length half_length rope
+  let str = Piece_rope.substring quarter_length half_length rope in
+  let _ = Printf.printf "\n%i" half_length in
+  let _ = Printf.printf "\n%i\n" (String.length str) in
+  str
 
 let run_substring title rope =
   time_func title (fun _ -> run_substring_internal rope)
