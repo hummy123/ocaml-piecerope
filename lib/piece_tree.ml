@@ -352,28 +352,8 @@ let delete_tree start length tree =
   let rec del curIndex node cont =
     match node with
     | PE -> PE |> cont
-    | PT(h, l, v, r) as node when curIndex >= finish ->
-        if curIndex - v.left_idx > finish then
-          node |> cont
-        else
-          del (curIndex - n_length l -size_right l) l (fun l' -> 
-            let v' = { v with 
-                       left_idx = tree_size l'; 
-                       left_lns = tree_lines l'} in
-            PT(h, l', v', r) |> adjust |> cont
-          )
-    | PT(h, l, v, r) as node when curIndex + v.length <= start ->
-        if curIndex + v.right_idx < start then
-          node |> cont
-        else
-          del (curIndex + v.length + size_left r) r (fun r' -> 
-            let v' = { v with 
-                       right_idx = tree_size r'; 
-                       right_lns = tree_lines r'} in
-            PT(h, l, v', r') |> adjust |> cont
-          )
     | PT(h, l, v, r) when in_range start curIndex finish (curIndex + v.length) ->
-        del (curIndex - n_length l -size_right l) l (fun l' ->
+        del (curIndex - n_length l - size_right l) l (fun l' ->
           del (curIndex + v.length + size_left r) r (fun r' -> 
             if l' = PE then
               r' |> cont
@@ -394,8 +374,8 @@ let delete_tree start length tree =
                       start = newStart;
                       length = newLength;
                       lines = newLines;
-                      left_lns = tree_size l';
-                      left_idx = tree_lines l';
+                      left_idx = tree_size l';
+                      left_lns = tree_lines l';
                     } in
           PT(h, l', v', r) |> skew |> split |> cont
         )
@@ -423,9 +403,24 @@ let delete_tree start length tree =
                     right_lns = tree_lines newRight;
                   } in
         PT(h, l, v', newRight) |> skew |> split |> cont
+    | PT(h, l, v, r) when start < curIndex ->
+          del (curIndex - n_length l - size_right l) l (fun l' -> 
+            let v' = { v with 
+                       left_idx = tree_size l'; 
+                       left_lns = tree_lines l'} in
+            PT(h, l', v', r) |> adjust |> cont
+          )
+    | PT(h, l, v, r) when finish > curIndex + v.length ->
+          del (curIndex + v.length + size_left r) r (fun r' -> 
+            let v' = { v with 
+                       right_idx = tree_size r'; 
+                       right_lns = tree_lines r'} in
+            PT(h, l, v', r') |> adjust |> cont
+          )
+
     | PT(h, l, v, r) ->
         (* Unreachable case. *)
-        PT(h, l, v, r) |> adjust
+        PT(h, l, v, r) |> adjust |> cont
   in
   del (size_left tree) tree top_level_cont
 

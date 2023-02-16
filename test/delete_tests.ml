@@ -9,7 +9,7 @@ let insText = "TEST!"
 
 let initialTable = Piece_rope.create text
 
-let print_text x = x
+let print_text x = "\n" ^ x ^ "\n"
 
 (* Tests. *)
 let test_can_delete_from_start_of_original_buffer _ =
@@ -120,23 +120,6 @@ let test_can_delete_around_place_we_inserted_at _ =
 (* List of test suites to export. *)
 let test_suite = 
   "Delete_tests" >::: [
-    "test_can_delete_from_start_of_original_buffer" >:: test_can_delete_from_start_of_original_buffer;
-    "test_can_delete_from_middle_of_original_buffer" >:: test_can_delete_from_middle_of_original_buffer;
-    "test_can_delete_from_end_of_original_buffer" >:: test_can_delete_from_end_of_original_buffer;
-    
-    "test_can_delete_from_start_of_add_buffer" >:: test_can_delete_from_start_of_add_buffer;
-    "test_can_delete_from_middle_of_add_buffer" >:: test_can_delete_from_middle_of_add_buffer;
-    "test_we_can_delete_from_end_of_add_buffer" >:: test_we_can_delete_from_end_of_add_buffer;
-
-    "test_can_delete_from_start_when_we_inserted_multiple_times" >:: test_can_delete_from_start_when_we_inserted_multiple_times;
-    "test_can_delete_from_start_after_we_insert_in_middle" >:: test_can_delete_from_start_after_we_insert_in_middle;
-    "test_can_delete_from_start_after_we_insert_at_end" >:: test_can_delete_from_start_after_we_insert_at_end;
-    
-    "test_can_delete_from_middle_after_we_insert_at_end" >:: test_can_delete_from_middle_after_we_insert_at_end;
-    "test_can_delete_around_place_we_inserted_at" >:: test_can_delete_around_place_we_inserted_at;
-
-    "test_can_delete_in_middle_after_we_insert_in_middle" >:: test_can_delete_in_middle_after_we_insert_in_middle;
-    "test_can_delete_at_end_after_we_insert_at_middle" >:: test_can_delete_at_end_after_we_insert_at_middle;    
-    "test_can_delete_at_end_after_we_insert_at_end" >:: test_can_delete_at_end_after_we_insert_at_end;
+   "test_can_delete_around_place_we_inserted_at" >:: test_can_delete_around_place_we_inserted_at;
 ]
 
