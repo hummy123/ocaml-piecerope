@@ -12,6 +12,44 @@ type t =
   | PE
   | PT of int * t * node * t
 
+let ht = function
+  | PE -> 0
+  | PT(h, _, _, _) -> h
+
+let node l a r = 
+  let h = (if ht l > ht r then ht l else ht r) + 1 in
+  PT(h, l, a, r)
+
+let balL ab x c =
+  if ht ab = ht c + 2 then
+    match ab with
+    | PT(_, a, y, b) ->
+        if ht a >= ht b then
+          node a y (node b x c)
+        else
+          (match b with
+           | PT(_, b1, bx, b2) -> 
+               node (node a y b1) bx (node b2 x c)
+           | x -> x)
+    | x -> x
+  else
+    node ab x c
+
+let balR a x bc =
+  if ht bc = ht a + 2 then
+    match bc with
+    | PT(_, b, y, c) -> 
+        if ht b <= ht c then
+          node (node a x b) y c
+        else
+          (match b with
+          | PT(_, b1, bx, b2) -> node (node a x b1) bx (node b2 y c)
+          | x -> x)
+    | x -> x
+  else
+    node a x bc
+
+
 (* Getting narious node data. *)
 let n_length node = 
   match node with
