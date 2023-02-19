@@ -16,39 +16,6 @@ let ht = function
   | PE -> 0
   | PT(h, _, _, _) -> h
 
-let node l a r = 
-  let h = (if ht l > ht r then ht l else ht r) + 1 in
-  PT(h, l, a, r)
-
-let balL ab x c =
-  if ht ab = ht c + 2 then
-    match ab with
-    | PT(_, a, y, b) ->
-        if ht a >= ht b then
-          node a y (node b x c)
-        else
-          (match b with
-           | PT(_, b1, bx, b2) -> 
-               node (node a y b1) bx (node b2 x c)
-           | x -> x)
-    | x -> x
-  else
-    node ab x c
-
-let balR a x bc =
-  if ht bc = ht a + 2 then
-    match bc with
-    | PT(_, b, y, c) -> 
-        if ht b <= ht c then
-          node (node a x b) y c
-        else
-          (match b with
-          | PT(_, b1, bx, b2) -> node (node a x b1) bx (node b2 y c)
-          | x -> x)
-    | x -> x
-  else
-    node a x bc
-
 
 (* Getting narious node data. *)
 let n_length node = 
@@ -117,6 +84,41 @@ let set_data leftTree rightTree node =
       right_idx = tree_size rightTree;
       right_lns = tree_lines rightTree; }
   
+let mk l a r = 
+  let a = {a with left_idx = tree_size l; left_lns = tree_lines l; right_idx = tree_size r; right_lns = tree_lines r} in
+  let h = (if ht l > ht r then ht l else ht r) + 1 in
+  PT(h, l, a, r)
+
+let balL ab x c =
+  if ht ab = ht c + 2 then
+    match ab with
+    | PT(_, a, y, b) ->
+        if ht a >= ht b then
+          mk a y (mk b x c)
+        else
+          (match b with
+           | PT(_, b1, bx, b2) -> 
+               mk (mk a y b1) bx (mk b2 x c)
+           | x -> x)
+    | x -> x
+  else
+    mk ab x c
+
+let balR a x bc =
+  if ht bc = ht a + 2 then
+    match bc with
+    | PT(_, b, y, c) -> 
+        if ht b <= ht c then
+          mk (mk a x b) y c
+        else
+          (match b with
+          | PT(_, b1, bx, b2) -> mk (mk a x b1) bx (mk b2 y c)
+          | x -> x)
+    | x -> x
+  else
+    mk a x bc
+
+
 (* Logic for handling piece nodes; not using a separate module because more work due to defining interface. *)
 
 (* tryFindIndex function ported from F#: https://github.com/dotnet/fsharp/blob/main/src/FSharp.Core/array.fs#L1558 *)
@@ -199,72 +201,6 @@ let at_start_and_length start length buffer =
   Piece_buffer.substring start length buffer
 
 (* AA Tree balancing functions. *)
-let sngl = function
-  | PE -> false
-  | PT(_, _, _, PE) -> false
-  | PT(lvx, _, _, PT(lvy, _, _, _)) -> lvx > lvy
-
-let lvl = function
-  | PE -> 0
-  | PT(lvt, _, _, _) -> lvt
-
-let skew = function
-  | PT(lvx, PT(lvy, a, ky, b), kx, c) when lvx = lvy ->
-      let kx = set_data b c kx in
-      let innerNode = PT(lvx, b, kx, c) in
-      let ky = set_data a innerNode ky in
-      PT(lvx, a, ky, innerNode)
-  | t -> t
-
-let split = function
-  | PT(lvx, a, kx, PT(lvy, b, ky, PT(lvz, c, kz, d))) when lvx = lvy && lvy = lvz ->
-      let right = PT(lvx, c, kz, d) in
-      let kx = set_data a b kx in
-      let left = PT(lvx, a, kx, b) in
-      let ky = set_data left  right ky in
-      PT(lvx + 1, left, ky, right)
-  | t -> t
-
-let nlvl = function
-  | PT(lvt, _, _, _) as t -> if sngl t then lvt else lvt - 1
-  | _ -> failwith "unexpected nlvl case"
-
-let adjust = function
-  | PT(lvt, lt, _, rt) as t when lvl lt >= lvt - 1 && lvl rt >= (lvt - 1) -> 
-      t
-  | PT(lvt, lt, kt, rt) when lvl rt < lvt - 1 && sngl lt -> 
-      PT(lvt - 1, lt, kt, rt) |> skew
-  | PT(lvt, PT(lv1, a, kl, PT(lvb, lb, kb, rb)), kt, rt) when lvl rt < lvt - 1 -> 
-      let kl = set_data a lb kl in
-      let leftNode = PT(lv1, a, kl, lb) in
-      let kt = set_data rb rt kt in
-      let rightNode = PT(lvt - 1, rb, kt, rt) in
-      let kb = set_data leftNode rightNode kb in
-      PT(lvb + 1, leftNode, kb, rightNode)
-  | PT(lvt, lt, kt, rt) when lvl rt < lvt -> 
-      PT(lvt - 1, lt, kt, rt) |> split
-  | PT(lvt, lt, kt, PT(_, (PT(lva, c, ka, d) as a), kr, b)) ->
-      let kt = set_data lt c kt in
-      let leftNode = PT(lvt - 1, lt, kt, c) in
-      let kr = set_data d b kr in
-      let rightNode = PT(nlvl a, d, kr, b) |> split in
-      let ka = set_data leftNode rightNode ka in
-      PT(lva + 1, leftNode, ka, rightNode)
-  | t -> t
-
-let rec split_max = function
-  | PT(_, l, v, (PE as r)) ->
-      let v' = set_data l r v in
-      l, v'
-  | PT(h, l, v, r) -> 
-      let (r', b) = split_max r in
-      let v' = { v with 
-                 right_idx = tree_size r'; 
-                 right_lns = tree_lines r'; } in
-      let newLeft = PT(h, l, v', r') in
-      newLeft, b
-  | PE -> failwith "unexpected splitMax case"
-
 let rec fold f x t =
   match t with
   | PE -> x
@@ -281,10 +217,10 @@ let prepend pcStart pcLength pcLines tree =
   let rec pre node cont =
     match node with
     | PE -> PT(1, PE, create pcStart pcLength pcLines, PE) |> cont
-    | PT(h, l, v, r) ->
+    | PT(_, l, v, r) ->
         pre l (fun l' ->
           let v' = plus_left pcLength (Array.length pcLines) v in
-          PT(h, l', v', r) |> skew |> split |> cont
+          balL l' v' r |> cont
         )
   in
   pre tree top_level_cont
@@ -300,10 +236,10 @@ let append pcStart pcLength pcLines tree =
         let v'Lines = Array.append v.lines pcLines in
         let v' = { v with length = v.length + pcLength; lines = v'Lines } in
         PT(h, l, v', PE) |> cont
-    | PT(h, l, v, r) ->
+    | PT(_, l, v, r) ->
         app r (fun r' ->
           let v' = plus_right pcLength (Array.length pcLines) v in
-          PT(h, l, v', r') |> skew |> split |> cont
+          balR l v' r' |> cont
         )
   in
   app tree top_level_cont
@@ -314,10 +250,10 @@ let ins_max pcStart pcLength (pcLines: int array) tree =
   let rec max node cont =
     match node with
     | PE -> PT(1, PE, create pcStart pcLength pcLines, PE) |> cont
-    | PT(h, l, v, r) ->
+    | PT(_, l, v, r) ->
         max r (fun r' ->
           let v' = plus_right pcLength (Array.length pcLines) v in
-          PT(h, l, v', r') |> skew |> split |> cont
+          balR l v' r' |> cont
         )
   in
   max tree top_level_cont
@@ -326,31 +262,31 @@ let insert_tree insIndex pcStart pcLength pcLines tree =
   let rec ins curIndex node cont =
     match node with
     | PE -> PT(1, PE, create pcStart pcLength pcLines, PE) |> cont
-    | PT(h, l, v, r) when insIndex < curIndex ->
+    | PT(_, l, v, r) when insIndex < curIndex ->
         let nextIndex = curIndex - n_length l - size_right l in
         let v' = plus_left pcLength (Array.length pcLines) v in
         ins nextIndex l (fun l' -> 
-          PT(h, l', v', r) |> skew |> split |> cont
+          balL l' v' r |> cont
         )
-    | PT(h, l, v, r) when insIndex > curIndex + v.length ->
+    | PT(_, l, v, r) when insIndex > curIndex + v.length ->
         let nextIndex = curIndex + v.length + size_left r in
         let v' = plus_right pcLength (Array.length pcLines) v in
         ins nextIndex r (fun r' ->
-          PT(h, l, v', r') |> skew |> split |> cont
+          balR l v' r' |> cont
         )
-    | PT(h, l, v, r) when insIndex = curIndex ->
+    | PT(_, l, v, r) when insIndex = curIndex ->
         let v' = plus_left pcLength (Array.length pcLines) v in
         let l' = ins_max pcStart pcLength pcLines l in
-        PT(h, l', v', r) |> skew |> split |> cont
+        balL l' v' r |> cont
     | PT(h, l, v, r) when insIndex = curIndex + v.length && is_consecutive v pcStart ->
         let v'Lines = Array.append v.lines pcLines in
         let v' = { v with length = v.length + pcLength; lines = v'Lines } in
         PT(h, l, v', r) |> cont
-    | PT(h, l, v, r) when insIndex = curIndex + v.length ->
+    | PT(_, l, v, r) when insIndex = curIndex + v.length ->
         let v' = plus_right pcLength (Array.length pcLines) v in
         let r' = prepend pcStart pcLength pcLines r in
-        PT(h, l, v', r') |> skew |> split |> cont
-    | PT(h, l, v, r) ->
+        balR l v' r' |> cont
+    | PT(_, l, v, r) ->
         let difference = insIndex - curIndex in
         let rStart = v.start + difference in
         let rLength = v.length - difference in
@@ -368,7 +304,7 @@ let insert_tree insIndex pcStart pcLength pcLines tree =
                     right_idx = v.right_idx + rLength;
                     right_lns = v.right_lns + Array.length rightLines;
                   } in
-        PT(h, l', v', r') |> skew |> split |> cont
+        (mk l' v' r') |> cont
     in
     ins (size_left tree) tree top_level_cont
 
@@ -385,81 +321,7 @@ let end_is_in_range start curIndex finish nodeEndIndex =
 let middle_is_in_range start curIndex finish nodeEndIndex =
   start >= curIndex && finish <= nodeEndIndex
 
-let delete_tree start length tree =
-  let finish = start + length in
-  let rec del curIndex node cont =
-    match node with
-    | PE -> PE |> cont
-    | PT(h, l, v, r) when in_range start curIndex finish (curIndex + v.length) ->
-        del (curIndex - n_length l - size_right l) l (fun l' ->
-          del (curIndex + v.length + size_left r) r (fun r' -> 
-            if l' = PE then
-              r' |> cont
-            else
-              let (newLeft, newVal) = split_max l' in
-              let newVal = { newVal with 
-                             left_idx = tree_size newLeft;
-                             left_lns = tree_lines newLeft;
-                             right_idx = tree_size r';
-                             right_lns = tree_lines r'; } in
-              PT(h, newLeft, newVal, r') |> adjust |> cont
-          )
-        )
-    | PT(h, l, v, r) when start_is_in_range start curIndex finish (curIndex + v.length) ->
-        del (curIndex - n_length l - size_right l) l (fun l' -> 
-          let (newStart, newLength, newLines) = delete_at_start curIndex finish v in
-          let v' =  { v with
-                      start = newStart;
-                      length = newLength;
-                      lines = newLines;
-                      left_idx = tree_size l';
-                      left_lns = tree_lines l';
-                    } in
-          PT(h, l', v', r) |> skew |> split |> cont
-        )
-    | PT(h, l, v, r) when end_is_in_range start curIndex finish (curIndex + v.length) ->
-        del (curIndex + v.length + size_left r) r (fun r' ->
-          let (length, lines) = delete_at_end curIndex start v in
-          let v' =  {
-                      v with
-                      length = length;
-                      lines = lines;
-                      right_idx = tree_size r';
-                      right_lns = tree_lines r';
-                    } in
-          PT(h, l, v', r') |> adjust |> cont
-        )
-    | PT(h, l, v, r) when middle_is_in_range start curIndex finish (curIndex + v.length) ->
-        let (p1Length, p1Lines, p2Start, p2Length, p2Lines) =
-          delete_in_range curIndex start finish v in
-        let newRight = prepend p2Start p2Length p2Lines r in
-        let v' =  {
-                    v with
-                    length = p1Length;
-                    lines = p1Lines;
-                    right_idx = tree_size newRight;
-                    right_lns = tree_lines newRight;
-                  } in
-        PT(h, l, v', newRight) |> skew |> split |> cont
-    | PT(h, l, v, r) when start < curIndex ->
-        del (curIndex - n_length l - size_right l) l (fun l' -> 
-          let v' = { v with 
-                     left_idx = tree_size l'; 
-                     left_lns = tree_lines l'} in
-          PT(h, l', v', r) |> adjust |> cont
-        )
-    | PT(h, l, v, r) when finish > curIndex + v.length ->
-        del (curIndex + v.length + size_left r) r (fun r' -> 
-          let v' = { v with 
-                     right_idx = tree_size r'; 
-                     right_lns = tree_lines r'} in
-          PT(h, l, v', r') |> adjust |> cont
-        )
-    | PT(h, l, v, r) ->
-        (* Unreachable case. *)
-        PT(h, l, v, r) |> adjust |> cont
-  in
-  del (size_left tree) tree top_level_cont
+let delete_tree _ _ tree = tree
 
 let substring start length tree buffer =
   let finish = start + length in
