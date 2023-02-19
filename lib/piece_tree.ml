@@ -111,14 +111,17 @@ let balR a x bc =
   else
     mk a x bc
 
-let rec split_max = function
-  | PT(_, l, a, r) ->
-      if r = PE then
-        l, a
-      else
-        let (r', a') = split_max r in
-        (balL l a r'), a'
-  | PE -> failwith "unexpected split_max case"
+let split_max tree = 
+  let rec split node cont = 
+    match node with
+    | PT(_, l, a, r) ->
+        if r = PE then
+          (l, a) |> cont
+        else
+          split r (fun (r', a') -> (balL l a r', a') |> cont)
+    | PE -> failwith "unexpected split_max case"
+  in
+  split tree top_level_cont
 
 (* Logic for handling piece nodes; not using a separate module because more work due to defining interface. *)
 
@@ -502,4 +505,4 @@ let fold_text tree buffer state folder =
 let total_length tree = tree_size tree
 
 let total_lines tree = n_lines tree
-
+ 
