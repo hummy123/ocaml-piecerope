@@ -20,18 +20,28 @@ let size_right = function
   | BE -> 0
   | BT(_, _, _, _, rm, _) -> rm
 
-let skew = function
-  | BT(lvx, BT(lvy, a, lky, ky, rky, b), _, kx, rkx, c) when lvx = lvy ->
-    let innerNode =  BT(lvx, b, rky, kx, rkx, c) in
-    BT(lvx, a, lky, ky, size innerNode, innerNode)
-  | t -> t
+(* AVL Tree-specific functions. *)
+let ht = function
+  | BE -> 0
+  | BT(h, _, _, _, _, _) -> h
 
-let split = function
-  | BT(lvx, a, lkx, kx, _, BT(lvy, b, lky, ky, _, BT(lvz, c, lkz, kz, rkz, d))) when lvx = lvy && lvy = lvz -> 
-    let right = BT(lvx, c, lkz, kz, rkz, d) in
-    let left = BT(lvx, a, lkx, kx, lky, b) in
-    BT(lvx + 1, left, size left, ky, size right, right)
-  | t -> t
+let mk l a r = 
+  let h = (if ht l > ht r then ht l else ht r) + 1 in
+  BT(h, l, (size l), a, (size r), r)
+
+let balR a x bc =
+  if ht bc = ht a + 2 then
+    match bc with
+    | BT(_, b, _, y, _, c) -> 
+        if ht b <= ht c then
+          mk (mk a x b) y c
+        else
+          (match b with
+          | BT(_, b1, _, bx, _, b2) -> mk (mk a x b1) bx (mk b2 y c)
+          | x -> x)
+    | x -> x
+  else
+    mk a x bc
 
 let top_level_cont x = x
 
@@ -43,9 +53,9 @@ let append str buffer =
     | BE -> BT(1, BE, 0, str, 0, BE) |> cont
     | BT(h, l, lm, v, rm, BE) when String.length v + String.length str <= target_size ->
         BT(h, l, lm, v ^ str, rm, BE) |> cont
-    | BT(h, l, lm, v, rm, r) ->
+    | BT(_, l, _, v, _, r) ->
         ins_max r (fun r' ->
-          BT(h, l, lm, v, rm + String.length str, r') |> skew |> split |> cont
+          (balR l v r') |> cont
         )
   in
   ins_max buffer top_level_cont
