@@ -443,43 +443,47 @@ let end_is_in_line nodeStartLine searchLine nodeEndLine =
 let middle_is_in_line nodeStartLine searchLine nodeEndLine =
   nodeStartLine < searchLine && nodeEndLine > searchLine
 
-let get_line line (tree: t) buffer =
-  let rec get curLine node (acc: string list) =
-      match node with
-      | PE -> acc
-      | PT(_, l, v, r) ->
-          let nodeEndLine = curLine + (Array.length v.lines) in
-          let right = 
-              if line >= nodeEndLine
-              then get (nodeEndLine + lines_left r) r acc
-              else acc
-          in
+let get_line line tree buffer =
+  let rec get curLine node acc cont =
+    match node with
+    | PE -> 
+        acc |> cont
 
-          let middle =
-              if line_in_range curLine line nodeEndLine then
-                  (text v buffer)::right
-              else if start_is_in_line curLine line nodeEndLine then
-                  (* + 1 gives us \n in string and - v.Start takes us to piece offset *)
-                  let length: int = (Array.unsafe_get v.lines 0) + 1 - v.start in
-                  (at_start_and_length v.start length buffer)::right
-              else if end_is_in_line curLine line nodeEndLine then
-                  let start = (Array.unsafe_get v.lines (Array.length v.lines - 1)) + 1 in
-                  let length = v.length - start + v.start in
-                  (at_start_and_length start length buffer)::right
-              else if middle_is_in_line curLine line nodeEndLine then
-                  let lineDifference = line - curLine in
-                  let lineStart = (Array.unsafe_get v.lines (lineDifference - 1)) + 1 in
-                  let lineLength = (Array.unsafe_get v.lines lineDifference) - lineStart + 1 in
-                  (at_start_and_length lineStart lineLength buffer)::right
-              else
-                  right
-          in
+    | PT(_, _, v, r) when end_is_in_line curLine line (curLine + Array.length v.lines) ->
+        let start = (Array.unsafe_get v.lines (Array.length v.lines - 1)) + 1 in
+        let length = v.length - start + v.start in
+        let nodeText = at_start_and_length start length buffer in
+        get (curLine + Array.length v.lines + lines_left r) r acc (fun x -> nodeText::x |> cont)
 
-          if line <= curLine
-          then get (curLine - n_lines l - lines_right l) l middle
-          else middle
-  in
-  String.concat "" (get (lines_left tree) tree [])
+    | PT(_, l, v, r) when line_in_range curLine line (curLine + Array.length v.lines) ->
+        let nodeEndLine = curLine + Array.length v.lines in
+        let nodeText = text v buffer in
+
+        get (nodeEndLine + lines_left r) r acc (fun right ->
+          get (curLine - n_lines l - lines_right l) l (nodeText::right) (fun x -> x |> cont)
+        )
+
+    | PT(_, l, v, _) when start_is_in_line curLine line (curLine + Array.length v.lines) ->
+        (* + 1 gives us \n in string and - v.Start takes us to piece offset *)
+        let length: int = (Array.unsafe_get v.lines 0) + 1 - v.start in
+        let nodeText = at_start_and_length v.start length buffer in
+        get (curLine - n_lines l - lines_right l) l (nodeText::acc) (fun x -> x |> cont)
+
+    | PT(_, _, v, _) when middle_is_in_line curLine line (curLine + Array.length v.lines) ->
+        let lineDifference = line - curLine in
+        let lineStart = (Array.unsafe_get v.lines (lineDifference - 1)) + 1 in
+        let lineLength = (Array.unsafe_get v.lines lineDifference) - lineStart + 1 in
+        [at_start_and_length lineStart lineLength buffer] |> cont
+
+    | PT(_, l, _, _) when line < curLine ->
+        get (curLine - n_lines l - lines_right l) l acc (fun x -> x |> cont)
+    | PT(_, _, v, r) when line > curLine + Array.length v.lines ->
+        get (curLine + Array.length v.lines + lines_left r) r acc (fun x -> x |> cont)
+
+    | PT(_, _, _, _) -> 
+        failwith "unreachable Piece_tree.get_line case"
+ in
+ String.concat "" (get (lines_left tree) tree [] top_level_cont)
 
 let empty = PE
 
