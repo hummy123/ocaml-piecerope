@@ -16,7 +16,6 @@ let ht = function
   | PE -> 0
   | PT(h, _, _, _) -> h
 
-
 (* Getting narious node data. *)
 let n_length node = 
   match node with
@@ -77,13 +76,7 @@ let plus_left idxDelta lnDelta node =
 let plus_right idxDelta lnDelta node =
   { node with right_idx = node.right_idx + idxDelta; right_lns = node.right_lns + lnDelta }
 
-let set_data leftTree rightTree node =
-  { node with 
-      left_idx = tree_size leftTree;
-      left_lns = tree_lines leftTree; 
-      right_idx = tree_size rightTree;
-      right_lns = tree_lines rightTree; }
-  
+(* AVL tree balance functions. *)
 let mk l a r = 
   let a = {a with left_idx = tree_size l; left_lns = tree_lines l; right_idx = tree_size r; right_lns = tree_lines r} in
   let h = (if ht l > ht r then ht l else ht r) + 1 in
@@ -118,6 +111,14 @@ let balR a x bc =
   else
     mk a x bc
 
+let rec split_max = function
+  | PT(_, l, a, r) ->
+      if r = PE then
+        l, a
+      else
+        let (r', a') = split_max r in
+        (balL l a r'), a'
+  | PE -> failwith "unexpected split_max case"
 
 (* Logic for handling piece nodes; not using a separate module because more work due to defining interface. *)
 
@@ -321,7 +322,71 @@ let end_is_in_range start curIndex finish nodeEndIndex =
 let middle_is_in_range start curIndex finish nodeEndIndex =
   start >= curIndex && finish <= nodeEndIndex
 
-let delete_tree _ _ tree = tree
+let delete_tree start length tree =
+  let finish = start + length in
+  let rec del curIndex node cont =
+    match node with
+    | PE -> PE |> cont
+    | PT(_, l, v, r) when in_range start curIndex finish (curIndex + v.length) ->
+        del (curIndex - n_length l - size_right l) l (fun l' ->
+          del (curIndex + v.length + size_left r) r (fun r' -> 
+            if l' = PE then
+              r' |> cont
+            else
+              let (newLeft, newVal) = split_max l' in
+              balR newLeft newVal r' |> cont
+          )
+        )
+    | PT(_, l, v, r) when start_is_in_range start curIndex finish (curIndex + v.length) ->
+        del (curIndex - n_length l - size_right l) l (fun l' -> 
+          let (newStart, newLength, newLines) = delete_at_start curIndex finish v in
+          let v' =  { v with
+                      start = newStart;
+                      length = newLength;
+                      lines = newLines;
+                      left_idx = tree_size l';
+                      left_lns = tree_lines l';
+                    } in
+          balR l' v' r |> cont
+        )
+    | PT(_, l, v, r) when end_is_in_range start curIndex finish (curIndex + v.length) ->
+        del (curIndex + v.length + size_left r) r (fun r' ->
+          let (length, lines) = delete_at_end curIndex start v in
+          let v' =  {
+                      v with
+                      length = length;
+                      lines = lines;
+                      right_idx = tree_size r';
+                      right_lns = tree_lines r';
+                    } in
+          balL l v' r' |> cont
+        )
+    | PT(_, l, v, r) when middle_is_in_range start curIndex finish (curIndex + v.length) ->
+        let (p1Length, p1Lines, p2Start, p2Length, p2Lines) =
+          delete_in_range curIndex start finish v in
+        let newRight = prepend p2Start p2Length p2Lines r in
+        let v' =  {
+                    v with
+                    length = p1Length;
+                    lines = p1Lines;
+                    right_idx = tree_size newRight;
+                    right_lns = tree_lines newRight;
+                  } in
+        balR l v' newRight |> cont
+    | PT(_, l, v, r) when start < curIndex ->
+        del (curIndex - n_length l - size_right l) l (fun l' -> 
+          balR l' v r |> cont
+        )
+    | PT(_, l, v, r) when finish > curIndex + v.length ->
+        del (curIndex + v.length + size_left r) r (fun r' -> 
+          balL l v r' |> cont
+        )
+    | PT(h, l, v, r) ->
+        (* Unreachable case. *)
+        PT(h, l, v, r) |> cont
+  in
+  del (size_left tree) tree top_level_cont
+
 
 let substring start length tree buffer =
   let finish = start + length in
