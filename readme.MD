@@ -1,7 +1,7 @@
-# Piecerope-ocaml
+# Piecerope-ocaml - ⚠️ WIP
 
 ## To do
 
-- Convert delete_tree, substring and get_line fuctions to Continuation Passing Style.
 - Handle Unicode grapheme clusters.
-- Add more tests, trying to falsify code I am uncertain about where current tests still pass after modifying relevant areas.
+- Change get_line method to return (int, string) tuple where int represents start index of that line and string represents the string content of that line.
+- Add docs on data strcture design.

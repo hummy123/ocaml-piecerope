@@ -456,14 +456,18 @@ let get_line line tree buffer =
         let start = (Array.unsafe_get v.lines (Array.length v.lines - 1)) + 1 in
         let length = v.length - start + v.start in
         let nodeText = at_start_and_length start length buffer in
-        get (curLine + Array.length v.lines + lines_left r) r acc (fun x -> nodeText::x |> cont)
+        let recurseRightLine = curLine + Array.length v.lines + lines_left r in
+        get recurseRightLine r acc (fun x -> nodeText::x |> cont)
 
     | PT(_, l, v, r) when line_in_range curLine line (curLine + Array.length v.lines) ->
         let nodeEndLine = curLine + Array.length v.lines in
         let nodeText = text v buffer in
 
-        get (nodeEndLine + lines_left r) r acc (fun right ->
-          get (curLine - n_lines l - lines_right l) l (nodeText::right) (fun x -> x |> cont)
+        let recurseRightLine = nodeEndLine + lines_left r in
+        let recurseLeftLine = nodeEndLine - n_lines l - lines_right l in
+
+        get recurseRightLine r acc (fun right ->
+          get recurseLeftLine l (nodeText::right) (fun x -> x |> cont)
         )
 
     | PT(_, l, v, _) when start_is_in_line curLine line (curLine + Array.length v.lines) ->
