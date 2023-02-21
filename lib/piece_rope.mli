@@ -16,6 +16,9 @@ val substring: int -> int -> t -> string
 (** Retrieves a specific line from a Piecerope. *)
 val get_line: int -> t -> string
 
+(** Returns a line and the index where that line starts. *)
+val get_line_and_line_start_index  : int -> t -> string * int
+
 (** Retrieves all the text in the Piecerope. *)
 val get_text: t -> string
 

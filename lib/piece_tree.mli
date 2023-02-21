@@ -16,6 +16,9 @@ val substring: int -> int -> t -> Piece_buffer.t -> string
 (** Returns a line using a Piece_tree and a Piece_buffer. Is zero-indexed. *)
 val get_line: int -> t -> Piece_buffer.t -> string
 
+(** Returns a line and the index where that line starts. *)
+val get_line_and_line_start_index: int -> t -> Piece_buffer.t -> string * int
+
 (** Returns all text using a Piece_tree and a Piece_buffer. May cause errors if the resulting string is too large for OCaml to handle. *)
 val get_text: t -> Piece_buffer.t -> string
 

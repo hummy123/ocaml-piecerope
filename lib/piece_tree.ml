@@ -331,11 +331,11 @@ let delete_tree start length tree =
     match node with
     | PE -> PE |> cont
     | PT(_, l, v, r) when in_range start curIndex finish (curIndex + v.length) ->
-        let leftRecurseIndex = curIndex - n_length l - size_right l in
-        let rightRecurseIndex = curIndex + v.length + size_left r in
+        let recurseLeftIndex = curIndex - n_length l - size_right l in
+        let recurseRightIndex = curIndex + v.length + size_left r in
 
-        del leftRecurseIndex l (fun l' ->
-          del rightRecurseIndex r (fun r' -> 
+        del recurseLeftIndex l (fun l' ->
+          del recurseRightIndex r (fun r' -> 
             if l' = PE then
               r' |> cont
             else
@@ -344,8 +344,8 @@ let delete_tree start length tree =
           )
         )
     | PT(_, l, v, r) when start_is_in_range start curIndex finish (curIndex + v.length) ->
-        let leftRecurseIndex = curIndex - n_length l - size_right l in
-        del leftRecurseIndex l (fun l' -> 
+        let recurseLeftIndex = curIndex - n_length l - size_right l in
+        del recurseLeftIndex l (fun l' -> 
           let (newStart, newLength, newLines) = delete_at_start curIndex finish v in
           let v' =  { v with
                       start = newStart;
@@ -357,8 +357,8 @@ let delete_tree start length tree =
           balR l' v' r |> cont
         )
     | PT(_, l, v, r) when end_is_in_range start curIndex finish (curIndex + v.length) ->
-        let rightRecurseIndex = curIndex + v.length + size_left r in
-        del rightRecurseIndex r (fun r' ->
+        let recurseRightIndex = curIndex + v.length + size_left r in
+        del recurseRightIndex r (fun r' ->
           let (length, lines) = delete_at_end curIndex start v in
           let v' =  {
                       v with
@@ -382,13 +382,13 @@ let delete_tree start length tree =
                   } in
         balR l v' newRight |> cont
     | PT(_, l, v, r) when start < curIndex ->
-        let leftRecurseIndex = curIndex - n_length l - size_right l in
-        del leftRecurseIndex l (fun l' -> 
+        let recurseLeftIndex = curIndex - n_length l - size_right l in
+        del recurseLeftIndex l (fun l' -> 
           balR l' v r |> cont
         )
     | PT(_, l, v, r) when finish > curIndex + v.length ->
-        let rightRecurseIndex = curIndex + v.length + size_left r in
-        del rightRecurseIndex r (fun r' -> 
+        let recurseRightIndex = curIndex + v.length + size_left r in
+        del recurseRightIndex r (fun r' -> 
           balL l v r' |> cont
         )
     | PT(h, l, v, r) ->
@@ -407,26 +407,26 @@ let substring start length tree buffer =
     (* The end of the current substring range is in this node, |whi|ch means the start of this node. *)
     | PT(_, _, v, r) when end_is_in_range start curIndex finish (curIndex + v.length) ->
         let nodeText = text_at_end curIndex start v buffer in
-        let rightRecurseIndex = curIndex + v.length + size_left r in
-        sub rightRecurseIndex r acc (fun x -> nodeText::x |> cont)
+        let recurseRightIndex = curIndex + v.length + size_left r in
+        sub recurseRightIndex r acc (fun x -> nodeText::x |> cont)
 
     (* The currennt node is |fully| within the substring range. *)
     | PT(_, l, v, r) when in_range start curIndex finish (curIndex + v.length) ->
         let nodeEndIndex = curIndex + v.length in
         let nodeText = text v buffer in
 
-        let rightRecurseIndex = nodeEndIndex + size_left r in
-        let leftRecurseIndex = curIndex - n_length l - size_right l in
+        let recurseRightIndex = nodeEndIndex + size_left r in
+        let recurseLeftIndex = curIndex - n_length l - size_right l in
 
-        sub rightRecurseIndex r acc (fun right ->
-          sub leftRecurseIndex l (nodeText::right) (fun x -> x |> cont)
+        sub recurseRightIndex r acc (fun right ->
+          sub recurseLeftIndex l (nodeText::right) (fun x -> x |> cont)
         )
 
     (* The start of the substring range is in the node, whi|ch| means the end of this node. *)
     | PT(_, l, v, _) when start_is_in_range start curIndex finish (curIndex + v.length) ->
         let nodeText = text_at_start curIndex finish v buffer in
-        let leftRecurseIndex = curIndex - n_length l - size_right l in
-        sub leftRecurseIndex l (nodeText::acc) (fun x -> x |> cont)
+        let recurseLeftIndex = curIndex - n_length l - size_right l in
+        sub recurseLeftIndex l (nodeText::acc) (fun x -> x |> cont)
 
     (* The mi|d|dle of the current node is in the substring range. *)
     | PT(_, _, v, _) when middle_is_in_range start curIndex finish (curIndex + v.length) ->
@@ -435,78 +435,115 @@ let substring start length tree buffer =
     (* Below two cases navigate to the next node when the substring range is outside the current node. *)
     (* When the current node is after the substring's end range. *)
     | PT(_, l, _, _) when start < curIndex ->
-        let leftRecurseIndex = curIndex - n_length l - size_right l in
-        sub leftRecurseIndex l acc (fun x -> x |> cont)
+        let recurseLeftIndex = curIndex - n_length l - size_right l in
+        sub recurseLeftIndex l acc (fun x -> x |> cont)
     (* When the current node is before the substring's start range. *)
     | PT(_, _, v, r) when finish > curIndex + v.length ->
-        let rightRecurseIndex = curIndex + v.length + size_left r in
-        sub rightRecurseIndex r acc (fun x -> x |> cont)
+        let recurseRightIndex = curIndex + v.length + size_left r in
+        sub recurseRightIndex r acc (fun x -> x |> cont)
     | PT(_, _, _, _) -> 
         failwith "unreachable Buffer.substring case"
  in
  String.concat "" (sub (size_left tree) tree [] top_level_cont)
 
 (* Delete/substring if-statements adapted to work with lines. *)
-let line_in_range nodeStartLine searchLine nodeEndLine =
+let node_is_in_line nodeStartLine searchLine nodeEndLine =
   nodeStartLine = searchLine && searchLine = nodeEndLine
 
-let start_is_in_line nodeStartLine searchLine nodeEndLine =
+let end_of_line_is_in_node nodeStartLine searchLine nodeEndLine =
   nodeStartLine = searchLine && searchLine < nodeEndLine
 
-let end_is_in_line nodeStartLine searchLine nodeEndLine =
+let start_of_line_in_node nodeStartLine searchLine nodeEndLine =
   nodeStartLine < searchLine && searchLine = nodeEndLine
 
-let middle_is_in_line nodeStartLine searchLine nodeEndLine =
+let line_is_in_node nodeStartLine searchLine nodeEndLine =
   nodeStartLine < searchLine && nodeEndLine > searchLine
 
-let get_line line tree buffer =
-  let rec get curLine node acc cont =
+let get_line_and_line_start_index line tree buffer =
+  let rec get curLine curIndex node acc cont =
     match node with
     | PE -> 
-        acc |> cont
+        (acc, None) |> cont
 
-    | PT(_, _, v, r) when end_is_in_line curLine line (curLine + Array.length v.lines) ->
-        let start = (Array.unsafe_get v.lines (Array.length v.lines - 1)) + 1 in
-        let length = v.length - start + v.start in
-        let nodeText = at_start_and_length start length buffer in
+    | PT(_, _, v, r) when start_of_line_in_node curLine line (curLine + Array.length v.lines) ->
+        (* Start of line in terms of piece offset. *)
+        let lineStart = (Array.unsafe_get v.lines (Array.length v.lines - 1)) + 1 in
+        let length = v.length - lineStart + v.start in
+        let nodeText = at_start_and_length lineStart length buffer in
+
+        (* Index where line starts in terms of piece tree (not buffer). *)
+        let lineStartIndex = Some (curIndex + v.length - lineStart) in
+
         let recurseRightLine = curLine + Array.length v.lines + lines_left r in
-        get recurseRightLine r acc (fun x -> nodeText::x |> cont)
+        let recurseRightIndex = curIndex + v.length + size_left r in
 
-    | PT(_, l, v, r) when line_in_range curLine line (curLine + Array.length v.lines) ->
+        get recurseRightLine recurseRightIndex r acc (fun (acc, _) -> 
+          (nodeText::acc, lineStartIndex) |> cont
+        )
+
+    | PT(_, l, v, r) when node_is_in_line curLine line (curLine + Array.length v.lines) ->
         let nodeEndLine = curLine + Array.length v.lines in
         let nodeText = text v buffer in
 
         let recurseRightLine = nodeEndLine + lines_left r in
-        let recurseLeftLine = nodeEndLine - n_lines l - lines_right l in
+        let recurseLeftLine = curLine - n_lines l - lines_right l in
 
-        get recurseRightLine r acc (fun right ->
-          get recurseLeftLine l (nodeText::right) (fun x -> x |> cont)
+        let recurseRightIndex = curIndex + v.length + size_left r in
+        let recurseLeftIndex = curIndex - n_length l - size_right l in
+
+        get recurseRightLine recurseRightIndex r acc (fun (acc, _) -> 
+          get recurseLeftLine recurseLeftIndex l (nodeText::acc) (fun (acc, lidx) ->
+            match lidx with
+            | Some _ -> (acc, lidx) |> cont
+            | None -> (acc, Some curIndex) |> cont
+          )
         )
 
-    | PT(_, l, v, _) when start_is_in_line curLine line (curLine + Array.length v.lines) ->
+    | PT(_, l, v, _) when end_of_line_is_in_node curLine line (curLine + Array.length v.lines) ->
         (* + 1 gives us \n in string and - v.Start takes us to piece offset *)
         let length: int = (Array.unsafe_get v.lines 0) + 1 - v.start in
-        let recurseLeftLine = curLine - n_lines l - lines_right l in
         let nodeText = at_start_and_length v.start length buffer in
-        get recurseLeftLine l (nodeText::acc) (fun x -> x |> cont)
 
-    | PT(_, _, v, _) when middle_is_in_line curLine line (curLine + Array.length v.lines) ->
+        let recurseLeftLine = curLine - n_lines l - lines_right l in
+        let recurseLeftIndex = curIndex - n_length l - size_right l in
+
+        get recurseLeftLine recurseLeftIndex l (nodeText::acc) (fun (acc, lidx) -> 
+          match lidx with
+          | Some _ -> (acc, lidx) |> cont
+          | None -> (acc, Some curIndex) |> cont
+        )
+
+    | PT(_, _, v, _) when line_is_in_node curLine line (curLine + Array.length v.lines) ->
         let lineDifference = line - curLine in
         let lineStart = (Array.unsafe_get v.lines (lineDifference - 1)) + 1 in
         let lineLength = (Array.unsafe_get v.lines lineDifference) - lineStart + 1 in
-        [at_start_and_length lineStart lineLength buffer] |> cont
+
+        let lineStartIndex = Some ((lineStart - v.start) - curIndex) in
+        ([at_start_and_length lineStart lineLength buffer], lineStartIndex) |> cont
 
     | PT(_, l, _, _) when line < curLine ->
         let recurseLeftLine = curLine - n_lines l - lines_right l in
-        get recurseLeftLine l acc (fun x -> x |> cont)
+        let recurseLeftIndex = curIndex - n_length l - size_right l in
+        get recurseLeftLine recurseLeftIndex l acc (fun x -> x |> cont)
+
     | PT(_, _, v, r) when line > curLine + Array.length v.lines ->
         let recurseRightLine = curLine + Array.length v.lines + lines_left r in
-        get recurseRightLine r acc (fun x -> x |> cont)
+        let recurseRightIndex = curIndex + v.length + size_left r in
+        get recurseRightLine recurseRightIndex r acc (fun x -> x |> cont)
 
     | PT(_, _, _, _) -> 
         failwith "unreachable Piece_tree.get_line case"
  in
- String.concat "" (get (lines_left tree) tree [] top_level_cont)
+ let (strList, lineStartIndex) = get (lines_left tree) (size_left tree) tree [] top_level_cont in
+ let str = String.concat "" strList in
+
+ match lineStartIndex with
+ | Some idx -> str, idx
+ | None -> str, 0
+
+let get_line line tree buffer = 
+  let (str, _) = get_line_and_line_start_index line tree buffer in
+  str
 
 let empty = PE
 

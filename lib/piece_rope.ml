@@ -54,6 +54,9 @@ let substring start length piecerope =
 let get_line line piecerope =
   Piece_tree.get_line line piecerope.pieces piecerope.buffer
 
+let get_line_and_line_start_index  line piecerope =
+  Piece_tree.get_line_and_line_start_index  line piecerope.pieces piecerope.buffer
+
 let empty = { buffer = Piece_buffer.empty; pieces = Piece_tree.empty }
 
 let get_text piecerope = Piece_tree.get_text piecerope.pieces piecerope.buffer
