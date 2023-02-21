@@ -4,6 +4,8 @@ open Txns
 
 let print_text x = "\n" ^ x ^ "\n"
 
+let print_num (x: int) = string_of_int x
+
 let test_svelte_rope_has_same_length_as_sum_of_txns _ =
   let (rope, count) = Utils.run_txns_result Sveltecomponent.data in
   let ropeText = Piece_rope.get_text rope in
@@ -131,10 +133,13 @@ let test_rope_lines rope =
   let lastRopeLine = String.sub lastRopeLine 0 (String.length lastRopeLine - 1) in
   let _ = assert_equal ~printer:print_text lastStr lastRopeLine in
 
+  let lineStartIdx = ref 0 in
   for i = 0 to totalLines do (* All except last line. *)
     let strLine = List.nth splitString i  ^ "\n" in
-    let ropeLine = Piece_rope.get_line i rope in
-    assert_equal ~printer:print_text  strLine ropeLine
+    let (ropeLine, ropeIdx) = Piece_rope.get_line_and_line_start_index i rope in
+    let _ = assert_equal ~printer:print_text  strLine ropeLine in
+    let _ = assert_equal ~printer:print_num !lineStartIdx ropeIdx in
+    lineStartIdx := !lineStartIdx + String.length strLine 
   done
 
 let test_svelte_lines _ =
