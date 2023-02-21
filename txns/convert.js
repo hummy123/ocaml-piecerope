@@ -15,7 +15,8 @@ let data = [|
 
 for (const entry of txns) {
     for (const [pos, delNum, insStr] of entry.patches) {
-    	content += `  (${pos}, ${delNum}, "${escape(insStr)}");\n`
+      const str = JSON.stringify(insStr) // escape special chars in string
+    	content += `  (${pos}, ${delNum}, ${str});\n`
     }
 }
 
