@@ -125,12 +125,7 @@ let test_rope_lines rope =
   let totalLines = if totalLines > 0 then totalLines else 0 in
   let splitString = Piece_rope.get_text rope |> String.split_on_char '\n' in
 
-  (* Test last line. *)
-  let lastStrLine = List.nth splitString totalLines in
-  let lastRopeLine = Piece_rope.get_line totalLines rope in
-  let _ = assert_equal ~printer:print_text  lastStrLine lastRopeLine in
-
-  for i = 0 to totalLines - 1 do (* All except last line. *)
+  for i = 0 to totalLines do (* All except last line. *)
     let strLine = List.nth splitString i  ^ "\n" in
     let ropeLine = Piece_rope.get_line i rope in
     assert_equal ~printer:print_text  strLine ropeLine
@@ -138,6 +133,18 @@ let test_rope_lines rope =
 
 let test_svelte_lines _ =
   let (rope, _) = Utils.run_txns_result Sveltecomponent.data in
+  test_rope_lines rope
+
+let test_rust_lines _ =
+  let (rope, _) = Utils.run_txns_result Rustcode.data in
+  test_rope_lines rope
+
+let test_seph_lines _ =
+  let (rope, _) = Utils.run_txns_result Sephblog.data in
+  test_rope_lines rope
+
+let test_automerge_lines _ =
+  let (rope, _) = Utils.run_txns_result Automerge.data in
   test_rope_lines rope
 
 (* List of test suites to export. *)
@@ -159,5 +166,8 @@ let test_suite =
    "automerge_substrings" >:: test_automerge_substrings;
 
    "svelte_lines" >:: test_svelte_lines;
+   "rust_lines" >:: test_rust_lines;
+   "seph_lines" >:: test_seph_lines;
+   "automerge_lines" >:: test_automerge_lines;
 ]
 

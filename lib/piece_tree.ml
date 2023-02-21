@@ -92,8 +92,8 @@ let balL ab x c =
           (match b with
            | PT(_, b1, bx, b2) -> 
                mk (mk a y b1) bx (mk b2 x c)
-           | x -> x)
-    | x -> x
+           | _ -> mk ab x c)
+    | _ -> mk ab x c
   else
     mk ab x c
 
@@ -106,8 +106,8 @@ let balR a x bc =
         else
           (match b with
           | PT(_, b1, bx, b2) -> mk (mk a x b1) bx (mk b2 y c)
-          | x -> x)
-    | x -> x
+          | _ -> mk a x bc)
+    | _ -> mk a x bc
   else
     mk a x bc
 
@@ -116,7 +116,8 @@ let split_max tree =
     match node with
     | PT(_, l, a, r) ->
         if r = PE then
-          (l, a) |> cont
+          let a' = {a with right_lns = 0; right_idx = 0 } in
+          (l, a') |> cont
         else
           split r (fun (r', a') -> (balL l a r', a') |> cont)
     | PE -> failwith "unexpected split_max case"
@@ -147,8 +148,8 @@ let split_lines rStart (lines: int array) =
 let delete_lines_in_range p1Length p2Start lines =
   let p1Lines =
     match try_find_index (fun x -> x >= p1Length) lines with
-    | Some x -> Array.sub lines 0 (x)
-    | None -> Array.make 0 0
+    | Some x -> Array.sub lines 0 x
+    | None -> lines
   in
   let p2Lines =
     match try_find_index (fun x -> x >= p2Start) lines with
@@ -170,18 +171,22 @@ let delete_at_start curIndex finish piece =
   let newStart = piece.start + difference in
   let newLength = piece.length - difference in
   let newLines =
-    match try_find_index (fun x -> x >= difference) piece.lines with
-    | Some x -> Array.sub piece.lines x (Array.length piece.lines - 1 - x)
-    | None -> Array.make 0 0 
+    match try_find_index (fun x -> x >= difference + piece.start) piece.lines with
+    | Some x -> 
+        Array.sub piece.lines x (Array.length piece.lines - x)
+    | None -> 
+        Array.make 0 0
   in
   (newStart, newLength, newLines)
 
 let delete_at_end curIndex start piece =
   let length = start - curIndex in
   let lines = 
-    match try_find_index (fun x -> x <= length) piece.lines with
-    | Some x -> Array.sub piece.lines x (Array.length piece.lines - 1 - x)
-    | None -> Array.make 0 0
+    match try_find_index (fun x -> x <= length + piece.start) piece.lines with
+    | Some x ->
+        Array.sub piece.lines x (Array.length piece.lines - 1 - x)
+    | None -> 
+        Array.make 0 0
   in
   (length, lines)
 
