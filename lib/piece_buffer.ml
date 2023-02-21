@@ -93,8 +93,8 @@ let substring start length buffer =
     | BT(_, _, _, v, _, r) when end_is_in_range start curIndex finish (curIndex + String.length v) ->
         let strStart = start - curIndex in
         let len = String.length v - strStart in
-        let acc = (String.sub v strStart len)::acc in
-        sub (curIndex + String.length v + size_left r) r acc (fun x -> x |> cont)
+        let nodeText = String.sub v strStart len in
+        sub (curIndex + String.length v + size_left r) r acc (fun x -> nodeText::x |> cont)
 
     | BT(_, _, _, v, _, _) when middle_is_in_range start curIndex finish (curIndex + String.length v) ->
         let strStart = start - curIndex in
