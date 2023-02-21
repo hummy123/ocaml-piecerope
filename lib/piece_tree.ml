@@ -173,7 +173,7 @@ let delete_at_start curIndex finish piece =
   let newLines =
     match try_find_index (fun x -> x >= difference + piece.start) piece.lines with
     | Some x -> 
-        Array.sub piece.lines x (Array.length piece.lines - x)
+        Array.sub piece.lines x (Array.length piece.lines - 1 - x)
     | None -> 
         Array.make 0 0
   in

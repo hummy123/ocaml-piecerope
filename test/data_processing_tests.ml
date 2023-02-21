@@ -125,6 +125,12 @@ let test_rope_lines rope =
   let totalLines = if totalLines > 0 then totalLines else 0 in
   let splitString = Piece_rope.get_text rope |> String.split_on_char '\n' in
 
+  (* Remove \n from last line for comparison. *)
+  let lastStr = List.nth splitString totalLines in
+  let lastRopeLine = Piece_rope.get_line totalLines rope in
+  let lastRopeLine = String.sub lastRopeLine 0 (String.length lastRopeLine - 1) in
+  let _ = assert_equal ~printer:print_text lastStr lastRopeLine in
+
   for i = 0 to totalLines do (* All except last line. *)
     let strLine = List.nth splitString i  ^ "\n" in
     let ropeLine = Piece_rope.get_line i rope in
