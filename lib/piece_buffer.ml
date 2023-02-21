@@ -2,7 +2,7 @@ type t =
     | BE
     | BT of int * t * int * string * int * t
 
-let target_size = 512
+let target_size = 1024
 
 let size = function
   | BE -> 0
