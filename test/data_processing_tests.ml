@@ -158,6 +158,30 @@ let test_automerge_lines _ =
   let (rope, _) = Utils.run_txns_result Automerge.data in
   test_rope_lines rope
 
+let test_svelte_string _ =
+  let (rope, _) = Utils.run_txns_result Sveltecomponent.data in
+  let ropeText = Piece_rope.get_text rope in
+  let strText = Sveltestring.str in
+  assert_equal ~printer:print_text strText ropeText
+
+let test_rust_string _ =
+  let (rope, _) = Utils.run_txns_result Rustcode.data in
+  let ropeText = Piece_rope.get_text rope in
+  let strText = Ruststring.str in
+  assert_equal ~printer:print_text strText ropeText
+
+let test_seph_string _ =
+  let (rope, _) = Utils.run_txns_result Sephblog.data in
+  let ropeText = Piece_rope.get_text rope in
+  let strText = Sephstring.str in
+  assert_equal ~printer:print_text strText ropeText
+
+let test_automerge_string _ =
+  let (rope, _) = Utils.run_txns_result Automerge.data in
+  let ropeText = Piece_rope.get_text rope in
+  let strText = Automergestring.str in
+  assert_equal ~printer:print_text strText ropeText
+
 (* List of test suites to export. *)
 let test_suite = 
   "Transaction_tests" >::: [
@@ -180,5 +204,10 @@ let test_suite =
    "rust_lines" >:: test_rust_lines;
    "seph_lines" >:: test_seph_lines;
    "automerge_lines" >:: test_automerge_lines;
+
+   "test_svelte_string" >:: test_svelte_string ;
+   "test_rust_string" >:: test_rust_string ;
+   "test_seph_string " >:: test_seph_string ;
+   "test_automerge_string" >:: test_automerge_string ;
 ]
 
