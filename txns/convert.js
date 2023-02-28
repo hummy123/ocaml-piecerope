@@ -9,21 +9,51 @@ const {
   txns
 } = JSON.parse(fs.readFileSync(inputPath, 'utf-8'))
 
-let content = `
+// Counter to stop applying transactinos after a certainn nmber of steps (useful for debugging)
+let counter = 0
+const COUNTER_STOP = 98710
+
+// Generate array of tuples that can be executed in code.
+let data = `
 let data = [|
 `
 
 for (const entry of txns) {
-    for (const [pos, delNum, insStr] of entry.patches) {
-      const str = JSON.stringify(insStr) // escape special chars in string
-    	content += `  (${pos}, ${delNum}, ${str});\n`
+    if (counter < COUNTER_STOP) {
+        for (const [pos, delNum, insStr] of entry.patches) {
+          const str = JSON.stringify(insStr) // escape special chars in string
+        	data += `  (${pos}, ${delNum}, ${str});\n`
+        }
+        counter += 1
     }
 }
 
-content += `
+data += `
   |]
 `
 
-let outputPath = `${filename}.ml`
+let dataOutputPath = `${filename}.ml`
 
-fs.writeFileSync(outputPath, content)
+fs.writeFileSync(dataOutputPath, data)
+
+// Reset counter and generate target string using counter.
+counter = 0
+let content = ""
+
+for (const top of txns) {
+    if (counter < COUNTER_STOP) {
+        for (const [pos, delHere, insContent] of top.patches) {
+        const before = content.slice(0, pos)
+        const after = content.slice(pos + delHere)
+        content = before + insContent + after
+        }
+        counter += 1
+    }
+}
+
+content = "let str = " + JSON.stringify(content)
+
+let contentOutputPath = `${filename}string.ml`
+
+fs.writeFileSync(contentOutputPath, content)
+

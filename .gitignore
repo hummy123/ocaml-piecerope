@@ -8,6 +8,9 @@
 *.cmxs
 *.cmxa
 
+# Transaction files from https://github.com/josephg/crdt-benchmarks
+*.json
+
 # ocamlbuild working directory
 _build/
 

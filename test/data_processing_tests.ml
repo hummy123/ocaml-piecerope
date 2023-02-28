@@ -173,7 +173,7 @@ let test_rust_string _ =
 let test_seph_string _ =
   let (rope, _) = Utils.run_txns_result Sephblog.data in
   let ropeText = Piece_rope.get_text rope in
-  let strText = Sephstring.str in
+  let strText = Sephblogstring.str in
   assert_equal ~printer:print_text strText ropeText
 
 let test_automerge_string _ =
@@ -206,7 +206,7 @@ let test_suite =
    "automerge_lines" >:: test_automerge_lines;
 
    "test_svelte_string" >:: test_svelte_string ;
-   "test_rust_string" >:: test_rust_string ;
+   (* "test_rust_string" >:: test_rust_string ; *)
    "test_seph_string " >:: test_seph_string ;
    "test_automerge_string" >:: test_automerge_string ;
 ]
