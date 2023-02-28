@@ -206,7 +206,7 @@ let test_suite =
    "automerge_lines" >:: test_automerge_lines;
 
    "test_svelte_string" >:: test_svelte_string ;
-   (* "test_rust_string" >:: test_rust_string ; *)
+   "test_rust_string" >:: test_rust_string ;
    "test_seph_string " >:: test_seph_string ;
    "test_automerge_string" >:: test_automerge_string ;
 ]
