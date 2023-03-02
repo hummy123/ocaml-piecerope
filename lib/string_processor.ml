@@ -77,4 +77,4 @@ let find_char_and_line_breaks (str: string) (pcStart: int) =
       (* Convert line breaks into array. *)
       charBreaks |> List.rev |> Array.of_list, lineBreaks |> List.rev |> Array.of_list
   in
-  get 0 0 [0] []
+  get 0 0 [0] [] false
