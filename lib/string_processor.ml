@@ -24,8 +24,8 @@ let get_char_int str pos length =
       (String.unsafe_get str (pos + 3) |> int_of_char)
   | _ -> failwith "String_processor.get_char_int error"
 
-let get_line_breaks_and_lookup_table (str: string) =
-  let rec get pos riCounter acc =
+let find_char_and_line_breaks (str: string) (pcStart: int) =
+  let rec get pos riCounter charBreaks lineBreaks =
     let leftLegnth = char_bytes (String.unsafe_get str pos) in
     let leftChar = get_char_int str pos leftLegnth in
     let leftCategory = Codepoint_converter.intToCategory leftChar in
@@ -40,34 +40,41 @@ let get_line_breaks_and_lookup_table (str: string) =
       match leftCategory, rightCategory with
       (* Do not break between CR LF *)
       | CR, LF -> 
-          get rightStart 0 acc
+          get rightStart 0 charBreaks ((pos + pcStart)::lineBreaks)
       (* Otherwise, break between controls. *)
       | (Control | CR | LF), _ 
       | _, (Control | CR | LF) -> 
-          get rightStart 0 (rightStart::acc)
+          let lineBreaks = 
+            if rightCategory = CR || rightCategory = LF then
+              (rightStart + pcStart)::lineBreaks
+            else
+              lineBreaks
+          in
+          get rightStart 0 ((rightStart + pcStart)::charBreaks) lineBreaks
       (* Do not break between Hangul syllable sequences. *)
       | L, (L | V | LV | LVT)
       | (LV | V), (V | T)
       | (LVT | T), T->
-          get rightStart 0 acc
+          get rightStart 0 charBreaks lineBreaks
       (* Do not break between extending characters or ZWJ. *)
       | _, (Extend | ZWJ) ->
-          get rightStart 0 acc
+          get rightStart 0 charBreaks lineBreaks
       (* Do not break before SpacingMarks. *)
       | _, SpacingMark ->
-          get rightStart 0 acc
+          get rightStart 0 charBreaks lineBreaks
       (* Do not break after Prepend characters. *)
       | Prepend, _ ->
-          get rightStart 0 acc
+          get rightStart 0 charBreaks lineBreaks
       (* Do not break within emoji modifier sequences or emoji zwj sequences. *)
       | (Extend | ZWJ | Extended_Pictographic), Extended_Pictographic ->
-          get rightStart 0 acc
+          get rightStart 0 charBreaks lineBreaks
       (* Do not break emoji flag sequences if there is an odd number of regional indicators before.. *)
       | Regional_Indicator, Regional_Indicator when riCounter mod 2 = 1 ->
-          get rightStart (riCounter + 1) acc
+          get rightStart (riCounter + 1) charBreaks lineBreaks
       | _, _ ->
-          get rightStart 0 (rightStart::acc)
+          get rightStart 0 (rightStart::charBreaks) lineBreaks
     else
-      acc
+      (* Convert line breaks into array. *)
+      charBreaks |> List.rev |> Array.of_list, lineBreaks |> List.rev |> Array.of_list
   in
-  get 0 0 [0]
+  get 0 0 [0] []
