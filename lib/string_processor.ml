@@ -30,27 +30,27 @@ let find_char_and_line_breaks (str: string) (pcStart: int) =
     let leftChar = get_char_int str pos leftLegnth in
     let leftCategory = Codepoint_converter.intToCategory leftChar in
   
+    let lineBreaks =
+      if leftCategory = CR || leftCategory = LF then
+        (pos + pcStart)::lineBreaks
+      else
+        lineBreaks
+    in
+
     let rightStart = pos + leftLegnth in
     if rightStart < String.length str then
       let rightLength = char_bytes (String.unsafe_get str rightStart) in
       let rightChar = get_char_int str rightStart rightLength in
       let rightCategory = Codepoint_converter.intToCategory rightChar in
 
-      let open Codepoint_converter in
       match leftCategory, rightCategory with
       (* Do not break between CR LF *)
       | CR, LF -> 
-          get rightStart 0 charBreaks ((pos + pcStart)::lineBreaks)
+          get rightStart 0 charBreaks lineBreaks
       (* Otherwise, break between controls. *)
       | (Control | CR | LF), _ 
       | _, (Control | CR | LF) -> 
-          let lineBreaks = 
-            if rightCategory = CR || rightCategory = LF then
-              (rightStart + pcStart)::lineBreaks
-            else
-              lineBreaks
-          in
-          get rightStart 0 ((rightStart + pcStart)::charBreaks) lineBreaks
+          get rightStart 0 (rightStart::charBreaks) lineBreaks
       (* Do not break between Hangul syllable sequences. *)
       | L, (L | V | LV | LVT)
       | (LV | V), (V | T)
