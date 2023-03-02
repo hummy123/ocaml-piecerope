@@ -60,7 +60,7 @@ let get_line_breaks_and_lookup_table (str: string) =
       | Prepend, _ ->
           get rightStart 0 acc
       (* Do not break within emoji modifier sequences or emoji zwj sequences. *)
-      | (Extend | ZWJ), Extend ->
+      | (Extend | ZWJ | Extended_Pictographic), Extended_Pictographic ->
           get rightStart 0 acc
       (* Do not break emoji flag sequences if there is an odd number of regional indicators before.. *)
       | Regional_Indicator, Regional_Indicator when riCounter mod 2 = 1 ->

@@ -5,6 +5,7 @@
 
 # Ignore generated .ml file in this directory.
 *.ml
+.mli
 
 # User-specific files
 *.rsuser

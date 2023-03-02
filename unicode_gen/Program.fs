@@ -5,6 +5,11 @@ let getCategory (line: string) =
   let splitStr = splitStr[1].Split(" #")
   splitStr[0]
 
+let getExPictoCategory (line: string) =
+  let splitStr = line.Split("; ")
+  let splitStr = splitStr[1].Split("#")
+  splitStr[0]
+
 let getLineCodes (line: string) =
   let line = line.Split(" ")[0] (* Get code..point range, *)
   if line.Contains("..") then
@@ -34,6 +39,21 @@ for line in lines do
     | None ->
         map <- map.Add(category, lineCodes)
 
+(* We also want the Extended_Pictographic property from emoji-data.txt . *)
+let emojiLines = File.ReadAllLines "./emoji-data.txt"
+
+for line in emojiLines do
+  if not (line.StartsWith "#" || line = "") then
+    let category = getExPictoCategory line
+    if category = "Extended_Pictographic" then
+      let lineCodes = getLineCodes line
+      match map.TryFind category with
+      | Some value -> 
+          let newArr = Array.append value lineCodes
+          map <- map.Add(category, newArr)
+      | None ->
+          map <- map.Add(category, lineCodes)
+
 (* Create string that will contain the category union. *)
 let stringOfTypes = Map.fold (fun str cat _ -> str + " | " + cat) "type t =" map + " | Any"
 
@@ -54,4 +74,8 @@ let patternMatchString =
 let output = stringOfTypes + "\n" + patternMatchString
 
 File.WriteAllText("codepoint_converter.ml", output)
+
+let mli = stringOfTypes + "\n" + @"(** Convert an integer to a Unicode codepoint category. *)
+val intToCategory : int -> t"
+File.WriteAllText("codepoint_converter.mli", mli)
 
