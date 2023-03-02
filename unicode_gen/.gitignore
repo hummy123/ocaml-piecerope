@@ -3,6 +3,9 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/main/VisualStudio.gitignore
 
+# Ignore generated .ml file in this directory.
+*.ml
+
 # User-specific files
 *.rsuser
 *.suo

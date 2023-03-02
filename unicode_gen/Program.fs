@@ -35,7 +35,7 @@ for line in lines do
         map <- map.Add(category, lineCodes)
 
 (* Create string that will contain the category union. *)
-let stringOfTypes = Map.fold (fun str cat _ -> str + " | " + cat) "type CodePointCategory =" map 
+let stringOfTypes = Map.fold (fun str cat _ -> str + " | " + cat) "type t =" map + " | Any"
 
 (* Create string that will produce function to match int to cateory. *)
 let patternMatchBase = @"
@@ -49,6 +49,7 @@ let patternMatchString =
     let codePoints = Array.fold (fun state el -> state + "| " + el + " ") "" arr
     str + codePoints + " -> " + cat + "\n  "
   ) patternMatchBase map
+  + "| _ -> Any"
 
 let output = stringOfTypes + "\n" + patternMatchString
 
