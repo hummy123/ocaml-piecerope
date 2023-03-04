@@ -1,6 +1,6 @@
 type t =
   | CE 
-  | CT of int * t * int * Codepoint_converter.t * t
+  | CT of int * t * int * Codepoint_types.t * t
 
 let ht = function
   | CE -> 0
@@ -39,16 +39,16 @@ let balR a xk xv bc =
   else
     mk a xk xv bc
 
-let rec insert k v = function
+let rec add k v = function
   | CE -> mk CE k v CE
   | CT(_, nl, nk, nv, nr) ->
       if k < nk then
-        balL (insert k v nl) nk nv nr
+        balL (add k v nl) nk nv nr
       else
-        balR nl nk nv (insert k v nr)
+        balR nl nk nv (add k v nr)
 
 let rec find k = function
-  | CE -> Codepoint_converter.Any
+  | CE -> Codepoint_types.Any
   | CT(_, nl, nk, nv, nr) ->
       if k < nk then
         find k nl
@@ -56,4 +56,6 @@ let rec find k = function
         find k nr
       else
         nv
+
+let empty = CE
 

@@ -28,7 +28,7 @@ let find_char_and_line_breaks (str: string) (pcStart: int) =
   let rec get pos riCounter charBreaks lineBreaks shouldSkipLineBreak =
     let leftLegnth = char_bytes (String.unsafe_get str pos) in
     let leftChar = get_char_int str pos leftLegnth in
-    let leftCategory = Codepoint_converter.intToCategory leftChar in
+    let leftCategory = Codepoint_values.intToCategory leftChar in
   
     let lineBreaks =
       if (leftCategory = CR || leftCategory = LF) && not shouldSkipLineBreak then
@@ -41,7 +41,7 @@ let find_char_and_line_breaks (str: string) (pcStart: int) =
     if rightStart < String.length str then
       let rightLength = char_bytes (String.unsafe_get str rightStart) in
       let rightChar = get_char_int str rightStart rightLength in
-      let rightCategory = Codepoint_converter.intToCategory rightChar in
+      let rightCategory = Codepoint_values.intToCategory rightChar in
 
       match leftCategory, rightCategory with
       (* Do not break between CR LF *)
