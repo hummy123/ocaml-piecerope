@@ -57,21 +57,27 @@ for line in emojiLines do
 (* Create string that will contain the category union. *)
 let stringOfTypes = Map.fold (fun str cat _ -> str + " | " + cat) "type t =" map + " | Any"
 
-(* Create string that will produce function to match int to cateory. *)
-let patternMatchBase = @"
-let intToCategory input =
-  match input with
-  "
+(* Create string that will produce hash table to match int to category. *)
+let totalLength: int = Map.fold (fun acc _ (el: int array) -> acc + el.Length) 0 map
+let hashTableStringBase = "let tbl = Hashtbl.create " + string totalLength  + ";;\n"
+let hashTableString = 
+  Map.fold (fun str cat (arr: int array) ->
+    let arr = Array.map (fun el -> el |> string) arr (* Manipulate ints as strings in generator *)
 
-let patternMatchString = 
-  Map.fold (fun str cat arr ->
-    let arr = Array.map (fun el -> el |> string) arr
-    let codePoints = Array.fold (fun state el -> state + "| " + el + " ") "" arr
-    str + codePoints + " -> " + cat + "\n  "
-  ) patternMatchBase map
-  + "| _ -> Any"
+    let codePoints = Array.fold (fun state el -> state + "Hashtbl.add tbl (" + el + ", " + cat + ");;\n") "" arr
 
-let output = stringOfTypes + "\n" + patternMatchString
+    str + codePoints 
+  ) hashTableStringBase map
+
+(* String containing function to get category from string. *)
+let intToCategoryString = @"
+let intToCategory x =
+  match Hashtbl.find_opt x with
+  | Some(_, cat) -> cat
+  | None -> Any
+"
+
+let output = stringOfTypes + "\n\n" + hashTableString + "\n" + intToCategoryString
 
 File.WriteAllText("codepoint_converter.ml", output)
 
