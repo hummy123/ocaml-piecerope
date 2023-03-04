@@ -24,11 +24,16 @@ let get_char_int str pos length =
       (String.unsafe_get str (pos + 3) |> int_of_char)
   | _ -> failwith "String_processor.get_char_int error"
 
-let find_char_and_line_breaks (str: string) (pcStart: int) =
+let find_char_and_line_breaks (str: string) (pcStart: int) tbl =
   let rec get pos riCounter charBreaks lineBreaks shouldSkipLineBreak =
     let leftLegnth = char_bytes (String.unsafe_get str pos) in
     let leftChar = get_char_int str pos leftLegnth in
-    let leftCategory = Codepoint_values.intToCategory leftChar in
+
+    let leftCategory = 
+      match Hashtbl.find_opt tbl leftChar with
+      | Some x -> x
+      | None -> Codepoint_types.Any
+    in
   
     let lineBreaks =
       if (leftCategory = CR || leftCategory = LF) && not shouldSkipLineBreak then
@@ -41,7 +46,12 @@ let find_char_and_line_breaks (str: string) (pcStart: int) =
     if rightStart < String.length str then
       let rightLength = char_bytes (String.unsafe_get str rightStart) in
       let rightChar = get_char_int str rightStart rightLength in
-      let rightCategory = Codepoint_values.intToCategory rightChar in
+
+      let rightCategory = 
+        match Hashtbl.find_opt tbl rightChar with
+        | Some x -> x
+        | None -> Codepoint_types.Any
+      in
 
       match leftCategory, rightCategory with
       (* Do not break between CR LF *)

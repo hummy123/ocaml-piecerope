@@ -54,25 +54,30 @@ for line in emojiLines do
       | None ->
           map <- map.Add(category, lineCodes)
 
-(* Create string that will contain the category union. *)
-let stringOfTypes = Map.fold (fun str cat _ -> str + " | " + cat) "type t =" map + " | Any"
+(* Create string that will contain the category union and count total code points. *)
+let (typeString, totalPoints) = Map.fold (fun (str, count) cat (arr: int array) -> 
+  str + " | " + cat, count + arr.Length) ("type t =", 0) map // + " | Any"
+
+let stringOfTypes = typeString + " | Any"
 
 (* File containing categories and its corresponding mli. *)
-File.WriteAllText("codepoint_types.ml", stringOfTypes)
+File.WriteAllText("../lib/codepoint_types.ml", stringOfTypes)
 
-File.WriteAllText("codepoint_types.mli", stringOfTypes)
+File.WriteAllText("../lib/codepoint_types.mli", stringOfTypes)
 
 (* Next step is to insert code points into map. *)
-let mapStringBase = "let v = Codepoint_map.empty \n"
+let mapStringBase = "let tbl: (int, Codepoint_types.t) Hashtbl.t  = Hashtbl.create " + string totalPoints + " in\n"
 
 let mapString = 
   Map.fold (fun str cat arr -> 
-    let arr = Array.map (fun el -> "|> Codepoint_map.add " + string el + " " + cat + " ") arr
-    let values = Array.fold (fun state el -> state + el) str arr
-    values + "\n"
-  ) mapStringBase map
+    Array.fold (fun state el ->
+      let el = string el
+      state + "let _ = Hashtbl.add tbl " + el + " " + cat + " in\n"
+    ) str arr
+  ) mapStringBase map 
+  + "\ntbl"
 
-let intToCategory = "let intToCategory x = Codepoint_map.find x v"
+let hashtblString = "let hashTableGen _ =\n" + mapString
 
-File.WriteAllText("codepoint_values.ml", mapString + "\n\n" + intToCategory)
+File.WriteAllText("../lib/codepoint_values.ml", hashtblString)
 
