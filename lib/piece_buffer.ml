@@ -107,12 +107,13 @@ let substring start length buffer =
           let nodeText = String.sub v strStart len in
           sub (curIndex + String.length v + size_left r) r acc (fun x -> nodeText::x |> cont)
 
-    | BT(_, _, _, v, _, _, length) when middle_is_in_range start curIndex finish (curIndex + length) ->
-        if length = String.length v then
+    | BT(_, _, _, v, _, _, vLen) when middle_is_in_range start curIndex finish (curIndex + vLen) ->
+        if vLen = String.length v then
           let strStart = start - curIndex in
           (String.sub v strStart length)::acc |> cont
         else
           let strStart = String_processor.clip_to_start (start - curIndex) v in
+          let length = String_processor.clip_to_start length v in
           (String.sub v strStart length)::acc |> cont
 
     | BT(_, l, _, _, _, _, _) when start < curIndex ->
