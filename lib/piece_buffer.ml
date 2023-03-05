@@ -103,7 +103,7 @@ let substring start length buffer =
           sub (curIndex + vLen + size_left r) r acc (fun x -> nodeText::x |> cont)
         else
           let strStart = String_processor.clip_to_start (start - curIndex) v in
-          let len = String_processor.clip_to_start (vLen - strStart) v in
+          let len = String.length v - strStart in
           let nodeText = String.sub v strStart len in
           sub (curIndex + vLen + size_left r) r acc (fun x -> nodeText::x |> cont)
 

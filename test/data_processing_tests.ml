@@ -139,7 +139,7 @@ let test_svelte_string _ =
 let test_rust_string _ =
   let (rope, _) = Utils.run_txns_result Rustcode.data in
   let ropeText = Piece_rope.get_text rope in
-  let strText = Ruststring.str in
+  let strText = Rustcodestring.str in
   assert_equal ~printer:print_text strText ropeText
 
 let test_seph_string _ =
