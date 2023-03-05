@@ -14,7 +14,7 @@ let insert index (str: string) piecerope =
   let pcStart = Piece_buffer.size piecerope.buffer in
   let open String_processor in
   let (pcLength, pcLines) = char_length_and_line_breaks str pcStart in
-  let buffer = Piece_buffer.append str piecerope.buffer in
+  let buffer = Piece_buffer.append str pcLength piecerope.buffer in
   let pieces = Piece_tree.insert_tree index pcStart pcLength pcLines piecerope.pieces in
   { piecerope with buffer; pieces }
 
@@ -22,7 +22,7 @@ let prepend (str: string) piecerope =
   let pcStart = Piece_buffer.size piecerope.buffer in
   let open String_processor in
   let (pcLength, pcLines) = char_length_and_line_breaks str pcStart in
-  let buffer = Piece_buffer.append str piecerope.buffer in
+  let buffer = Piece_buffer.append str pcLength piecerope.buffer in
   let pieces = Piece_tree.prepend pcStart pcLength pcLines piecerope.pieces in
   { piecerope with buffer; pieces }
 
@@ -30,7 +30,7 @@ let append (str: string) piecerope =
   let pcStart = Piece_buffer.size piecerope.buffer in
   let open String_processor in
   let (pcLength, pcLines) = char_length_and_line_breaks str pcStart in
-  let buffer = Piece_buffer.append str piecerope.buffer in
+  let buffer = Piece_buffer.append str pcLength piecerope.buffer in
   let pieces = Piece_tree.append pcStart pcLength pcLines piecerope.pieces in
   { piecerope with buffer; pieces }
 

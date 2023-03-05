@@ -1,3 +1,4 @@
+(* Functions for counting code points and line breaks. *)
 let char_bytes chr =
   match chr with
   | '\x00' .. '\x7f' -> 1
@@ -42,3 +43,14 @@ let char_length_and_line_breaks (str: string) (pcStart: int) =
   in
   get 0 0 [] false
 
+(* Functions for clipping to start of code point. *)
+let is_start chr =
+  match chr with
+  | '\x00' .. '\xf7' -> true
+  | _ -> false
+
+let rec clip_to_start idx str =
+  if is_start (String.unsafe_get str idx) || idx = 0 then
+    idx
+  else
+    clip_to_start (idx - 1) str

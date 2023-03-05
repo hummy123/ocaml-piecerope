@@ -77,37 +77,43 @@ let substring start length buffer =
   let rec sub (curIndex: int) node (acc: string list) cont =
     match node with
     | BE -> acc |> cont
-    | BT(_, l, _, v, _, r, length) when in_range start curIndex finish (curIndex + length) ->
-        let nodeEndIndex = curIndex + length in
+    | BT(_, l, _, v, _, r, vLen) when in_range start curIndex finish (curIndex + vLen) ->
+        let nodeEndIndex = curIndex + vLen in
 
         sub (nodeEndIndex + size_left r) r acc (fun right ->
           let middle = v::right in
           sub (curIndex - string_length l - size_right l) l middle (fun x -> x |> cont)
         )
 
-    | BT(_, l, _, v, _, _, length) when start_is_in_range start curIndex finish (curIndex + length) ->
-        if length = String.length v then
-          let length = finish - curIndex in
-          let acc = (String.sub v 0 length)::acc in
-          sub (curIndex - string_length l - size_right l) l acc (fun x -> x |> cont)
-        else
-          (* To do: if the string has a codepoint or grapheme cluster. *)
+    | BT(_, l, _, v, _, _, vLen) when start_is_in_range start curIndex finish (curIndex + vLen) ->
+        let length =
+          if vLen = String.length v then
+            finish - curIndex
+          else
+            String_processor.clip_to_start (finish - curIndex) v
+        in
+        let acc = (String.sub v 0 length)::acc in
+        sub (curIndex - string_length l - size_right l) l acc (fun x -> x |> cont)
 
-    | BT(_, _, _, v, _, r, length) when end_is_in_range start curIndex finish (curIndex + length) ->
-        if length = String.length v then
+    | BT(_, _, _, v, _, r, vLen) when end_is_in_range start curIndex finish (curIndex + vLen) ->
+        if vLen = String.length v then
           let strStart = start - curIndex in
-          let len = String.length v - strStart in
+          let len = vLen - strStart in
           let nodeText = String.sub v strStart len in
           sub (curIndex + String.length v + size_left r) r acc (fun x -> nodeText::x |> cont)
         else
-          (* To do: if the string has a codepoint or grapheme cluster. *)
+          let strStart = String_processor.clip_to_start (start - curIndex) v in
+          let len = String_processor.clip_to_start (vLen - strStart) v in
+          let nodeText = String.sub v strStart len in
+          sub (curIndex + String.length v + size_left r) r acc (fun x -> nodeText::x |> cont)
 
     | BT(_, _, _, v, _, _, length) when middle_is_in_range start curIndex finish (curIndex + length) ->
         if length = String.length v then
           let strStart = start - curIndex in
           (String.sub v strStart length)::acc |> cont
         else
-          (* To do: if the string has a codepoint or grapheme cluster. *)
+          let strStart = String_processor.clip_to_start (start - curIndex) v in
+          (String.sub v strStart length)::acc |> cont
 
     | BT(_, l, _, _, _, _, _) when start < curIndex ->
         sub (curIndex - string_length l - size_right l) l acc (fun x -> x |> cont)
