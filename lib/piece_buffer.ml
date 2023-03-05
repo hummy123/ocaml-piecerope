@@ -100,12 +100,12 @@ let substring start length buffer =
           let strStart = start - curIndex in
           let len = vLen - strStart in
           let nodeText = String.sub v strStart len in
-          sub (curIndex + String.length v + size_left r) r acc (fun x -> nodeText::x |> cont)
+          sub (curIndex + vLen + size_left r) r acc (fun x -> nodeText::x |> cont)
         else
           let strStart = String_processor.clip_to_start (start - curIndex) v in
           let len = String_processor.clip_to_start (vLen - strStart) v in
           let nodeText = String.sub v strStart len in
-          sub (curIndex + String.length v + size_left r) r acc (fun x -> nodeText::x |> cont)
+          sub (curIndex + vLen + size_left r) r acc (fun x -> nodeText::x |> cont)
 
     | BT(_, _, _, v, _, _, vLen) when middle_is_in_range start curIndex finish (curIndex + vLen) ->
         if vLen = String.length v then
@@ -119,8 +119,8 @@ let substring start length buffer =
     | BT(_, l, _, _, _, _, _) when start < curIndex ->
         sub (curIndex - string_length l - size_right l) l acc (fun x -> x |> cont)
 
-    | BT(_, _, _, v, _, r, _) when finish > curIndex + String.length v ->
-        sub (curIndex + String.length v + size_left r) r acc (fun x -> x |> cont)
+    | BT(_, _, _, v, _, r, vLen) when finish > curIndex + vLen ->
+        sub (curIndex + vLen + size_left r) r acc (fun x -> x |> cont)
 
     | _ ->
         failwith "unreachable Buffer.substring case"

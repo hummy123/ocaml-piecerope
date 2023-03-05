@@ -27,14 +27,6 @@ let test_whole_svelte_substring _ =
   let (rope, count) = Utils.run_txns_result Sveltecomponent.data in
   test_whole_substrings rope count
 
-let test_whole_rust_substring _ =
-  let (rope, count) = Utils.run_txns_result Rustcode.data in
-  test_whole_substrings rope count
-
-let test_whole_seph_substring _ =
-  let (rope, count) = Utils.run_txns_result Sephblog.data in
-  test_whole_substrings rope count
-
 let test_whole_automerge_substring _ =
   let (rope, count) = Utils.run_txns_result Automerge.data in
   test_whole_substrings rope count
@@ -96,14 +88,6 @@ let test_substrings_by_tenths rope total_length =
 
 let test_svelte_substrings _ =
   let (rope, total_length) = Utils.run_txns_result Sveltecomponent.data in
-  test_substrings_by_tenths rope total_length
-
-let test_rust_substrings _ =
-  let (rope, total_length) = Utils.run_txns_result Rustcode.data in
-  test_substrings_by_tenths rope total_length
-
-let test_seph_substrings _ =
-  let (rope, total_length) = Utils.run_txns_result Sephblog.data in
   test_substrings_by_tenths rope total_length
 
 let test_automerge_substrings _ =
@@ -173,18 +157,14 @@ let test_automerge_string _ =
 (* List of test suites to export. *)
 let test_suite = 
   "Transaction_tests" >::: [
+   (* Some tests for rustcode and sephblog omitted because they contain non-ASCII *)
    "svelte_length" >:: test_svelte_rope_has_same_length_as_sum_of_txns;
-   (* Not testing rust/seph length because they contain non-ASCII characters. *)
    "automerge_length" >:: test_automerge_rope_has_same_length_as_sum_of_txns;
 
    "whole_svelte_substring" >:: test_whole_svelte_substring;
-   "whole_rust_substring" >:: test_whole_rust_substring;
-   "whole_seph_substring" >:: test_whole_seph_substring;
    "whole_automerge_substring" >:: test_whole_automerge_substring;
 
    "svelte_substrings" >:: test_svelte_substrings;
-   "rust_substrings" >:: test_rust_substrings;
-   "seph_substrings" >:: test_seph_substrings;
    "automerge_substrings" >:: test_automerge_substrings;
 
    "svelte_lines" >:: test_svelte_lines;

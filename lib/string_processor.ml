@@ -54,3 +54,4 @@ let rec clip_to_start idx str =
     idx
   else
     clip_to_start (idx - 1) str
+
