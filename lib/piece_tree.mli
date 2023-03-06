@@ -11,16 +11,16 @@ val total_lines: t -> int
 val total_length: t -> int
 
 (** Returns a substring using a Piece_tree and a Piece_buffer. Is zero-indexed where first character = 0. *)
-val substring: int -> int -> t -> Piece_buffer.t -> string
+val substring: int -> int -> t -> Piece_buffer.t -> (int, Codepoint_types.t) Hashtbl.t -> string
 
 (** Returns a line using a Piece_tree and a Piece_buffer. Is zero-indexed. *)
-val get_line: int -> t -> Piece_buffer.t -> string
+val get_line: int -> t -> Piece_buffer.t -> (int, Codepoint_types.t) Hashtbl.t -> string
 
 (** Returns a line and the index where that line starts. *)
-val get_line_and_line_start_index: int -> t -> Piece_buffer.t -> string * int
+val get_line_and_line_start_index: int -> t -> Piece_buffer.t -> (int, Codepoint_types.t) Hashtbl.t -> string * int
 
 (** Returns all text using a Piece_tree and a Piece_buffer. May cause errors if the resulting string is too large for OCaml to handle. *)
-val get_text: t -> Piece_buffer.t -> string
+val get_text: t -> Piece_buffer.t -> (int, Codepoint_types.t) Hashtbl.t -> string
 
 (** Deletes or truncates pointers to text in the Piece_buffer from a Piece_tree. *)
 val delete_tree: int -> int -> t -> t
@@ -35,4 +35,4 @@ val prepend: int -> int -> int array -> t -> t
 val append: int -> int -> int array -> t -> t
 
 (** Folds over text in order (from start to last). Useful for saving to a file and possibly other situations. *)
-val fold_text: t -> Piece_buffer.t -> 'a -> (string -> 'a) -> 'a
+val fold_text: t -> Piece_buffer.t -> (int, Codepoint_types.t) Hashtbl.t -> 'a -> (string -> 'a) -> 'a

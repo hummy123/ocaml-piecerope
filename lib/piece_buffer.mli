@@ -11,4 +11,4 @@ val size: t -> int
 val append: string -> int -> t -> t 
 
 (** Retrieves a substring from a buffer. *)
-val substring: int -> int -> t -> string
+val substring: int -> int -> t ->  (int, Codepoint_types.t) Hashtbl.t -> string

@@ -192,22 +192,22 @@ let delete_at_end curIndex start piece =
 
 let text piece buffer = Piece_buffer.substring piece.start piece.length buffer
 
-let text_in_range curIndex start finish piece buffer =
+let text_in_range curIndex start finish piece buffer tbl =
   let textStart = start - curIndex + piece.start in
   let textLength = finish - curIndex + piece.start - textStart in
-  Piece_buffer.substring textStart textLength buffer
+  Piece_buffer.substring textStart textLength buffer tbl
 
-let text_at_start curIndex finish piece buffer =
+let text_at_start curIndex finish piece buffer tbl =
   let textLength = finish - curIndex in
-  Piece_buffer.substring piece.start textLength buffer
+  Piece_buffer.substring piece.start textLength buffer tbl
 
-let text_at_end curIndex start piece buffer =
+let text_at_end curIndex start piece buffer tbl =
   let textStart = start - curIndex + piece.start in
   let textLength = piece.start + piece.length - textStart in
-  Piece_buffer.substring textStart textLength buffer
+  Piece_buffer.substring textStart textLength buffer tbl
 
-let at_start_and_length start length buffer =
-  Piece_buffer.substring start length buffer
+let at_start_and_length start length buffer tbl =
+  Piece_buffer.substring start length buffer tbl
 
 (* AA Tree balancing functions. *)
 let rec fold f x t =
@@ -402,7 +402,7 @@ let delete_tree start length tree =
   in
   del (size_left tree) tree top_level_cont
 
-let substring start length tree buffer =
+let substring start length tree buffer tbl =
   let finish = start + length in
   let rec sub curIndex node acc cont =
     match node with
@@ -411,14 +411,14 @@ let substring start length tree buffer =
     (* Cases when the current node is at least partially in the substring range. *)
     (* The end of the current substring range is in this node, |whi|ch means the start of this node. *)
     | PT(_, _, v, r) when end_is_in_range start curIndex finish (curIndex + v.length) ->
-        let nodeText = text_at_end curIndex start v buffer in
+        let nodeText = text_at_end curIndex start v buffer tbl in
         let recurseRightIndex = curIndex + v.length + size_left r in
         sub recurseRightIndex r acc (fun x -> nodeText::x |> cont)
 
     (* The currennt node is |fully| within the substring range. *)
     | PT(_, l, v, r) when in_range start curIndex finish (curIndex + v.length) ->
         let nodeEndIndex = curIndex + v.length in
-        let nodeText = text v buffer in
+        let nodeText = text v buffer tbl in
 
         let recurseRightIndex = nodeEndIndex + size_left r in
         let recurseLeftIndex = curIndex - n_length l - size_right l in
@@ -429,13 +429,13 @@ let substring start length tree buffer =
 
     (* The start of the substring range is in the node, whi|ch| means the end of this node. *)
     | PT(_, l, v, _) when start_is_in_range start curIndex finish (curIndex + v.length) ->
-        let nodeText = text_at_start curIndex finish v buffer in
+        let nodeText = text_at_start curIndex finish v buffer tbl in
         let recurseLeftIndex = curIndex - n_length l - size_right l in
         sub recurseLeftIndex l (nodeText::acc) (fun x -> x |> cont)
 
     (* The mi|d|dle of the current node is in the substring range. *)
     | PT(_, _, v, _) when middle_is_in_range start curIndex finish (curIndex + v.length) ->
-        [text_in_range curIndex start finish v buffer] |> cont
+        [text_in_range curIndex start finish v buffer tbl] |> cont
 
     (* Below two cases navigate to the next node when the substring range is outside the current node. *)
     (* When the current node is after the substring's end range. *)
@@ -464,8 +464,8 @@ let start_of_line_in_node nodeStartLine searchLine nodeEndLine =
 let line_is_in_node nodeStartLine searchLine nodeEndLine =
   nodeStartLine < searchLine && nodeEndLine > searchLine
 
-let get_line_and_line_start_index line tree buffer =
-  let rec get curLine curIndex node acc cont =
+let get_line_and_line_start_index line tree buffer tbl =
+  let rec get curLine curIndex node (acc: string list) cont =
     match node with
     | PE -> 
         (acc, None) |> cont
@@ -474,7 +474,7 @@ let get_line_and_line_start_index line tree buffer =
         (* Start of line in terms of piece offset. *)
         let lineStart = (Array.unsafe_get v.lines (Array.length v.lines - 1)) + 1 in
         let length = v.length - lineStart + v.start in
-        let nodeText = at_start_and_length lineStart length buffer in
+        let nodeText = at_start_and_length lineStart length buffer tbl in
 
         (* Index where line starts in terms of piece tree (not buffer). *)
         let lineStartIndex = Some (curIndex + v.length - lineStart) in
@@ -488,7 +488,7 @@ let get_line_and_line_start_index line tree buffer =
 
     | PT(_, l, v, r) when node_is_in_line curLine line (curLine + Array.length v.lines) ->
         let nodeEndLine = curLine + Array.length v.lines in
-        let nodeText = text v buffer in
+        let nodeText = text v buffer tbl in
 
         let recurseRightLine = nodeEndLine + lines_left r in
         let recurseLeftLine = curLine - n_lines l - lines_right l in
@@ -507,7 +507,7 @@ let get_line_and_line_start_index line tree buffer =
     | PT(_, l, v, _) when end_of_line_is_in_node curLine line (curLine + Array.length v.lines) ->
         (* + 1 gives us \n in string and - v.Start takes us to piece offset *)
         let length: int = (Array.unsafe_get v.lines 0) + 1 - v.start in
-        let nodeText = at_start_and_length v.start length buffer in
+        let nodeText = at_start_and_length v.start length buffer tbl in
 
         let recurseLeftLine = curLine - n_lines l - lines_right l in
         let recurseLeftIndex = curIndex - n_length l - size_right l in
@@ -524,7 +524,7 @@ let get_line_and_line_start_index line tree buffer =
         let lineLength = (Array.unsafe_get v.lines lineDifference) - lineStart + 1 in
 
         let lineStartIndex = Some ((lineStart - v.start) - curIndex) in
-        ([at_start_and_length lineStart lineLength buffer], lineStartIndex) |> cont
+        ([at_start_and_length lineStart lineLength buffer tbl], lineStartIndex) |> cont
 
     | PT(_, l, _, _) when line < curLine ->
         let recurseLeftLine = curLine - n_lines l - lines_right l in
@@ -546,22 +546,22 @@ let get_line_and_line_start_index line tree buffer =
  | Some idx -> str, idx
  | None -> str, 0
 
-let get_line line tree buffer = 
-  let (str, _) = get_line_and_line_start_index line tree buffer in
+let get_line line tree buffer tbl = 
+  let (str, _) = get_line_and_line_start_index line tree buffer tbl in
   str
 
 let empty = PE
 
-let get_text tree buffer = 
+let get_text tree buffer tbl = 
   let lst = fold (fun (acc: string list) pc ->
-    let text = Piece_buffer.substring pc.start pc.length buffer in
+    let text = Piece_buffer.substring pc.start pc.length buffer tbl in
     text::acc
   ) [] tree in
   List.rev lst |> String.concat ""
 
-let fold_text tree buffer state folder =
+let fold_text tree buffer tbl state folder =
   fold (fun _ pc ->
-    folder (Piece_buffer.substring pc.start pc.length buffer)
+    folder (Piece_buffer.substring pc.start pc.length buffer tbl)
   ) state tree
 
 let total_length tree = tree_size tree

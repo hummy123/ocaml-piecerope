@@ -39,16 +39,16 @@ let delete start length piecerope =
   { piecerope with pieces = pieces; }
 
 let substring start length piecerope =
-  Piece_tree.substring start length piecerope.pieces piecerope.buffer
+  Piece_tree.substring start length piecerope.pieces piecerope.buffer piecerope.lookup
 
 let get_line line piecerope =
-  Piece_tree.get_line line piecerope.pieces piecerope.buffer
+  Piece_tree.get_line line piecerope.pieces piecerope.buffer piecerope.lookup
 
-let get_line_and_line_start_index  line piecerope =
-  Piece_tree.get_line_and_line_start_index  line piecerope.pieces piecerope.buffer
+let get_line_and_line_start_index line piecerope =
+  Piece_tree.get_line_and_line_start_index  line piecerope.pieces piecerope.buffer piecerope.lookup
 
-
-let get_text piecerope = Piece_tree.get_text piecerope.pieces piecerope.buffer
+let get_text piecerope = 
+  Piece_tree.get_text piecerope.pieces piecerope.buffer piecerope.lookup
 
 let create str = insert 0 str empty
 

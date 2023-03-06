@@ -72,7 +72,7 @@ let end_is_in_range start curIndex finish nodeEndIndex =
 let middle_is_in_range start curIndex finish nodeEndIndex =
   start >= curIndex && finish <= nodeEndIndex
 
-let substring start length buffer =
+let substring start length buffer tbl =
   let finish = start + length in
   let rec sub (curIndex: int) node (acc: string list) cont =
     match node with
@@ -92,7 +92,7 @@ let substring start length buffer =
           if vLen = String.length v then
             (String.sub v 0 length)::acc 
           else
-            (String_processor.codepointSub v 0 length)::acc 
+            (String_processor.codepointSub v 0 length tbl)::acc 
         in
 
         sub (curIndex - string_length l - size_right l) l acc (fun x -> x |> cont)
@@ -104,7 +104,7 @@ let substring start length buffer =
           if vLen = String.length v then
             String.sub v strStart len
           else
-            String_processor.codepointSub v strStart len
+            String_processor.codepointSub v strStart len tbl
         in
 
         sub (curIndex + vLen + size_left r) r acc (fun x -> nodeText::x |> cont)
@@ -113,7 +113,7 @@ let substring start length buffer =
         if vLen = String.length v then
           [String.sub v strStart length] |> cont
         else
-          [String_processor.codepointSub v strStart length] |> cont
+          [String_processor.codepointSub v strStart length tbl] |> cont
 
     | BT(_, l, _, _, _, _, _) when start < curIndex ->
         sub (curIndex - string_length l - size_right l) l acc (fun x -> x |> cont)

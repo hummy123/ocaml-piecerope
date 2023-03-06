@@ -2,4 +2,4 @@
 val char_length_and_line_breaks :  string -> int -> int * int array
 
 (** Given an index and a string, clips to the start of the code point at/before the index. *)
-val codepointSub: string -> int -> int -> string
+val codepointSub: string -> int -> int -> (int, Codepoint_types.t) Hashtbl.t -> string
