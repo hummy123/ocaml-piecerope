@@ -1,48 +1,38 @@
 type t = {
-  mutable buffer: Piece_buffer.t;
+  buffer: Piece_buffer.t;
   pieces: Piece_tree.t;
+  lookup: (int, Codepoint_types.t) Hashtbl.t;
 }
 
-let rec find_line_breaks (str: string) strLengthMinus1 pcStart pos acc =
-  if pos > strLengthMinus1 then
-    List.rev acc |> Array.of_list
-  else
-    let cur = str.[pos] in
-    if cur = '\n' then
-      find_line_breaks str strLengthMinus1 pcStart (pos + 1) ((pos + pcStart)::acc)
-    else if cur = '\r' then
-      let acc = (pos + pcStart)::acc in
-      if pos = strLengthMinus1 then
-        List.rev acc |> Array.of_list
-      else
-        let next = str.[pos + 1] in
-        if next = '\n' then
-          find_line_breaks str strLengthMinus1 pcStart (pos + 2) acc
-        else
-          find_line_breaks str strLengthMinus1 pcStart (pos + 1) acc
-    else
-      find_line_breaks str strLengthMinus1 pcStart (pos + 1) acc
+let empty = { 
+  buffer = Piece_buffer.empty; 
+  pieces = Piece_tree.empty; 
+  lookup = Codepoint_values.hashTableGen()
+}
 
 let insert index (str: string) piecerope =
   let pcStart = Piece_buffer.size piecerope.buffer in
-  let pcLines = find_line_breaks str (String.length str - 1) pcStart 0 [] in
-  let _ = piecerope.buffer <- Piece_buffer.append str piecerope.buffer in
-  let pieces = Piece_tree.insert_tree index pcStart (String.length str) pcLines piecerope.pieces in
-  {piecerope with pieces = pieces}
+  let open String_processor in
+  let (pcLength, pcLines) = char_length_and_line_breaks str pcStart in
+  let buffer = Piece_buffer.append str pcLength piecerope.buffer in
+  let pieces = Piece_tree.insert_tree index pcStart pcLength pcLines piecerope.pieces in
+  { piecerope with buffer; pieces }
 
 let prepend (str: string) piecerope =
   let pcStart = Piece_buffer.size piecerope.buffer in
-  let pcLines = find_line_breaks str (String.length str - 1) pcStart 0 [] in
-  let _ = piecerope.buffer <- Piece_buffer.append str piecerope.buffer in
-  let pieces = Piece_tree.prepend pcStart (String.length str) pcLines piecerope.pieces in
-  {piecerope with pieces = pieces}
+  let open String_processor in
+  let (pcLength, pcLines) = char_length_and_line_breaks str pcStart in
+  let buffer = Piece_buffer.append str pcLength piecerope.buffer in
+  let pieces = Piece_tree.prepend pcStart pcLength pcLines piecerope.pieces in
+  { piecerope with buffer; pieces }
 
 let append (str: string) piecerope =
   let pcStart = Piece_buffer.size piecerope.buffer in
-  let pcLines = find_line_breaks str (String.length str - 1) pcStart 0 [] in
-  let _ = piecerope.buffer <- Piece_buffer.append str piecerope.buffer in
-  let pieces = Piece_tree.append pcStart (String.length str) pcLines piecerope.pieces in
-  {piecerope with pieces = pieces}
+  let open String_processor in
+  let (pcLength, pcLines) = char_length_and_line_breaks str pcStart in
+  let buffer = Piece_buffer.append str pcLength piecerope.buffer in
+  let pieces = Piece_tree.append pcStart pcLength pcLines piecerope.pieces in
+  { piecerope with buffer; pieces }
 
 let delete start length piecerope =
   let pieces = Piece_tree.delete_tree start length piecerope.pieces in
@@ -57,7 +47,6 @@ let get_line line piecerope =
 let get_line_and_line_start_index  line piecerope =
   Piece_tree.get_line_and_line_start_index  line piecerope.pieces piecerope.buffer
 
-let empty = { buffer = Piece_buffer.empty; pieces = Piece_tree.empty }
 
 let get_text piecerope = Piece_tree.get_text piecerope.pieces piecerope.buffer
 

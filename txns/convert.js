@@ -1,7 +1,7 @@
 const fs = require("fs")
 const path = require("path")
 
-const filename = "sephblog"
+const filename = "rustcode"
 
 const inputPath = path.resolve(`./${filename}.json`)
 

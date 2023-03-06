@@ -8,7 +8,7 @@ val empty: t
 val size: t -> int
 
 (** Appends a string to a buffer. *)
-val append: string -> t -> t 
+val append: string -> int -> t -> t 
 
 (** Retrieves a substring from a buffer. *)
 val substring: int -> int -> t -> string
