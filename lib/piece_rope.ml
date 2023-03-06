@@ -1,13 +1,11 @@
 type t = {
   buffer: Piece_buffer.t;
   pieces: Piece_tree.t;
-  lookup: (int, Codepoint_types.t) Hashtbl.t;
 }
 
 let empty = { 
   buffer = Piece_buffer.empty; 
   pieces = Piece_tree.empty; 
-  lookup = Codepoint_values.hashTableGen()
 }
 
 let insert index (str: string) piecerope =
@@ -16,7 +14,7 @@ let insert index (str: string) piecerope =
   let (pcLength, pcLines) = char_length_and_line_breaks str pcStart in
   let buffer = Piece_buffer.append str pcLength piecerope.buffer in
   let pieces = Piece_tree.insert_tree index pcStart pcLength pcLines piecerope.pieces in
-  { piecerope with buffer; pieces }
+  { buffer; pieces }
 
 let prepend (str: string) piecerope =
   let pcStart = Piece_buffer.size piecerope.buffer in
@@ -24,7 +22,7 @@ let prepend (str: string) piecerope =
   let (pcLength, pcLines) = char_length_and_line_breaks str pcStart in
   let buffer = Piece_buffer.append str pcLength piecerope.buffer in
   let pieces = Piece_tree.prepend pcStart pcLength pcLines piecerope.pieces in
-  { piecerope with buffer; pieces }
+  { buffer; pieces }
 
 let append (str: string) piecerope =
   let pcStart = Piece_buffer.size piecerope.buffer in
@@ -32,11 +30,11 @@ let append (str: string) piecerope =
   let (pcLength, pcLines) = char_length_and_line_breaks str pcStart in
   let buffer = Piece_buffer.append str pcLength piecerope.buffer in
   let pieces = Piece_tree.append pcStart pcLength pcLines piecerope.pieces in
-  { piecerope with buffer; pieces }
+  { buffer; pieces }
 
 let delete start length piecerope =
   let pieces = Piece_tree.delete_tree start length piecerope.pieces in
-  { piecerope with pieces = pieces; }
+  { piecerope with pieces; }
 
 let substring start length piecerope =
   Piece_tree.substring start length piecerope.pieces piecerope.buffer
@@ -46,7 +44,6 @@ let get_line line piecerope =
 
 let get_line_and_line_start_index  line piecerope =
   Piece_tree.get_line_and_line_start_index  line piecerope.pieces piecerope.buffer
-
 
 let get_text piecerope = Piece_tree.get_text piecerope.pieces piecerope.buffer
 
