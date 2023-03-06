@@ -11,7 +11,7 @@ const {
 
 // Counter to stop applying transactinos after a certainn nmber of steps (useful for debugging)
 let counter = 0
-const COUNTER_STOP = 4329
+const COUNTER_STOP = 999999999
 
 // Generate array of tuples that can be executed in code.
 let data = `

@@ -2,5 +2,4 @@
 val char_length_and_line_breaks :  string -> int -> int * int array
 
 (** Given an index and a string, clips to the start of the code point at/before the index. *)
-val clip_to_start : int -> string -> int
-
+val codepointSub: string -> int -> int -> string

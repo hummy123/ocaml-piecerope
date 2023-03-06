@@ -43,15 +43,24 @@ let char_length_and_line_breaks (str: string) (pcStart: int) =
   in
   get 0 0 [] false
 
-(* Functions for clipping to start of code point. *)
-let is_start chr =
-  match chr with
-  | '\x00' .. '\xf7' -> true
-  | _ -> false
-
-let rec clip_to_start idx str =
-  if is_start (String.unsafe_get str idx) || idx = 0 then
-    idx
-  else
-    clip_to_start (idx - 1) str
+(* Gets a substring from a string with a codepoint inside it.*)
+let codepointSub (str: string) (start: int) (length: int) =
+  let finish = start + length in
+  let rec sub strPos cdPos strStart strFinish =
+    if strPos = String.length str then
+      String.sub str strStart (String.length str - strStart)
+    else
+      let strStart = 
+        if cdPos = start then
+          strPos
+        else
+          strStart
+      in
+      if cdPos = finish then
+        String.sub str strStart (strPos - strStart)
+      else
+        let charLegnth = char_bytes (String.unsafe_get str strPos) in
+        sub (strPos + charLegnth) (cdPos + 1) strStart strFinish
+  in
+  sub 0 0 0 0
 
