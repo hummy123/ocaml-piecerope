@@ -18,12 +18,12 @@ let utf16_length chr =
 
 (** Counts the length of the string in UTF-16 and Unicode code points, 
     and builds an array of line breaks in terms of UTF-8 as that is OCaml's native string encoding. *)
-let char_length_and_line_breaks (str: string) (pcStart: int) =
+let count_string_stats (str: string) (pcStart: int) =
   let rec get utf8Pos utf16Cntr codepointCntr lineBreaks prevIsCr =
     if utf8Pos >= String.length str then
-      codepointCntr, lineBreaks |> List.rev |> Array.of_list
+      utf16Cntr, codepointCntr, lineBreaks |> List.rev |> Array.of_list
     else
-      let chr = (String.unsafe_get str utf8Pos) in
+      let chr = String.unsafe_get str utf8Pos in
       let utf8Length = utf8_length chr in
       let utf16Length = utf16_length chr in
 

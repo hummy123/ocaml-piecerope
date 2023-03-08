@@ -11,25 +11,28 @@ let empty = {
 let insert index (str: string) piecerope =
   let pcStart = Piece_buffer.size piecerope.buffer in
   let open String_processor in
-  let (pcLength, pcLines) = char_length_and_line_breaks str pcStart in
-  let buffer = Piece_buffer.append str pcLength piecerope.buffer in
-  let pieces = Piece_tree.insert_tree index pcStart pcLength pcLines piecerope.pieces in
+  let (utf16length, utf32length, pcLines) = count_string_stats str pcStart in
+  let utf8length = String.length str in
+  let buffer = Piece_buffer.append str utf32length piecerope.buffer in
+  let pieces = Piece_tree.insert_tree index pcStart utf32length pcLines piecerope.pieces in
   { buffer; pieces }
 
 let prepend (str: string) piecerope =
   let pcStart = Piece_buffer.size piecerope.buffer in
   let open String_processor in
-  let (pcLength, pcLines) = char_length_and_line_breaks str pcStart in
-  let buffer = Piece_buffer.append str pcLength piecerope.buffer in
-  let pieces = Piece_tree.prepend pcStart pcLength pcLines piecerope.pieces in
+  let (utf16length, utf32length, pcLines) = count_string_stats str pcStart in
+  let utf8length = String.length str in
+  let buffer = Piece_buffer.append str utf32length piecerope.buffer in
+  let pieces = Piece_tree.prepend pcStart utf32length pcLines piecerope.pieces in
   { buffer; pieces }
 
 let append (str: string) piecerope =
   let pcStart = Piece_buffer.size piecerope.buffer in
   let open String_processor in
-  let (pcLength, pcLines) = char_length_and_line_breaks str pcStart in
-  let buffer = Piece_buffer.append str pcLength piecerope.buffer in
-  let pieces = Piece_tree.append pcStart pcLength pcLines piecerope.pieces in
+  let (utf16length, utf32length, pcLines) = count_string_stats str pcStart in
+  let utf8length = String.length str in
+  let buffer = Piece_buffer.append str utf32length piecerope.buffer in
+  let pieces = Piece_tree.append pcStart utf32length pcLines piecerope.pieces in
   { buffer; pieces }
 
 let delete start length piecerope =

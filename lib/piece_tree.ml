@@ -1,36 +1,70 @@
 type node = {
-  start: int;
-  length: int;
-  left_idx: int;
-  right_idx: int;
-  left_lns: int;
-  right_lns: int;
-  lines: int array;
+  start:            int;
+  utf8_length:      int;
+  utf16_length:     int;
+  utf32_length:     int;
+  lines:            int array;
+}
+
+type metadata = {
+  utf8_subtree:   int;
+  utf16_subtree:  int;
+  utf32_subtree:  int;
+  subtree_lines:  int;
+}
+
+let create_metadata utf8 utf16 utf32 lines = {
+  utf8_subtree  = utf8;
+  utf16_subtree = utf16;
+  utf32_subtree = utf32;
+  subtree_lines = lines;
+}
+
+let emptyMetadata = {
+  utf8_subtree  = 0;
+  utf16_subtree = 0;
+  utf32_subtree = 0;
+  subtree_lines = 0;
 }
 
 type t = 
   | PE
-  | PT of int * t * node * t
+  | PT of int * t * metadata * node * metadata * t
 
 let ht = function
   | PE -> 0
-  | PT(h, _, _, _) -> h
+  | PT(h, _, _, _, _, _) -> h
 
 (* Getting narious node data. *)
-let n_length node = 
+let utf8_length node = 
   match node with
   | PE -> 0
-  | PT(_, _, v, _) -> v.length
+  | PT(_, _, _, v, _, _) -> v.utf8_length
+
+let utf16_length node = 
+  match node with
+  | PE -> 0
+  | PT(_, _, _, v, _, _) -> v.utf16_length
+
+let utf32_length node = 
+  match node with
+  | PE -> 0
+  | PT(_, _, _, v, _, _) -> v.utf32_length
 
 let n_lines node =
   match node with
   | PE -> 0
-  | PT(_, _, v, _) -> Array.length v.lines
+  | PT(_, _, _, v, _, _) -> Array.length v.lines
 
 let tree_size node =
   match node with
-  | PE -> 0
-  | PT(_, _, v, _) -> v.left_idx + v.right_idx + v.length
+  | PE -> emptyMetadata
+  | PT(_, _, lm, v, rm, _) -> 
+      let utf8 = lm.utf8_subtree + rm.utf8_subtree + v.utf8_length in
+      let utf16 = lm.utf16_subtree + rm.utf16_subtree + v.utf16_length in
+      let utf32 = lm.utf32_subtree + rm.utf32_subtree + v.utf32_length in
+      let lines = lm.subtree_lines + rm.subtree_lines + Array.length v.lines in
+      create_metadata utf8 utf16 utf32 lines
 
 let tree_lines node =
   match node with
@@ -272,7 +306,7 @@ let insert_tree insIndex pcStart pcLength pcLines tree =
     match node with
     | PE -> PT(1, PE, create pcStart pcLength pcLines, PE) |> cont
     | PT(_, l, v, r) when insIndex < curIndex ->
-        let nextIndex = curIndex - n_length l - size_right l in
+        let nextIndex = curIndex - utf32_length l - size_right l in
         let v' = plus_left pcLength (Array.length pcLines) v in
         ins nextIndex l (fun l' -> 
           balL l' v' r |> cont
@@ -336,7 +370,7 @@ let delete_tree start length tree =
     match node with
     | PE -> PE |> cont
     | PT(_, l, v, r) when in_range start curIndex finish (curIndex + v.length) ->
-        let recurseLeftIndex = curIndex - n_length l - size_right l in
+        let recurseLeftIndex = curIndex - utf32_length l - size_right l in
         let recurseRightIndex = curIndex + v.length + size_left r in
 
         del recurseLeftIndex l (fun l' ->
@@ -349,7 +383,7 @@ let delete_tree start length tree =
           )
         )
     | PT(_, l, v, r) when start_is_in_range start curIndex finish (curIndex + v.length) ->
-        let recurseLeftIndex = curIndex - n_length l - size_right l in
+        let recurseLeftIndex = curIndex - utf32_length l - size_right l in
         del recurseLeftIndex l (fun l' -> 
           let (newStart, newLength, newLines) = delete_at_start curIndex finish v in
           let v' =  { v with
@@ -387,7 +421,7 @@ let delete_tree start length tree =
                   } in
         balR l v' newRight |> cont
     | PT(_, l, v, r) when start < curIndex ->
-        let recurseLeftIndex = curIndex - n_length l - size_right l in
+        let recurseLeftIndex = curIndex - utf32_length l - size_right l in
         del recurseLeftIndex l (fun l' -> 
           balR l' v r |> cont
         )
@@ -421,7 +455,7 @@ let substring start length tree buffer =
         let nodeText = text v buffer in
 
         let recurseRightIndex = nodeEndIndex + size_left r in
-        let recurseLeftIndex = curIndex - n_length l - size_right l in
+        let recurseLeftIndex = curIndex - utf32_length l - size_right l in
 
         sub recurseRightIndex r acc (fun right ->
           sub recurseLeftIndex l (nodeText::right) (fun x -> x |> cont)
@@ -430,7 +464,7 @@ let substring start length tree buffer =
     (* The start of the substring range is in the node, whi|ch| means the end of this node. *)
     | PT(_, l, v, _) when start_is_in_range start curIndex finish (curIndex + v.length) ->
         let nodeText = text_at_start curIndex finish v buffer in
-        let recurseLeftIndex = curIndex - n_length l - size_right l in
+        let recurseLeftIndex = curIndex - utf32_length l - size_right l in
         sub recurseLeftIndex l (nodeText::acc) (fun x -> x |> cont)
 
     (* The mi|d|dle of the current node is in the substring range. *)
@@ -440,7 +474,7 @@ let substring start length tree buffer =
     (* Below two cases navigate to the next node when the substring range is outside the current node. *)
     (* When the current node is after the substring's end range. *)
     | PT(_, l, _, _) when start < curIndex ->
-        let recurseLeftIndex = curIndex - n_length l - size_right l in
+        let recurseLeftIndex = curIndex - utf32_length l - size_right l in
         sub recurseLeftIndex l acc (fun x -> x |> cont)
     (* When the current node is before the substring's start range. *)
     | PT(_, _, v, r) when finish > curIndex + v.length ->
@@ -494,7 +528,7 @@ let get_line_and_line_start_index line tree buffer =
         let recurseLeftLine = curLine - n_lines l - lines_right l in
 
         let recurseRightIndex = curIndex + v.length + size_left r in
-        let recurseLeftIndex = curIndex - n_length l - size_right l in
+        let recurseLeftIndex = curIndex - utf32_length l - size_right l in
 
         get recurseRightLine recurseRightIndex r acc (fun (acc, _) -> 
           get recurseLeftLine recurseLeftIndex l (nodeText::acc) (fun (acc, lidx) ->
@@ -510,7 +544,7 @@ let get_line_and_line_start_index line tree buffer =
         let nodeText = at_start_and_length v.start length buffer in
 
         let recurseLeftLine = curLine - n_lines l - lines_right l in
-        let recurseLeftIndex = curIndex - n_length l - size_right l in
+        let recurseLeftIndex = curIndex - utf32_length l - size_right l in
 
         get recurseLeftLine recurseLeftIndex l (nodeText::acc) (fun (acc, lidx) -> 
           match lidx with
@@ -528,7 +562,7 @@ let get_line_and_line_start_index line tree buffer =
 
     | PT(_, l, _, _) when line < curLine ->
         let recurseLeftLine = curLine - n_lines l - lines_right l in
-        let recurseLeftIndex = curIndex - n_length l - size_right l in
+        let recurseLeftIndex = curIndex - utf32_length l - size_right l in
         get recurseLeftLine recurseLeftIndex l acc (fun x -> x |> cont)
 
     | PT(_, _, v, r) when line > curLine + Array.length v.lines ->
