@@ -1,12 +1,19 @@
 (* Functions for counting code points and line breaks. *)
 
-(** Tuple returns length of this code point in UTF-8 first and secondly length of code point in UTF-16. *)
-let char_bytes chr =
+(** Given the first byte of a UTF-8 code point, returns the length of that character in UTF-8. *) 
+let utf8_length chr =
   match chr with
-  | '\x00' .. '\x7f' -> 1, 1 
-  | '\xc0' .. '\xdf' -> 2, 1
-  | '\xe0' .. '\xef' -> 3, 1
-  | '\xf0' .. '\xf7' -> 4, 2
+  | '\x00' .. '\x7f' -> 1 
+  | '\xc0' .. '\xdf' -> 2
+  | '\xe0' .. '\xef' -> 3
+  | '\xf0' .. '\xf7' -> 4
+  | _ -> failwith "invalid utf-8 start"
+
+(** Given the first byte of a UTF-8 code point, returns the length of that character in UTF-16. *) 
+let utf16_length chr =
+  match chr with
+  | '\x00' .. '\xef' -> 1
+  | '\xf0' .. '\xf7' -> 2
   | _ -> failwith "invalid utf-8 start"
 
 (** Counts the length of the string in UTF-16 and Unicode code points, 
@@ -16,8 +23,9 @@ let char_length_and_line_breaks (str: string) (pcStart: int) =
     if utf8Pos >= String.length str then
       codepointCntr, lineBreaks |> List.rev |> Array.of_list
     else
-      let (utf8Length, utf16Length) = char_bytes (String.unsafe_get str utf8Pos) in
-      let chr = String.unsafe_get str utf8Pos in
+      let chr = (String.unsafe_get str utf8Pos) in
+      let utf8Length = utf8_length chr in
+      let utf16Length = utf16_length chr in
 
       let lineBreaks =
         if chr = '\r' || (chr = '\n' && not prevIsCr) then
@@ -29,7 +37,7 @@ let char_length_and_line_breaks (str: string) (pcStart: int) =
   in
   get 0 0 0 [] false
 
-(* Gets a substring from a string with a codepoint inside it.*)
+(* Gets a substring from a string that has a non-ASCII character inside it.*)
 let codepointSub (str: string) (start: int) (length: int) =
   let finish = start + length in
   let rec sub strPos cdPos strStart strFinish =
@@ -45,7 +53,7 @@ let codepointSub (str: string) (start: int) (length: int) =
       if cdPos = finish then
         String.sub str strStart (strPos - strStart)
       else
-        let (utf8Length, _) = char_bytes (String.unsafe_get str strPos) in
+        let utf8Length = utf8_length (String.unsafe_get str strPos) in
         sub (strPos + utf8Length) (cdPos + 1) strStart strFinish
   in
   sub 0 0 0 0
