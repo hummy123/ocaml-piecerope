@@ -1,6 +1,12 @@
 (** A tree for a Pieeerope. *)
 type t
 
+(** A node in the Piece_tree. *)
+type node
+
+(** Creates a new node that can be inserted into a Piece_tree. *)
+val create_node : int -> int -> int -> int -> int array -> node
+
 (** An empty Piece_tree *)
 val empty : t
 

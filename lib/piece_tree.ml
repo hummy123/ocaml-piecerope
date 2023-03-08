@@ -121,7 +121,7 @@ let lines_right node =
 let top_level_cont x = x
 
 (* Creating and editing node data. *)
-let create start utf8length utf16length utf32length lines = { 
+let create_node start utf8length utf16length utf32length lines = { 
   start = start; 
   utf8_length = utf8length; 
   utf16_length = utf16length;
@@ -261,26 +261,29 @@ let at_start_and_length start length buffer =
   Piece_buffer.substring start length buffer
 
 (* AA Tree balancing functions. *)
-let rec fold f x t =
-  match t with
-  | PE -> x
-  | PT(_, l, v, r) ->
-      let x = fold f x l in
-      let x = f x v in
-      fold f x r
+let fold f x t =
+  let rec fld x t cont =
+    match t with
+    | PE -> x
+    | PT(_, l, _, v, _, r) ->
+        fld x l (fun x ->
+          let x = f x v in
+          fld x r (fun x -> x |> cont)
+        )
+  in
+  fld x t
 
 (* Core PieceTree logic. *)
-let is_consecutive v pcStart = v.start + v.length = pcStart
+let is_consecutive v pcStart = v.start + v.utf32_length = pcStart
 
 (** Adds the given piece to the start of the given tree. *)
-let prepend pcStart pcLength pcLines tree =
+let prepend insNode tree =
   let rec pre node cont =
     match node with
-    | PE -> PT(1, PE, create pcStart pcLength pcLines, PE) |> cont
-    | PT(_, l, v, r) ->
+    | PE -> mk PE insNode PE |> cont
+    | PT(_, l, _, v, _, r) ->
         pre l (fun l' ->
-          let v' = plus_left pcLength (Array.length pcLines) v in
-          balL l' v' r |> cont
+          balL l' v r |> cont
         )
   in
   pre tree top_level_cont
@@ -288,83 +291,93 @@ let prepend pcStart pcLength pcLines tree =
 (** Adds the given piece to the end of the given tree. 
     If the previous insert on the tree was done at the very end,
     we merge with the last piece rather than creating a new node to keep the tree more shallow. *)
-let append pcStart pcLength pcLines tree =
+let append insNode tree =
   let rec app node cont =
     match node with
-    | PE -> PT(1, PE, create pcStart pcLength pcLines, PE) |> cont
-    | PT(h, l, v, PE) when is_consecutive v pcStart ->
-        let v'Lines = Array.append v.lines pcLines in
-        let v' = { v with length = v.length + pcLength; lines = v'Lines } in
-        PT(h, l, v', PE) |> cont
-    | PT(_, l, v, r) ->
+    | PE -> mk PE insNode PE |> cont
+    | PT(_, l, _, v, _, PE) when is_consecutive v insNode.start ->
+        let v'Lines = Array.append v.lines insNode.lines in
+        let v' = 
+          { v with 
+          lines = v'Lines;
+          utf8_length = v.utf8_length + insNode.utf8_length; 
+          utf16_length = v.utf16_length + insNode.utf16_length; 
+          utf32_length = v.utf32_length + insNode.utf32_length; } 
+        in
+        mk l v' PE |> cont
+    | PT(_, l, _, v, _, r) ->
         app r (fun r' ->
-          let v' = plus_right pcLength (Array.length pcLines) v in
-          balR l v' r' |> cont
+          balR l v r' |> cont
         )
   in
   app tree top_level_cont
 
 (** Same as above append functino but omits the is_consecutive check. 
     Used when we split a piece and is not meant to be a public function. *)
-let ins_max pcStart pcLength (pcLines: int array) tree = 
+let ins_max insNode tree = 
   let rec max node cont =
     match node with
-    | PE -> PT(1, PE, create pcStart pcLength pcLines, PE) |> cont
-    | PT(_, l, v, r) ->
+    | PE -> mk PE insNode PE |> cont
+    | PT(_, l, _, v, _, r) ->
         max r (fun r' ->
-          let v' = plus_right pcLength (Array.length pcLines) v in
-          balR l v' r' |> cont
+          balR l v r' |> cont
         )
   in
   max tree top_level_cont
 
-let insert_tree insIndex pcStart pcLength pcLines tree =
+let insert_tree insIndex insNode tree =
   let rec ins curIndex node cont =
     match node with
-    | PE -> PT(1, PE, create pcStart pcLength pcLines, PE) |> cont
-    | PT(_, l, v, r) when insIndex < curIndex ->
+    | PE -> mk PE insNode PE |> cont
+    | PT(_, l, _, v, _, r) when insIndex < curIndex ->
         let nextIndex = curIndex - utf32_length l - utf32_size_right l in
-        let v' = plus_left pcLength (Array.length pcLines) v in
         ins nextIndex l (fun l' -> 
-          balL l' v' r |> cont
+          balL l' v r |> cont
         )
-    | PT(_, l, v, r) when insIndex > curIndex + v.length ->
-        let nextIndex = curIndex + v.length + utf32_size_left r in
-        let v' = plus_right pcLength (Array.length pcLines) v in
+    | PT(_, l, _, v, _, r) when insIndex > curIndex + v.utf32_length ->
+        let nextIndex = curIndex + v.utf32_length + utf32_size_left r in
         ins nextIndex r (fun r' ->
-          balR l v' r' |> cont
+          balR l v r' |> cont
         )
-    | PT(_, l, v, r) when insIndex = curIndex ->
-        let v' = plus_left pcLength (Array.length pcLines) v in
-        let l' = ins_max pcStart pcLength pcLines l in
-        balL l' v' r |> cont
-    | PT(h, l, v, r) when insIndex = curIndex + v.length && is_consecutive v pcStart ->
-        let v'Lines = Array.append v.lines pcLines in
-        let v' = { v with length = v.length + pcLength; lines = v'Lines } in
-        PT(h, l, v', r) |> cont
-    | PT(_, l, v, r) when insIndex = curIndex + v.length ->
-        let v' = plus_right pcLength (Array.length pcLines) v in
-        let r' = prepend pcStart pcLength pcLines r in
-        balR l v' r' |> cont
-    | PT(_, l, v, r) ->
-        let difference = insIndex - curIndex in
-        let rStart = v.start + difference in
-        let rLength = v.length - difference in
-        
-        let (leftLines, rightLines) = split_lines rStart v.lines in
-        
-        let l' = ins_max v.start difference leftLines l in
-        let r' = prepend rStart rLength rightLines r in
-        let v' =  { 
-                    start = pcStart;
-                    length = pcLength;
-                    lines = pcLines;
-                    left_idx = v.left_idx + difference;
-                    left_lns = v.left_lns + Array.length leftLines;
-                    right_idx = v.right_idx + rLength;
-                    right_lns = v.right_lns + Array.length rightLines;
-                  } in
-        (mk l' v' r') |> cont
+    | PT(_, l, _, v, _, r) when insIndex = curIndex ->
+        let l' = ins_max insNode l in
+        balL l' v r |> cont
+    | PT(_, l, _, v, _, r) when insIndex = curIndex + v.utf32_length && is_consecutive v insNode.start ->
+        let v'Lines = Array.append v.lines insNode.lines in
+        let v' = 
+          { v with 
+          lines = v'Lines;
+          utf8_length = v.utf8_length + insNode.utf8_length; 
+          utf16_length = v.utf16_length + insNode.utf16_length; 
+          utf32_length = v.utf32_length + insNode.utf32_length; } in
+        mk l v' r |> cont
+    | PT(_, l, _, v, _, r) when insIndex = curIndex + v.utf32_length ->
+        let r' = prepend insNode r in
+        balR l v r' |> cont
+    | PT(_, l, _, v, _, r) ->
+        (* Requires no special handling as this node only contains ASCII. *)
+        if v.utf32_length = v.utf8_length then
+          let difference = insIndex - curIndex in
+          let rStart = v.start + difference in
+          let rLength = v.length - difference in
+          
+          let (leftLines, rightLines) = split_lines rStart v.lines in
+          
+          let l' = ins_max v.start difference leftLines l in
+          let r' = prepend rStart rLength rightLines r in
+          let v' =  { 
+                      start = pcStart;
+                      length = pcLength;
+                      lines = pcLines;
+                      left_idx = v.left_idx + difference;
+                      left_lns = v.left_lns + Array.length leftLines;
+                      right_idx = v.right_idx + rLength;
+                      right_lns = v.right_lns + Array.length rightLines;
+                    } in
+          (mk l' v' r') |> cont
+        (* Placeholder: figure out how to split non-ASCII. *)
+        else
+
     in
     ins (utf32_size_left tree) tree top_level_cont
 
