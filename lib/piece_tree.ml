@@ -241,7 +241,7 @@ let delete_at_end curIndex start piece =
   in
   (length, lines)
 
-let text piece buffer = Piece_buffer.substring piece.start piece.length buffer
+let text piece buffer = Piece_buffer.substring piece.start piece.utf32_length buffer
 
 let text_in_range curIndex start finish piece buffer =
   let textStart = start - curIndex + piece.start in
@@ -254,7 +254,7 @@ let text_at_start curIndex finish piece buffer =
 
 let text_at_end curIndex start piece buffer =
   let textStart = start - curIndex + piece.start in
-  let textLength = piece.start + piece.length - textStart in
+  let textLength = piece.start + piece.utf32_length - textStart in
   Piece_buffer.substring textStart textLength buffer
 
 let at_start_and_length start length buffer =
@@ -271,7 +271,7 @@ let fold f x t =
           fld x r (fun x -> x |> cont)
         )
   in
-  fld x t
+  fld x t top_level_cont
 
 (* Core PieceTree logic. *)
 let is_consecutive v pcStart = v.start + v.utf32_length = pcStart
@@ -477,14 +477,14 @@ let substring start length tree buffer =
         acc |> cont
     (* Cases when the current node is at least partially in the substring range. *)
     (* The end of the current substring range is in this node, |whi|ch means the start of this node. *)
-    | PT(_, _, v, r) when end_is_in_range start curIndex finish (curIndex + v.length) ->
+    | PT(_, _, _, v, _, r) when end_is_in_range start curIndex finish (curIndex + v.utf32_length) ->
         let nodeText = text_at_end curIndex start v buffer in
-        let recurseRightIndex = curIndex + v.length + utf32_size_left r in
+        let recurseRightIndex = curIndex + v.utf32_length + utf32_size_left r in
         sub recurseRightIndex r acc (fun x -> nodeText::x |> cont)
 
     (* The currennt node is |fully| within the substring range. *)
-    | PT(_, l, v, r) when in_range start curIndex finish (curIndex + v.length) ->
-        let nodeEndIndex = curIndex + v.length in
+    | PT(_, l, _, v, _, r) when in_range start curIndex finish (curIndex + v.utf32_length) ->
+        let nodeEndIndex = curIndex + v.utf32_length in
         let nodeText = text v buffer in
 
         let recurseRightIndex = nodeEndIndex + utf32_size_left r in
@@ -495,25 +495,25 @@ let substring start length tree buffer =
         )
 
     (* The start of the substring range is in the node, whi|ch| means the end of this node. *)
-    | PT(_, l, v, _) when start_is_in_range start curIndex finish (curIndex + v.length) ->
+    | PT(_, l, _, v, _, _) when start_is_in_range start curIndex finish (curIndex + v.utf32_length) ->
         let nodeText = text_at_start curIndex finish v buffer in
         let recurseLeftIndex = curIndex - utf32_length l - utf32_size_right l in
         sub recurseLeftIndex l (nodeText::acc) (fun x -> x |> cont)
 
     (* The mi|d|dle of the current node is in the substring range. *)
-    | PT(_, _, v, _) when middle_is_in_range start curIndex finish (curIndex + v.length) ->
+    | PT(_, _, _, v, _, _) when middle_is_in_range start curIndex finish (curIndex + v.utf32_length) ->
         [text_in_range curIndex start finish v buffer] |> cont
 
     (* Below two cases navigate to the next node when the substring range is outside the current node. *)
     (* When the current node is after the substring's end range. *)
-    | PT(_, l, _, _) when start < curIndex ->
+    | PT(_, l, _, _,_,  _) when start < curIndex ->
         let recurseLeftIndex = curIndex - utf32_length l - utf32_size_right l in
         sub recurseLeftIndex l acc (fun x -> x |> cont)
     (* When the current node is before the substring's start range. *)
-    | PT(_, _, v, r) when finish > curIndex + v.length ->
-        let recurseRightIndex = curIndex + v.length + utf32_size_left r in
+    | PT(_, _, _, v, _, r) when finish > curIndex + v.utf32_length ->
+        let recurseRightIndex = curIndex + v.utf32_length + utf32_size_left r in
         sub recurseRightIndex r acc (fun x -> x |> cont)
-    | PT(_, _, _, _) -> 
+    | PT(_, _, _, _, _, _) -> 
         failwith "unreachable Buffer.substring case"
  in
  String.concat "" (sub (utf32_size_left tree) tree [] top_level_cont)
@@ -537,30 +537,30 @@ let get_line_and_line_start_index line tree buffer =
     | PE -> 
         (acc, None) |> cont
 
-    | PT(_, _, v, r) when start_of_line_in_node curLine line (curLine + Array.length v.lines) ->
+    | PT(_, _, _, v, _, r) when start_of_line_in_node curLine line (curLine + Array.length v.lines) ->
         (* Start of line in terms of piece offset. *)
         let lineStart = (Array.unsafe_get v.lines (Array.length v.lines - 1)) + 1 in
-        let length = v.length - lineStart + v.start in
+        let length = v.utf32_length - lineStart + v.start in
         let nodeText = at_start_and_length lineStart length buffer in
 
         (* Index where line starts in terms of piece tree (not buffer). *)
-        let lineStartIndex = Some (curIndex + v.length - lineStart) in
+        let lineStartIndex = Some (curIndex + v.utf32_length - lineStart) in
 
         let recurseRightLine = curLine + Array.length v.lines + lines_left r in
-        let recurseRightIndex = curIndex + v.length + utf32_size_left r in
+        let recurseRightIndex = curIndex + v.utf32_length + utf32_size_left r in
 
         get recurseRightLine recurseRightIndex r acc (fun (acc, _) -> 
           (nodeText::acc, lineStartIndex) |> cont
         )
 
-    | PT(_, l, v, r) when node_is_in_line curLine line (curLine + Array.length v.lines) ->
+    | PT(_, l, _, v, _, r) when node_is_in_line curLine line (curLine + Array.length v.lines) ->
         let nodeEndLine = curLine + Array.length v.lines in
         let nodeText = text v buffer in
 
         let recurseRightLine = nodeEndLine + lines_left r in
         let recurseLeftLine = curLine - n_lines l - lines_right l in
 
-        let recurseRightIndex = curIndex + v.length + utf32_size_left r in
+        let recurseRightIndex = curIndex + v.utf32_length + utf32_size_left r in
         let recurseLeftIndex = curIndex - utf32_length l - utf32_size_right l in
 
         get recurseRightLine recurseRightIndex r acc (fun (acc, _) -> 
@@ -571,7 +571,7 @@ let get_line_and_line_start_index line tree buffer =
           )
         )
 
-    | PT(_, l, v, _) when end_of_line_is_in_node curLine line (curLine + Array.length v.lines) ->
+    | PT(_, l, _, v, _, _) when end_of_line_is_in_node curLine line (curLine + Array.length v.lines) ->
         (* + 1 gives us \n in string and - v.Start takes us to piece offset *)
         let length: int = (Array.unsafe_get v.lines 0) + 1 - v.start in
         let nodeText = at_start_and_length v.start length buffer in
@@ -585,7 +585,7 @@ let get_line_and_line_start_index line tree buffer =
           | None -> (acc, Some curIndex) |> cont
         )
 
-    | PT(_, _, v, _) when line_is_in_node curLine line (curLine + Array.length v.lines) ->
+    | PT(_, _, _, v, _, _) when line_is_in_node curLine line (curLine + Array.length v.lines) ->
         let lineDifference = line - curLine in
         let lineStart = (Array.unsafe_get v.lines (lineDifference - 1)) + 1 in
         let lineLength = (Array.unsafe_get v.lines lineDifference) - lineStart + 1 in
@@ -593,17 +593,17 @@ let get_line_and_line_start_index line tree buffer =
         let lineStartIndex = Some ((lineStart - v.start) - curIndex) in
         ([at_start_and_length lineStart lineLength buffer], lineStartIndex) |> cont
 
-    | PT(_, l, _, _) when line < curLine ->
+    | PT(_, l, _, _, _, _) when line < curLine ->
         let recurseLeftLine = curLine - n_lines l - lines_right l in
         let recurseLeftIndex = curIndex - utf32_length l - utf32_size_right l in
         get recurseLeftLine recurseLeftIndex l acc (fun x -> x |> cont)
 
-    | PT(_, _, v, r) when line > curLine + Array.length v.lines ->
+    | PT(_, _, _, v, _, r) when line > curLine + Array.length v.lines ->
         let recurseRightLine = curLine + Array.length v.lines + lines_left r in
-        let recurseRightIndex = curIndex + v.length + utf32_size_left r in
+        let recurseRightIndex = curIndex + v.utf32_length + utf32_size_left r in
         get recurseRightLine recurseRightIndex r acc (fun x -> x |> cont)
 
-    | PT(_, _, _, _) -> 
+    | PT(_, _, _, _, _, _) -> 
         failwith "unreachable Piece_tree.get_line case"
  in
  let (strList, lineStartIndex) = get (lines_left tree) (utf32_size_left tree) tree [] top_level_cont in
@@ -620,15 +620,15 @@ let get_line line tree buffer =
 let empty = PE
 
 let get_text tree buffer = 
-  let lst = fold (fun (acc: string list) pc ->
-    let text = Piece_buffer.substring pc.start pc.length buffer in
+  let lst: string list = fold (fun (acc: string list) pc ->
+    let text = Piece_buffer.substring pc.start pc.utf32_length buffer in
     text::acc
   ) [] tree in
   List.rev lst |> String.concat ""
 
 let fold_text tree buffer state folder =
   fold (fun _ pc ->
-    folder (Piece_buffer.substring pc.start pc.length buffer)
+    folder (Piece_buffer.substring pc.start pc.utf32_length buffer)
   ) state tree
 
 let total_length tree = tree_size tree
