@@ -1,3 +1,5 @@
+let top_level_cont x = x
+
 type node = {
   start:            int;
   utf8_length:      int;
@@ -34,6 +36,18 @@ type t =
 let ht = function
   | PE -> 0
   | PT(h, _, _, _, _, _) -> h
+
+let fold f x t =
+  let rec fld x t cont =
+    match t with
+    | PE -> x
+    | PT(_, l, _, v, _, r) ->
+        fld x l (fun x ->
+          let x = f x v in
+          fld x r (fun x -> x |> cont)
+        )
+  in
+  fld x t top_level_cont
 
 (* Getting narious node data. *)
 let utf8_length node = 
@@ -117,8 +131,6 @@ let lines_right node =
   match node with
   | PE -> 0
   | PT(_, _, _, _, rm, _) -> rm.subtree_lines
-
-let top_level_cont x = x
 
 (* Creating and editing node data. *)
 let create_node start utf8length utf16length utf32length lines = { 
@@ -259,19 +271,6 @@ let text_at_end curIndex start piece buffer =
 
 let at_start_and_length start length buffer =
   Piece_buffer.substring start length buffer
-
-(* AA Tree balancing functions. *)
-let fold f x t =
-  let rec fld x t cont =
-    match t with
-    | PE -> x
-    | PT(_, l, _, v, _, r) ->
-        fld x l (fun x ->
-          let x = f x v in
-          fld x r (fun x -> x |> cont)
-        )
-  in
-  fld x t top_level_cont
 
 (* Core PieceTree logic. *)
 let is_consecutive v pcStart = v.start + v.utf32_length = pcStart
@@ -531,77 +530,82 @@ let start_of_line_in_node nodeStartLine searchLine nodeEndLine =
 let line_is_in_node nodeStartLine searchLine nodeEndLine =
   nodeStartLine < searchLine && nodeEndLine > searchLine
 
+type line_offset = {
+  line: string;
+  utf32_offset: int;
+}
+
 let get_line_and_line_start_index line tree buffer =
-  let rec get curLine curIndex node acc cont =
+  let rec get cur_line cur_u32 node acc cont =
     match node with
     | PE -> 
         (acc, None) |> cont
 
-    | PT(_, _, _, v, _, r) when start_of_line_in_node curLine line (curLine + Array.length v.lines) ->
+    | PT(_, _, _, v, _, r) when start_of_line_in_node cur_line line (cur_line + Array.length v.lines) ->
         (* Start of line in terms of piece offset. *)
         let lineStart = (Array.unsafe_get v.lines (Array.length v.lines - 1)) + 1 in
         let length = v.utf32_length - lineStart + v.start in
         let nodeText = at_start_and_length lineStart length buffer in
 
         (* Index where line starts in terms of piece tree (not buffer). *)
-        let lineStartIndex = Some (curIndex + v.utf32_length - lineStart) in
+        let lineStartIndex = Some (cur_u32 + v.utf32_length - lineStart) in
 
-        let recurseRightLine = curLine + Array.length v.lines + lines_left r in
-        let recurseRightIndex = curIndex + v.utf32_length + utf32_size_left r in
+        let recurseRightLine = cur_line + Array.length v.lines + lines_left r in
+        let recurseRightIndex = cur_u32 + v.utf32_length + utf32_size_left r in
 
         get recurseRightLine recurseRightIndex r acc (fun (acc, _) -> 
           (nodeText::acc, lineStartIndex) |> cont
         )
 
-    | PT(_, l, _, v, _, r) when node_is_in_line curLine line (curLine + Array.length v.lines) ->
-        let nodeEndLine = curLine + Array.length v.lines in
+    | PT(_, l, _, v, _, r) when node_is_in_line cur_line line (cur_line + Array.length v.lines) ->
+        let nodeEndLine = cur_line + Array.length v.lines in
         let nodeText = text v buffer in
 
         let recurseRightLine = nodeEndLine + lines_left r in
-        let recurseLeftLine = curLine - n_lines l - lines_right l in
+        let recurseLeftLine = cur_line - n_lines l - lines_right l in
 
-        let recurseRightIndex = curIndex + v.utf32_length + utf32_size_left r in
-        let recurseLeftIndex = curIndex - utf32_length l - utf32_size_right l in
+        let recurseRightIndex = cur_u32 + v.utf32_length + utf32_size_left r in
+        let recurseLeftIndex = cur_u32 - utf32_length l - utf32_size_right l in
 
         get recurseRightLine recurseRightIndex r acc (fun (acc, _) -> 
           get recurseLeftLine recurseLeftIndex l (nodeText::acc) (fun (acc, lidx) ->
             match lidx with
             | Some _ -> (acc, lidx) |> cont
-            | None -> (acc, Some curIndex) |> cont
+            | None -> (acc, Some cur_u32) |> cont
           )
         )
 
-    | PT(_, l, _, v, _, _) when end_of_line_is_in_node curLine line (curLine + Array.length v.lines) ->
+    | PT(_, l, _, v, _, _) when end_of_line_is_in_node cur_line line (cur_line + Array.length v.lines) ->
         (* + 1 gives us \n in string and - v.Start takes us to piece offset *)
         let length: int = (Array.unsafe_get v.lines 0) + 1 - v.start in
         let nodeText = at_start_and_length v.start length buffer in
 
-        let recurseLeftLine = curLine - n_lines l - lines_right l in
-        let recurseLeftIndex = curIndex - utf32_length l - utf32_size_right l in
+        let recurseLeftLine = cur_line - n_lines l - lines_right l in
+        let recurseLeftIndex = cur_u32 - utf32_length l - utf32_size_right l in
 
         get recurseLeftLine recurseLeftIndex l (nodeText::acc) (fun (acc, lidx) -> 
           match lidx with
           | Some _ -> (acc, lidx) |> cont
-          | None -> (acc, Some curIndex) |> cont
+          | None -> (acc, Some cur_u32) |> cont
         )
 
-    | PT(_, _, _, v, _, _) when line_is_in_node curLine line (curLine + Array.length v.lines) ->
-        let lineDifference = line - curLine in
+    | PT(_, _, _, v, _, _) when line_is_in_node cur_line line (cur_line + Array.length v.lines) ->
+        let lineDifference = line - cur_line in
         let lineStart = (Array.unsafe_get v.lines (lineDifference - 1)) + 1 in
         let lineLength = (Array.unsafe_get v.lines lineDifference) - lineStart + 1 in
 
-        let lineStartIndex = Some ((lineStart - v.start) - curIndex) in
+        let lineStartIndex = Some ((lineStart - v.start) - cur_u32) in
         ([at_start_and_length lineStart lineLength buffer], lineStartIndex) |> cont
 
-    | PT(_, l, _, _, _, _) when line < curLine ->
-        let recurseLeftLine = curLine - n_lines l - lines_right l in
-        let recurseLeftIndex = curIndex - utf32_length l - utf32_size_right l in
+    | PT(_, l, _, _, _, _) when line < cur_line ->
+        let recurseLeftLine = cur_line - n_lines l - lines_right l in
+        let recurseLeftIndex = cur_u32 - utf32_length l - utf32_size_right l in
         get recurseLeftLine recurseLeftIndex l acc (fun x -> x |> cont)
 
-    | PT(_, _, _, v, _, r) when line > curLine + Array.length v.lines ->
-        let recurseRightLine = curLine + Array.length v.lines + lines_left r in
-        let recurseRightIndex = curIndex + v.utf32_length + utf32_size_left r in
-        get recurseRightLine recurseRightIndex r acc (fun x -> x |> cont)
+    | PT(_, _, _, v, _, r) when line > cur_line + Array.length v.lines ->
+        let right_line = cur_line + Array.length v.lines + lines_left r in
+        let right_u32 = cur_u32 + v.utf32_length + utf32_size_left r in
+        get right_line right_u32 r acc (fun x -> x |> cont)
 
     | PT(_, _, _, _, _, _) -> 
         failwith "unreachable Piece_tree.get_line case"
@@ -610,12 +614,12 @@ let get_line_and_line_start_index line tree buffer =
  let str = String.concat "" strList in
 
  match lineStartIndex with
- | Some idx -> str, idx
- | None -> str, 0
+ | Some idx -> { line = str; utf32_offset = idx }
+ | None -> { line = str; utf32_offset = 0 }
 
 let get_line line tree buffer = 
-  let (str, _) = get_line_and_line_start_index line tree buffer in
-  str
+  let line = get_line_and_line_start_index line tree buffer in
+  line.line
 
 let empty = PE
 
