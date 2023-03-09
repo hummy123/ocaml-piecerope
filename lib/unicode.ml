@@ -60,6 +60,9 @@ let utf32_sub (str: string) (start: int) (length: int) =
 
 type index_offsets = { utf8_pos: int; utf16_pos: int; utf32_pos: int; }
 
+let create_offset utf8_pos utf16_pos utf32_pos = 
+  { utf8_pos; utf16_pos; utf32_pos; }
+
 type encoding = Utf8 | Utf16 | Utf32
 
 let count_to (str: string) (countTo: int) (enc: encoding) =
