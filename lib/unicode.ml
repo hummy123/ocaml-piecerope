@@ -75,7 +75,18 @@ let count_to (str: string) (countTo: int) (enc: encoding) =
       let chr = String.unsafe_get str utf8Pos in
       let utf8Length = utf8_length chr in
       let utf16Length = utf16_length chr in
-      cnt (utf8Pos + utf8Length) (utf16Pos + utf16Length) (utf32Pos +1)
+
+      let nextUtf8 = utf8Pos + utf8Length in
+      let nextUtf16 = utf16Pos + utf16Length in
+      let nextUtf32 = utf32Pos + 1 in
+      (* Match to see if next pos is over and clip to current if so. Else, recurse. *)
+      (match enc with
+      | Utf8 when nextUtf8 > countTo ->
+        { utf8_pos = utf8Pos; utf16_pos = utf16Pos; utf32_pos = utf32Pos; }
+      | Utf16 when nextUtf16 > countTo ->
+        { utf8_pos = utf8Pos; utf16_pos = utf16Pos; utf32_pos = utf32Pos; }
+      | _ ->
+        cnt nextUtf8 nextUtf16 nextUtf32)
   in
   cnt 0 0 0
 

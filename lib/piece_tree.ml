@@ -325,7 +325,7 @@ let ins_max insNode tree =
   in
   max tree top_level_cont
 
-let insert_tree insIndex insNode tree =
+let insert_tree insIndex insNode tree buffer =
   let rec ins curIndex node cont =
     match node with
     | PE -> mk PE insNode PE |> cont
@@ -356,21 +356,31 @@ let insert_tree insIndex insNode tree =
         balR l v r' |> cont
     | PT(_, l, _, v, _, r) ->
         (* UTF-32 offset calculations which are same in both if/else cases. *)
-        let difference = insIndex - curIndex in
-        let rStart = v.start + difference in
-        let rLength = v.utf32_length - difference in
+        let difference_u32 = insIndex - curIndex in
+        let rStart = v.start + difference_u32 in
+        let rLength_u32 = v.utf32_length - difference_u32 in
         let (leftLines, rightLines) = split_lines rStart v.lines in
           
         (* Requires no special handling as this node only contains ASCII. *)
         if v.utf32_length = v.utf8_length then
-          let l'node = create_node v.start difference difference difference leftLines in
+          let l'node = create_node v.start difference_u32 difference_u32 difference_u32 leftLines in
           let l' = ins_max l'node l in
-          let r'node = create_node rStart rLength rLength rLength rightLines in
+          let r'node = create_node rStart rLength_u32 rLength_u32 rLength_u32 rightLines in
           let r' = prepend r'node r in
           mk l' insNode r' |> cont
-        (* Placeholder: figure out how to split non-ASCII. *)
+        (* Get string so we can translate utf-32 offset to utf-8/16. *)
         else
-
+          let nodeText = text v buffer in
+          let offsets = Unicode.count_to nodeText difference_u32 Unicode.Utf32 in
+          let difference_u8 = offsets.utf8_pos in
+          let difference_u16 = offsets.utf16_pos in
+          let rLength_u8 = v.start + difference_u8 in
+          let rLength_u16 = v.start + difference_u16 in
+          let l'node = create_node v.start difference_u8 difference_u16 difference_u32 leftLines in
+          let l' = ins_max l'node l in
+          let r'node = create_node rStart rLength_u8 rLength_u16 rLength_u32 rightLines in
+          let r' = prepend r'node r in
+          mk l' insNode r' |> cont
     in
     ins (utf32_size_left tree) tree top_level_cont
 
