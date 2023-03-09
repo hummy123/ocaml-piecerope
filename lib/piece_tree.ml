@@ -640,23 +640,23 @@ let offsets_from_ut32 find_offset tree buffer =
   let rec off cur_u8 cur_u16 cur_u32 node =
     match node with
     | PT(_, l, _, v, _, r) ->
-        let nodeEndIndex = cur_u32 + v.utf32_length in
+        let u32_node_end = cur_u32 + v.utf32_length in
         if find_offset < cur_u32 then
           let next_u8  = cur_u8  - utf8_length  l - utf8_size_right  l in
           let next_u16 = cur_u16 - utf16_length l - utf16_size_right l in
           let next_u32 = cur_u32 - utf32_length l - utf32_size_right l in
           off next_u8 next_u16 next_u32 l
-        else if find_offset > nodeEndIndex then
+        else if find_offset > u32_node_end then
           let next_u8  = cur_u8 + v.utf8_length + utf8_size_left r in
           let next_u16 = cur_u16 + v.utf16_length + utf16_size_left r in
-          let next_u32 = nodeEndIndex + utf32_size_left r in
+          let next_u32 = u32_node_end + utf32_size_left r in
           off next_u8 next_u16 next_u32 r
         (* Trying to find start of this node. *)
         else if find_offset = cur_u32 then
           Unicode.create_offsets cur_u8 cur_u16 cur_u32
         (* Trying to find end of this node. *)
-        else if find_offset = nodeEndIndex then
-          Unicode.create_offsets (cur_u8 + v.utf8_length) (cur_u16 + v.utf16_length) nodeEndIndex
+        else if find_offset = u32_node_end then
+          Unicode.create_offsets (cur_u8 + v.utf8_length) (cur_u16 + v.utf16_length) u32_node_end
         (* Trying to find middle of this node 
            while neither this node or any node we ttavelled to before contain any non-ASCII text. *)
         else if cur_u8 = cur_u32 && v.utf8_length = v.utf32_length then
@@ -678,6 +678,105 @@ let offsets_from_ut32 find_offset tree buffer =
           Unicode.create_offsets 0 0 0
         else
           failwith "impossible Piece_tree.offsets_from_ut32 case"
+  in
+  off (utf8_size_left tree) (utf16_size_left tree) (utf32_size_left tree)
+
+let offsets_from_ut16 find_offset tree buffer = 
+  let rec off cur_u8 cur_u16 cur_u32 node =
+    match node with
+    | PT(_, l, _, v, _, r) ->
+        let u16_node_end = cur_u16 + v.utf16_length in
+        if find_offset < cur_u16 then
+          let next_u8  = cur_u8  - utf8_length  l - utf8_size_right  l in
+          let next_u16 = cur_u16 - utf16_length l - utf16_size_right l in
+          let next_u32 = cur_u32 - utf32_length l - utf32_size_right l in
+          off next_u8 next_u16 next_u32 l
+        else if find_offset > u16_node_end then
+          let next_u8  = cur_u8 + v.utf8_length + utf8_size_left r in
+          let next_u16 = u16_node_end + utf16_size_left r in
+          let next_u32 = cur_u32 + v.utf32_length + utf32_size_left r in
+          off next_u8 next_u16 next_u32 r
+        (* Trying to find start of this node. *)
+        else if find_offset = cur_u16 then
+          Unicode.create_offsets cur_u8 cur_u16 cur_u32
+        (* Trying to find end of this node. *)
+        else if find_offset = u16_node_end then
+          Unicode.create_offsets (cur_u8 + v.utf8_length) u16_node_end (cur_u32 + v.utf32_length)
+        (* Trying to find middle of this node 
+           while neither this node or any node we ttavelled to before contain any non-ASCII text. *)
+        else if cur_u8 = cur_u32 && v.utf8_length = v.utf32_length then
+          Unicode.create_offsets find_offset find_offset find_offset
+        (* Trying to find middle of this node, and this node contains no non-ASCII chars. *)
+        else if v.utf8_length = v.utf32_length then
+          let u16_difference = find_offset - cur_u16 in
+          let u8_offset = cur_u8 + u16_difference in
+          let u32_offset = cur_u32 + u16_difference in
+          Unicode.create_offsets u8_offset find_offset u32_offset 
+        (* Trying to find middle of this node. We must get this node's text and count offsets from the string. *)
+        else
+          let u16_difference = find_offset - cur_u16 in
+          let nodeText = text v buffer in
+          let textOffsets = Unicode.count_to nodeText u16_difference Unicode.Utf16 in
+          Unicode.create_offsets 
+            (textOffsets.utf8_pos + cur_u8) 
+            (textOffsets.utf16_pos + cur_u16) 
+            (textOffsets.utf32_pos + cur_u32)
+    | PE -> 
+        if tree = PE then
+          Unicode.create_offsets 0 0 0
+        else
+          failwith "impossible Piece_tree.offsets_from_ut16 case"
+  in
+  off (utf8_size_left tree) (utf16_size_left tree) (utf32_size_left tree)
+
+let offsets_from_ut8 find_offset tree buffer = 
+  let rec off cur_u8 cur_u16 cur_u32 node =
+    match node with
+    | PT(_, l, _, v, _, r) ->
+        let u8_node_end = cur_u8 + v.utf8_length in
+        if find_offset < cur_u8 then
+          let next_u8  = cur_u8  - utf8_length  l - utf8_size_right  l in
+          let next_u16 = cur_u16 - utf16_length l - utf16_size_right l in
+          let next_u32 = cur_u32 - utf32_length l - utf32_size_right l in
+          off next_u8 next_u16 next_u32 l
+        else if find_offset > u8_node_end then
+          let next_u8  = u8_node_end + utf8_size_left r in
+          let next_u16 = cur_u16 + v.utf16_length + utf16_size_left r in
+          let next_u32 = cur_u32 + v.utf32_length + utf32_size_left r in
+          off next_u8 next_u16 next_u32 r
+        (* Trying to find start of this node. *)
+        else if find_offset = cur_u8 then
+          Unicode.create_offsets cur_u8 cur_u16 cur_u32
+        (* Trying to find end of this node. *)
+        else if find_offset = u8_node_end then
+          Unicode.create_offsets 
+          u8_node_end 
+          (cur_u16 + v.utf16_length)
+          (cur_u32 + v.utf32_length)
+        (* Trying to find middle of this node 
+           while neither this node or any node we ttavelled to before contain any non-ASCII text. *)
+        else if cur_u8 = cur_u32 && v.utf8_length = v.utf32_length then
+          Unicode.create_offsets find_offset find_offset find_offset
+        (* Trying to find middle of this node, while this node contains no non-ASCII chars. *)
+        else if v.utf8_length = v.utf32_length then
+          let u8_difference = find_offset - cur_u8 in
+          let u16_offset = cur_u16 + u8_difference in
+          let u32_offset = cur_u32 + u8_difference in
+          Unicode.create_offsets find_offset u16_offset u32_offset 
+        (* Trying to find middle of this node. We must get this node's text and count offsets from the string. *)
+        else
+          let u16_difference = find_offset - cur_u16 in
+          let nodeText = text v buffer in
+          let textOffsets = Unicode.count_to nodeText u16_difference Unicode.Utf8 in
+          Unicode.create_offsets 
+            (textOffsets.utf8_pos + cur_u8) 
+            (textOffsets.utf16_pos + cur_u16) 
+            (textOffsets.utf32_pos + cur_u32)
+    | PE -> 
+        if tree = PE then
+          Unicode.create_offsets 0 0 0
+        else
+          failwith "impossible Piece_tree.offsets_from_ut8 case"
   in
   off (utf8_size_left tree) (utf16_size_left tree) (utf32_size_left tree)
 
