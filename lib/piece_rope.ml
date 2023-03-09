@@ -10,7 +10,7 @@ let empty = {
 
 let insert index (str: string) piecerope =
   let pcStart = Piece_buffer.size piecerope.buffer in
-  let open String_processor in
+  let open Unicode in
   let (utf16length, utf32length, pcLines) = count_string_stats str pcStart in
   let utf8length = String.length str in
   let buffer = Piece_buffer.append str utf32length piecerope.buffer in
@@ -19,7 +19,7 @@ let insert index (str: string) piecerope =
 
 let prepend (str: string) piecerope =
   let pcStart = Piece_buffer.size piecerope.buffer in
-  let open String_processor in
+  let open Unicode in
   let (utf16length, utf32length, pcLines) = count_string_stats str pcStart in
   let utf8length = String.length str in
   let buffer = Piece_buffer.append str utf32length piecerope.buffer in
@@ -28,7 +28,7 @@ let prepend (str: string) piecerope =
 
 let append (str: string) piecerope =
   let pcStart = Piece_buffer.size piecerope.buffer in
-  let open String_processor in
+  let open Unicode in
   let (utf16length, utf32length, pcLines) = count_string_stats str pcStart in
   let utf8length = String.length str in
   let buffer = Piece_buffer.append str utf32length piecerope.buffer in

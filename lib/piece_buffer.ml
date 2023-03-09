@@ -92,7 +92,7 @@ let substring start length buffer =
           if vLen = String.length v then
             (String.sub v 0 length)::acc 
           else
-            (String_processor.codepointSub v 0 length)::acc 
+            (Unicode.utf32_sub v 0 length)::acc 
         in
 
         sub (curIndex - string_length l - size_right l) l acc (fun x -> x |> cont)
@@ -104,7 +104,7 @@ let substring start length buffer =
           if vLen = String.length v then
             String.sub v strStart len
           else
-            String_processor.codepointSub v strStart len
+            Unicode.utf32_sub v strStart len
         in
 
         sub (curIndex + vLen + size_left r) r acc (fun x -> nodeText::x |> cont)
@@ -113,7 +113,7 @@ let substring start length buffer =
         if vLen = String.length v then
           [String.sub v strStart length] |> cont
         else
-          [String_processor.codepointSub v strStart length] |> cont
+          [Unicode.utf32_sub v strStart length] |> cont
 
     | BT(_, l, _, _, _, _, _) when start < curIndex ->
         sub (curIndex - string_length l - size_right l) l acc (fun x -> x |> cont)

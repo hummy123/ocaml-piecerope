@@ -355,26 +355,19 @@ let insert_tree insIndex insNode tree =
         let r' = prepend insNode r in
         balR l v r' |> cont
     | PT(_, l, _, v, _, r) ->
+        (* UTF-32 offset calculations which are same in both if/else cases. *)
+        let difference = insIndex - curIndex in
+        let rStart = v.start + difference in
+        let rLength = v.utf32_length - difference in
+        let (leftLines, rightLines) = split_lines rStart v.lines in
+          
         (* Requires no special handling as this node only contains ASCII. *)
         if v.utf32_length = v.utf8_length then
-          let difference = insIndex - curIndex in
-          let rStart = v.start + difference in
-          let rLength = v.length - difference in
-          
-          let (leftLines, rightLines) = split_lines rStart v.lines in
-          
-          let l' = ins_max v.start difference leftLines l in
-          let r' = prepend rStart rLength rightLines r in
-          let v' =  { 
-                      start = pcStart;
-                      length = pcLength;
-                      lines = pcLines;
-                      left_idx = v.left_idx + difference;
-                      left_lns = v.left_lns + Array.length leftLines;
-                      right_idx = v.right_idx + rLength;
-                      right_lns = v.right_lns + Array.length rightLines;
-                    } in
-          (mk l' v' r') |> cont
+          let l'node = create_node v.start difference difference difference leftLines in
+          let l' = ins_max l'node l in
+          let r'node = create_node rStart rLength rLength rLength rightLines in
+          let r' = prepend r'node r in
+          mk l' insNode r' |> cont
         (* Placeholder: figure out how to split non-ASCII. *)
         else
 
