@@ -36,7 +36,7 @@ val substring : int -> int -> t -> string
     Returns a substring from the given Piece_buffer.
 
     Accepts:
-    An integer representing the start  indexof the substring range in UTF-32.
+    An integer representing the start index of the substring range in UTF-32.
     An integer representing the length of the substring range in UTF-32.
 
     Returns:

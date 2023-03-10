@@ -35,7 +35,7 @@ let run_txns title arr =
   time_func title (fun _ -> run_txns_result arr)
 
 let run_substring_result rope =
-  let half_length = Piece_rope.total_length rope / 2 in
+  let half_length = (Piece_rope.metadata rope).utf32_subtree / 2 in
   let quarter_length = half_length / 2 in
   let str = Piece_rope.substring quarter_length half_length rope in
   str

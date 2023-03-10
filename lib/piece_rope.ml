@@ -14,7 +14,8 @@ let insert index (str: string) piecerope =
   let (utf16length, utf32length, pcLines) = count_string_stats str pcStart in
   let utf8length = String.length str in
   let buffer = Piece_buffer.append str utf32length piecerope.buffer in
-  let pieces = Piece_tree.insert_tree index pcStart utf32length pcLines piecerope.pieces in
+  let node = Piece_tree.create_node pcStart utf8length utf16length utf32length pcLines in
+  let pieces = Piece_tree.insert_tree index node piecerope.pieces piecerope.buffer in
   { buffer; pieces }
 
 let prepend (str: string) piecerope =
@@ -23,7 +24,8 @@ let prepend (str: string) piecerope =
   let (utf16length, utf32length, pcLines) = count_string_stats str pcStart in
   let utf8length = String.length str in
   let buffer = Piece_buffer.append str utf32length piecerope.buffer in
-  let pieces = Piece_tree.prepend pcStart utf32length pcLines piecerope.pieces in
+  let node = Piece_tree.create_node pcStart utf8length utf16length utf32length pcLines in
+  let pieces = Piece_tree.prepend node piecerope.pieces in
   { buffer; pieces }
 
 let append (str: string) piecerope =
@@ -32,11 +34,12 @@ let append (str: string) piecerope =
   let (utf16length, utf32length, pcLines) = count_string_stats str pcStart in
   let utf8length = String.length str in
   let buffer = Piece_buffer.append str utf32length piecerope.buffer in
-  let pieces = Piece_tree.append pcStart utf32length pcLines piecerope.pieces in
+  let node = Piece_tree.create_node pcStart utf8length utf16length utf32length pcLines in
+  let pieces = Piece_tree.append node piecerope.pieces in
   { buffer; pieces }
 
 let delete start length piecerope =
-  let pieces = Piece_tree.delete_tree start length piecerope.pieces in
+  let pieces = Piece_tree.delete_tree start length piecerope.pieces piecerope.buffer in
   { piecerope with pieces; }
 
 let substring start length piecerope =
@@ -52,7 +55,5 @@ let get_text piecerope = Piece_tree.get_text piecerope.pieces piecerope.buffer
 
 let create str = insert 0 str empty
 
-let total_length piecerope = Piece_tree.total_length piecerope.pieces
- 
-let total_lines piecerope = Piece_tree.total_lines piecerope.pieces
+let metadata piecerope = Piece_tree.tree_size piecerope.pieces
 
