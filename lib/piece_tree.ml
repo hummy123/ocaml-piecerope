@@ -564,24 +564,12 @@ let delete_tree start length tree buffer =
         del recurseLeftIndex l (fun l' -> 
           let (newStart, newLength, newLines) = delete_at_start curIndex finish v in
           if v.utf8_length = v.utf32_length then
-            let v' =  {
-                        start = newStart;
-                        utf32_length = newLength;
-                        utf16_length = newLength;
-                        utf8_length = newLength;
-                        lines = newLines;
-                      } in
+            let v' = create_node newStart newLength newLength newLength newLines in
             balR l' v' r |> cont
           else
             let nodeText = at_start_and_length newStart newLength buffer in
             let offsets = Unicode.count_to nodeText newLength Unicode.Utf32 in
-            let v' = {
-              start = newStart;
-              utf32_length = newLength;
-              utf16_length = offsets.utf16_pos;
-              utf8_length = offsets.utf8_pos;
-              lines = newLines;
-            } in
+            let v' = create_node newStart offsets.utf8_pos offsets.utf16_pos newLength newLines in
             balR l' v' r
           )
     | PT(_, l, _, v, _, r) when end_is_in_range start curIndex finish (curIndex + v.utf32_length) ->
@@ -589,24 +577,12 @@ let delete_tree start length tree buffer =
         del recurseRightIndex r (fun r' ->
           let (length, lines) = delete_at_end curIndex start v in
           if v.utf32_length = v.utf8_length then
-            let v' =  {
-                        start = v.start;
-                        utf32_length = length;
-                        utf16_length = length;
-                        utf8_length  = length;
-                        lines = lines;
-                      } in
+            let v' = create_node v.start length length length lines in
             balL l v' r' |> cont
           else
             let nodeText = at_start_and_length v.start length buffer in
             let offsets = Unicode.count_to nodeText length Unicode.Utf32 in
-            let v' = {
-              start = v.start;
-              lines = lines;
-              utf32_length = length;
-              utf16_length = offsets.utf16_pos;
-              utf8_length  = offsets.utf8_pos;
-            } in
+            let v' = create_node v.start offsets.utf8_pos offsets.utf16_pos length lines in
             balL l v' r' |> cont
         )
     | PT(_, l, _, v, _, r) when middle_is_in_range start curIndex finish (curIndex + v.utf32_length) ->
@@ -615,13 +591,7 @@ let delete_tree start length tree buffer =
         if v.utf32_length = v.utf8_length then
           let r'node = create_node p2Start p2Length p2Length p2Length p2Lines in
           let r' = prepend r'node r in
-          let v' =  {
-                      start = v.start;
-                      lines = p1Lines;
-                      utf32_length = p1Length;
-                      utf16_length = p1Length;
-                      utf8_length  = p1Length;
-                    } in
+          let v' = create_node v.start p1Length p1Length p1Length p1Lines in
           balR l v' r' |> cont
         else
           let p1_text = at_start_and_length v.start p1Length buffer in
