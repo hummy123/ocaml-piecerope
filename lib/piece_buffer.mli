@@ -1,8 +1,9 @@
+type t
 (**
     The Piece_buffer.t type represents the buffer in the Piece Table data structure.
   *)
-type t
 
+val size : t -> int
 (**
     This function returns the length of the provided Piece_buffer in UTF-32 code points.
 
@@ -12,13 +13,13 @@ type t
     Returns:
     int indicating length of the Piece_buffer in UTF-32.
   *)
-val size : t -> int
 
+val empty : t
 (**
     The empty Piece_buffer.
   *)
-val empty : t
 
+val append : string -> int -> t -> t
 (**
     Appends a string to a Piece_buffer.
 
@@ -29,8 +30,8 @@ val empty : t
     Returns:
     The Piece_buffer with the string appended.
   *)
-val append : string -> int -> t -> t
 
+val substring : int -> int -> t -> string
 (**
     Returns a substring from the given Piece_buffer.
 
@@ -41,4 +42,3 @@ val append : string -> int -> t -> t
     Returns:
     The specified substring.
   *)
-val substring : int -> int -> t -> string
