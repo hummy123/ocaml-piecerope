@@ -776,17 +776,26 @@ let get_line line tree buffer =
 
 let empty = PE
 
-let get_text tree buffer = 
-  let lst: string list = fold (fun (acc: string list) pc ->
-    let text = Piece_buffer.substring pc.start pc.utf32_length buffer in
-    text::acc
-  ) [] tree in
+let fold_text tree buffer state folder =
+  fold (fun x pc ->
+    folder x (Piece_buffer.substring pc.start pc.utf32_length buffer)
+  ) state tree
+
+let get_text tree buffer =
+  let lst = fold_text tree buffer [] (fun acc str -> str::acc) in
   List.rev lst |> String.concat ""
 
-let fold_text tree buffer state folder =
-  fold (fun _ pc ->
-    folder (Piece_buffer.substring pc.start pc.utf32_length buffer)
-  ) state tree
+let fold_lines tree buffer state folder =
+  let metadata = tree_size tree in
+  let total_lines = metadata.subtree_lines in
+  let rec fld lineNum state =
+    if lineNum = total_lines then state
+    else
+      let line = get_line_and_line_start_index lineNum tree buffer in
+      let state = folder state line in
+      fld (lineNum + 1) state
+  in
+  fld 0 state
 
 let stats tree = tree_size tree
 
