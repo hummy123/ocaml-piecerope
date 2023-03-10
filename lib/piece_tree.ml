@@ -29,6 +29,13 @@ let emptyMetadata = {
   subtree_lines = 0;
 }
 
+type line_offset = {
+  line: string;
+  utf32_offset: int;
+  utf16_offset: int;
+  utf8_offset:  int;
+}
+
 type t = 
   | PE
   | PT of int * t * metadata * node * metadata * t
@@ -679,13 +686,6 @@ let start_of_line_in_node nodeStartLine searchLine nodeEndLine =
 let line_is_in_node nodeStartLine searchLine nodeEndLine =
   nodeStartLine < searchLine && nodeEndLine > searchLine
 
-type line_offset = {
-  line: string;
-  utf32_offset: int;
-  utf16_offset: int;
-  utf8_offset:  int;
-}
-
 let get_line_and_line_start_index line tree buffer =
   let rec get cur_line cur_u32 node acc cont =
     match node with
@@ -788,7 +788,5 @@ let fold_text tree buffer state folder =
     folder (Piece_buffer.substring pc.start pc.utf32_length buffer)
   ) state tree
 
-let total_length tree = tree_size tree
+let stats tree = tree_size tree
 
-let total_lines tree = n_lines tree
- 
