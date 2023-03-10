@@ -12,7 +12,7 @@ type encoding = Utf8 | Utf16 | Utf32
 (** 
     This function analyses an input string for metadata necessary for tracking Unicode encodings and line break information in the data structure.
    
-    Arguments:
+    Accepts:
     String to be processed.
     Integer representing current length of the Piece_buffer before appending this string.
    
@@ -26,7 +26,7 @@ val count_string_stats : string -> int -> int * int * int array
 (**
     This function extracts a substring from a string using UTF-32 indices, useful as OCaml natively uses UTF-8.
    
-    Arguments:
+    Accepts:
     String to extract from.
     Substring start index in UTF-32.
     Substring length where start + length is a UTF-32 index.
@@ -39,7 +39,7 @@ val utf32_sub : string -> int -> int -> string
 (**
     This function creates an instance of the index_offsets type.
    
-    Arguments:
+    Accepts:
     Offset in UTF-8.
     Offset in UTF-16.
     Offset in UTF-32.
@@ -53,7 +53,7 @@ val create_offsets : int -> int -> int -> index_offsets
     This function counts to a specified index in the string.
     If a UTF-8 or UTF-16 encoding is provided and the index refers in between a UTF-32 code point so that inserting here would produce invalid Unicode, the return value clips to the start of that code point.
 
-    Arguments:
+    Accepts:
     String to count in.
     Index to count to.
     Encoding of the index to count to.
