@@ -837,8 +837,7 @@ let find_and_replace find_string find_string_length (replace_node : node) tree
   let length_difference = find_string_length - replace_node.utf32_length in
   fold_match_indices find_string tree buffer (tree, 0)
     (fun (acc_tree, acc_diff) idx ->
-      let acc_tree =
-        delete_tree (idx + acc_diff) find_string_length acc_tree buffer
-      in
+      let idx = idx + acc_diff in
+      let acc_tree = delete_tree idx find_string_length acc_tree buffer in
       ( insert_tree idx replace_node acc_tree buffer,
         acc_diff + length_difference ))
