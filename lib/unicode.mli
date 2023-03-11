@@ -9,6 +9,17 @@ type encoding = Utf8 | Utf16 | Utf32
     It is used in some internal functions for changing behaviour slightly depending on encoding.
   *)
 
+val utf8_length : char -> int
+(**
+    This function returns the length of a code point in UTF-8 bytes.
+   
+    Accepts:
+    The first byte in the code point.
+
+    Returns:
+    The length of the code point in bytes.
+  *)
+
 val count_string_stats : string -> int -> int * int * int array
 (** 
     This function analyses an input string for metadata necessary for tracking Unicode encodings and line break information in the data structure.

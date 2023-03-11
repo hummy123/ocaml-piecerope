@@ -139,6 +139,8 @@ let lines_right node =
   | PE -> 0
   | PT(_, _, _, _, rm, _) -> rm.subtree_lines
 
+let stats tree = tree_size tree
+
 (* Creating and editing node data. *)
 let create_node start utf8length utf16length utf32length lines = { 
   start = start; 
@@ -777,9 +779,7 @@ let get_line line tree buffer =
 let empty = PE
 
 let fold_text tree buffer state folder =
-  fold (fun x pc ->
-    folder x (Piece_buffer.substring pc.start pc.utf32_length buffer)
-  ) state tree
+  fold (fun x pc -> folder x (Piece_buffer.substring pc.start pc.utf32_length buffer)) state tree
 
 let get_text tree buffer =
   let lst = fold_text tree buffer [] (fun acc str -> str::acc) in
@@ -797,5 +797,38 @@ let fold_lines tree buffer state folder =
   in
   fld 0 state
 
-let stats tree = tree_size tree
+let fold_match_indices str tree buffer initial_state folder =
+  let chr = String.unsafe_get str 0 in
+  let (_, length, _) = Unicode.count_string_stats str 0 in
 
+  let rec fnd str_idx utf32_pos text acc tree_pos =
+    if str_idx = String.length text then acc
+    else 
+      let cur_chr = String.unsafe_get text str_idx in
+      let char_length = Unicode.utf8_length cur_chr in
+      if cur_chr = chr then
+        let substr = substring utf32_pos length tree buffer in
+        let acc = if substr = str then folder acc (utf32_pos + tree_pos) else acc in
+        fnd (str_idx + char_length) (utf32_pos + 1) text acc tree_pos
+      else
+        fnd (str_idx + char_length) (utf32_pos + 1) text acc tree_pos
+  in
+      
+  let (result, _) =
+    fold (fun (acc, pos) piece -> 
+      let text = Piece_buffer.substring piece.start piece.utf32_length buffer in
+      let acc = fnd 0 0 text acc pos in
+      acc, (pos + piece.utf32_length)
+    ) (initial_state, 0) tree
+  in
+  result
+
+let find_matches find_string tree buffer =
+  let lst = fold_match_indices find_string tree buffer [] (fun acc idx -> idx::acc) in
+  List.rev lst |> Array.of_list
+
+let find_and_replace find_string find_string_length replace_node tree buffer =
+  fold_match_indices find_string tree buffer tree (fun cur_tree idx -> 
+    let cur_tree = delete_tree idx find_string_length cur_tree buffer in
+    insert_tree idx replace_node cur_tree buffer
+  )
