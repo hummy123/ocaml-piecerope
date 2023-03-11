@@ -788,7 +788,7 @@ let fold_lines tree buffer state folder =
   let metadata = tree_size tree in
   let total_lines = metadata.subtree_lines in
   let rec fld lineNum state =
-    if lineNum = total_lines then state
+    if lineNum >= total_lines && lineNum <> 0 then state
     else
       let line = get_line lineNum tree buffer in
       let state = folder state line in
