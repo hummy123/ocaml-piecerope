@@ -60,12 +60,12 @@ let utf32_sub (str : string) (start : int) (length : int) =
   in
   sub 0 0 0 0
 
-(* 
-   The count_to functions duplicate some code intentionally.
-   A previous generic version existed,
-   but I was bothered by additional if-statements on each recursion 
-   to handle UTF-8/16 cases when the specified index is inside a code point. 
- *)
+(*
+    The count_to functions duplicate some code intentionally.
+    A previous generic version existed,
+    but I was bothered by additional if-statements on each recursion
+    to handle UTF-8/16 cases when the specified index is inside a code point.
+*)
 let count_to_utf32 (str : string) (count_to : int) =
   let rec cnt utf8_pos utf16_pos utf32_pos =
     if utf32_pos = count_to then create_offsets utf8_pos utf16_pos utf32_pos

@@ -3,8 +3,11 @@ type index_offsets = { utf8_pos : int; utf16_pos : int; utf32_pos : int }
     The index_offsets type describes the same offset in UTF-8, UTF-16 and UTF-32 encodings.
   *)
 
-type encoding = Utf8 | Utf16 | Utf32
-(**
+type encoding =
+  | Utf8
+  | Utf16
+  | Utf32
+      (**
     The encoding type specifies whether something should be UTF-8, UTF-16 or UTF-32. 
     It is used in some internal functions for changing behaviour slightly depending on encoding.
   *)
