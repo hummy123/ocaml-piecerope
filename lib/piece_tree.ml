@@ -18,11 +18,11 @@ let ht = function PE -> 0 | PT (h, _, _, _, _, _) -> h
 let fold f x t =
   let rec fld x t cont =
     match t with
-    | PE -> x
+    | PE -> cont x
     | PT (_, l, _, v, _, r) ->
         fld x l (fun x ->
             let x = f x v in
-            fld x r (fun x -> x |> cont))
+            fld x r (fun x -> cont x))
   in
   fld x t top_level_cont
 
@@ -754,10 +754,7 @@ let get_line line rope =
 let empty = PE
 
 let fold_text rope state folder =
-  fold
-    (fun x pc ->
-      folder x (Piece_buffer.substring pc.start pc.utf32_length rope.buffer))
-    state rope.pieces
+  fold (fun x pc -> folder x (text pc rope.buffer)) state rope.pieces
 
 let get_text rope =
   let lst = fold_text rope [] (fun acc str -> str :: acc) in

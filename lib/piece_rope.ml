@@ -60,7 +60,7 @@ let substring start length piecerope =
 
 let get_line line piecerope = Piece_tree.get_line line piecerope
 let get_text piecerope = Piece_tree.get_text piecerope
-let of_string str = insert 0 str empty
+let of_string str = append str empty
 let stats piecerope = Piece_tree.stats piecerope.pieces
 
 let find_matches find_string piecerope =
