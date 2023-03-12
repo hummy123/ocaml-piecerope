@@ -1,3 +1,5 @@
+open Piece_types
+
 let empty = { buffer = Piece_buffer.empty; pieces = Piece_tree.empty }
 
 let insert index (str : string) piecerope =
@@ -54,17 +56,15 @@ let delete start length piecerope =
   { piecerope with pieces }
 
 let substring start length piecerope =
-  Piece_tree.substring start length piecerope.pieces piecerope.buffer
+  Piece_tree.substring start length piecerope
 
-let get_line line piecerope =
-  Piece_tree.get_line line piecerope.pieces piecerope.buffer
-
-let get_text piecerope = Piece_tree.get_text piecerope.pieces piecerope.buffer
+let get_line line piecerope = Piece_tree.get_line line piecerope
+let get_text piecerope = Piece_tree.get_text piecerope
 let create str = insert 0 str empty
 let stats piecerope = Piece_tree.stats piecerope.pieces
 
 let find_matches find_string piecerope =
-  Piece_tree.find_matches find_string piecerope.pieces piecerope.buffer
+  Piece_tree.find_matches find_string piecerope
 
 let find_and_replace find_string replace_string piecerope =
   let utf16_length, utf32_length, line_breaks =
@@ -80,7 +80,6 @@ let find_and_replace find_string replace_string piecerope =
       utf16_length utf32_length line_breaks
   in
   let pieces =
-    Piece_tree.find_and_replace find_string utf32_length ins_node
-      piecerope.pieces buffer
+    Piece_tree.find_and_replace find_string utf32_length ins_node piecerope
   in
   { buffer; pieces }

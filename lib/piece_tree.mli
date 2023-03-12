@@ -29,8 +29,7 @@ val create_node : int -> int -> int -> int -> int array -> node
     A node that can be inserted into the Piece_tree.
   *)
 
-val offsets :
-  int -> piece_tree -> piece_buffer -> encoding -> index_offsets
+val offsets : int -> piece_rope -> encoding -> index_offsets
 (**
     This function, given an index, returns an index_offsets instance describing the offset in the three Unicode encodings.
     If the given index is in UTF-8 or UTF-16 and in the middle of a valid UTF-32 offset, the return value clips to the previous valid UTF-32 offset.
@@ -57,7 +56,7 @@ val prepend : node -> piece_tree -> piece_tree
     The Piece_tree with the node prepended.
   *)
 
-val append : node -> t -> t
+val append : node -> piece_tree -> piece_tree
 (**
     This function inserts the given node to the very end of the Piece_tree.
 
@@ -82,7 +81,7 @@ val ins_max : node -> piece_tree -> piece_tree
     The Piece_tree with the node inserted at the end.
   *)
 
-val insert_tree : int -> node -> piece_tree -> Piece_buffer.t -> piece_tree
+val insert_tree : int -> node -> piece_tree -> piece_buffer -> piece_tree
 (**
     This function inserts the given node to the given Piece_tree at the given UTF-32 index.
 
@@ -96,7 +95,7 @@ val insert_tree : int -> node -> piece_tree -> Piece_buffer.t -> piece_tree
     The Piece_tree with the node inserted at the given index.
   *)
 
-val delete_tree : int -> int -> piece_tree -> Piece_buffer.t -> piece_tree
+val delete_tree : int -> int -> piece_tree -> piece_buffer -> piece_tree
 (**
     This function deletes a range of text from the given Piece_tree, assuming start and length are UTF-32.
 
@@ -110,7 +109,7 @@ val delete_tree : int -> int -> piece_tree -> Piece_buffer.t -> piece_tree
     The Piece_tree with the given range deleted.
   *)
 
-val substring : int -> int -> piece_tree -> Piece_buffer.t -> string
+val substring : int -> int -> piece_rope -> string
 (**
     This function extracts a substring from the given tree, assuming start and length are UTF-32.
 
@@ -124,7 +123,7 @@ val substring : int -> int -> piece_tree -> Piece_buffer.t -> string
     The extracted substring.
   *)
 
-val get_line : int -> piece_tree -> Piece_buffer.t -> line_offset
+val get_line : int -> piece_rope -> line_offset
 (**
     This function retrieves a given line from a Piece_tree.
 
@@ -137,7 +136,7 @@ val get_line : int -> piece_tree -> Piece_buffer.t -> line_offset
     A line_offset instance containing the retrieved line and the offset the line starts at.
   *)
 
-val get_text : piece_tree -> Piece_buffer.t -> string
+val get_text : piece_rope -> string
 (**
     This function returns all the text for the given Piece_tree.
 
@@ -149,7 +148,7 @@ val get_text : piece_tree -> Piece_buffer.t -> string
     String containing all text in the Piece_tree.
   *)
 
-val find_matches : string -> piece_tree -> Piece_buffer.t -> int array
+val find_matches : string -> piece_rope -> int array
 (**
     This function finds all matches of a given string in the given Piece_tree and returns an int array with the UTF-32 indices the string was found at.
     If no matches are found, returns an empty array.
@@ -163,7 +162,7 @@ val find_matches : string -> piece_tree -> Piece_buffer.t -> int array
     An int array representing the indices in terms of UTF-32 offsets.
   *)
 
-val find_and_replace : string -> int -> node -> piece_tree -> Piece_buffer.t -> piece_tree
+val find_and_replace : string -> int -> node -> piece_rope -> piece_tree
 (**
     This function finds all matches of a given string and replaces them with the given node.
 
@@ -178,7 +177,7 @@ val find_and_replace : string -> int -> node -> piece_tree -> Piece_buffer.t -> 
     A Piece_tree with all instances of the string replaced.
   *)
 
-val fold_text : piece_tree -> Piece_buffer.t -> 'a -> ('a -> string -> 'a) -> 'a
+val fold_text : piece_rope -> 'a -> ('a -> string -> 'a) -> 'a
 (**
     This function executes a function for each string in the Piece_tree in order, threading an accumulator argument between each stage,
 
@@ -192,7 +191,7 @@ val fold_text : piece_tree -> Piece_buffer.t -> 'a -> ('a -> string -> 'a) -> 'a
     The result of the accumulator after applying the folder on each string.
   *)
 
-val fold_lines : piece_tree -> Piece_buffer.t -> 'a -> ('a -> line_offset -> 'a) -> 'a
+val fold_lines : piece_rope -> 'a -> ('a -> line_offset -> 'a) -> 'a
 (**
     This function executes a function for each line in the Piece_tree in order, threading an accumulator argument between each stage,
 
@@ -206,8 +205,7 @@ val fold_lines : piece_tree -> Piece_buffer.t -> 'a -> ('a -> line_offset -> 'a)
     The result of the accumulator after applying the folder on each line.
   *)
 
-val fold_match_indices :
-  string -> piece_tree -> Piece_buffer.t -> 'a -> ('a -> int -> 'a) -> 'a
+val fold_match_indices : string -> piece_rope -> 'a -> ('a -> int -> 'a) -> 'a
 (**
     This function executes a folder function on the UTF-32 indices found to match a given string.
     This is used internally for the find_matches and find_and_replace functions and it may be useful to library consumers for other purposes as well.
