@@ -1,26 +1,26 @@
 (lang dune 3.6)
 
-(name piecerope)
+(name piece_rope)
 
 (generate_opam_files true)
 
 (source
- (github username/reponame))
+ (github hummy123/ocaml-piecerope))
 
-(authors "Author Name")
+(authors "Humza Shahid")
 
-(maintainers "Maintainer Name")
+(maintainers "Humza Shahid")
 
-(license LICENSE)
+(license  MIT)
 
 (documentation https://url/to/documentation)
 
 (package
- (name piecerope)
- (synopsis "A short synopsis")
- (description "A longer description")
+ (name piece_rope)
+ (synopsis "A data structure for efficiently manipulating strings.")
+ (description "Supports UTF-8, UTF-16 and UTF-32 for interacting with external systems. Provides extensibility points for you to implement domain-specific functions. Documented and designed to be simple to use.")
  (depends ocaml dune)
  (tags
-  (topics "to describe" your project)))
+  (text "piece table" "piece tree" rope unicode)))
 
 ; See the complete stanza docs at https://dune.readthedocs.io/en/stable/dune-files.html#dune-project
