@@ -1,4 +1,4 @@
-type t = BE | BT of int * t * int * string * int * t * int
+open Piece_types
 
 let target_size = 1024
 

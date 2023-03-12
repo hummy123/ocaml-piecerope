@@ -1,5 +1,4 @@
-type encoding = Utf8 | Utf16 | Utf32
-type index_offsets = { utf8_pos : int; utf16_pos : int; utf32_pos : int }
+open Piece_types
 
 let create_offsets utf8_pos utf16_pos utf32_pos =
   { utf8_pos; utf16_pos; utf32_pos }

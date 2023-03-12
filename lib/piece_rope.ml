@@ -1,47 +1,51 @@
-type t = { buffer : Piece_buffer.t; pieces : Piece_tree.t }
-
 let empty = { buffer = Piece_buffer.empty; pieces = Piece_tree.empty }
 
 let insert index (str : string) piecerope =
-  let pcStart = Piece_buffer.size piecerope.buffer in
-  let utf16length, utf32length, pcLines =
-    Unicode.count_string_stats str pcStart
-  in
-  let utf8length = String.length str in
-  let buffer = Piece_buffer.append str utf32length piecerope.buffer in
-  let node =
-    Piece_tree.create_node pcStart utf8length utf16length utf32length pcLines
-  in
-  let pieces =
-    Piece_tree.insert_tree index node piecerope.pieces piecerope.buffer
-  in
-  { buffer; pieces }
+  if str <> "" then
+    let pcStart = Piece_buffer.size piecerope.buffer in
+    let utf16length, utf32length, pcLines =
+      Unicode.count_string_stats str pcStart
+    in
+    let utf8length = String.length str in
+    let buffer = Piece_buffer.append str utf32length piecerope.buffer in
+    let node =
+      Piece_tree.create_node pcStart utf8length utf16length utf32length pcLines
+    in
+    let pieces =
+      Piece_tree.insert_tree index node piecerope.pieces piecerope.buffer
+    in
+    { buffer; pieces }
+  else piecerope
 
 let prepend (str : string) piecerope =
-  let pcStart = Piece_buffer.size piecerope.buffer in
-  let utf16length, utf32length, pcLines =
-    Unicode.count_string_stats str pcStart
-  in
-  let utf8length = String.length str in
-  let buffer = Piece_buffer.append str utf32length piecerope.buffer in
-  let node =
-    Piece_tree.create_node pcStart utf8length utf16length utf32length pcLines
-  in
-  let pieces = Piece_tree.prepend node piecerope.pieces in
-  { buffer; pieces }
+  if str <> "" then
+    let pcStart = Piece_buffer.size piecerope.buffer in
+    let utf16length, utf32length, pcLines =
+      Unicode.count_string_stats str pcStart
+    in
+    let utf8length = String.length str in
+    let buffer = Piece_buffer.append str utf32length piecerope.buffer in
+    let node =
+      Piece_tree.create_node pcStart utf8length utf16length utf32length pcLines
+    in
+    let pieces = Piece_tree.prepend node piecerope.pieces in
+    { buffer; pieces }
+  else piecerope
 
 let append (str : string) piecerope =
-  let pcStart = Piece_buffer.size piecerope.buffer in
-  let utf16length, utf32length, pcLines =
-    Unicode.count_string_stats str pcStart
-  in
-  let utf8length = String.length str in
-  let buffer = Piece_buffer.append str utf32length piecerope.buffer in
-  let node =
-    Piece_tree.create_node pcStart utf8length utf16length utf32length pcLines
-  in
-  let pieces = Piece_tree.append node piecerope.pieces in
-  { buffer; pieces }
+  if str <> "" then
+    let pcStart = Piece_buffer.size piecerope.buffer in
+    let utf16length, utf32length, pcLines =
+      Unicode.count_string_stats str pcStart
+    in
+    let utf8length = String.length str in
+    let buffer = Piece_buffer.append str utf32length piecerope.buffer in
+    let node =
+      Piece_tree.create_node pcStart utf8length utf16length utf32length pcLines
+    in
+    let pieces = Piece_tree.append node piecerope.pieces in
+    { buffer; pieces }
+  else piecerope
 
 let delete start length piecerope =
   let pieces =
@@ -55,13 +59,9 @@ let substring start length piecerope =
 let get_line line piecerope =
   Piece_tree.get_line line piecerope.pieces piecerope.buffer
 
-let get_line_and_line_start_index line piecerope =
-  Piece_tree.get_line_and_line_start_index line piecerope.pieces
-    piecerope.buffer
-
 let get_text piecerope = Piece_tree.get_text piecerope.pieces piecerope.buffer
 let create str = insert 0 str empty
-let metadata piecerope = Piece_tree.tree_size piecerope.pieces
+let stats piecerope = Piece_tree.stats piecerope.pieces
 
 let find_matches find_string piecerope =
   Piece_tree.find_matches find_string piecerope.pieces piecerope.buffer

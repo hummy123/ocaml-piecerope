@@ -1,21 +1,8 @@
+open Piece_types
+
 let top_level_cont x = x
 
-type node = {
-  start : int;
-  utf8_length : int;
-  utf16_length : int;
-  utf32_length : int;
-  lines : int array;
-}
-
-type metadata = {
-  utf8_subtree : int;
-  utf16_subtree : int;
-  utf32_subtree : int;
-  subtree_lines : int;
-}
-
-let create_metadata utf8 utf16 utf32 lines =
+let create_metadata utf8 utf16 utf32 lines : metadata =
   {
     utf8_subtree = utf8;
     utf16_subtree = utf16;
@@ -25,22 +12,6 @@ let create_metadata utf8 utf16 utf32 lines =
 
 let emptyMetadata =
   { utf8_subtree = 0; utf16_subtree = 0; utf32_subtree = 0; subtree_lines = 0 }
-
-type line_offset = {
-  line : string;
-  utf32_offset : int;
-  utf16_offset : int;
-  utf8_offset : int;
-}
-
-type tree_stats = {
-  lines : int;
-  utf32_length : int;
-  utf16_length : int;
-  utf8_length : int;
-}
-
-type t = PE | PT of int * t * metadata * node * metadata * t
 
 let ht = function PE -> 0 | PT (h, _, _, _, _, _) -> h
 
@@ -251,7 +222,7 @@ let at_start_and_length start length buffer =
 let is_consecutive v pcStart = v.start + v.utf32_length = pcStart
 
 (* Indexing operations for finding offsets in other encodings. *)
-let offsets_from_ut32 find_offset tree buffer : Unicode.index_offsets =
+let offsets_from_ut32 find_offset rope : index_offsets =
   let rec off cur_u8 cur_u16 cur_u32 node =
     match node with
     | PT (_, l, _, v, _, r) ->
@@ -286,21 +257,21 @@ let offsets_from_ut32 find_offset tree buffer : Unicode.index_offsets =
           (* Trying to find middle of this node. We must get this node's text and count offsets from the string. *)
         else
           let u32_difference = find_offset - cur_u32 in
-          let nodeText = text v buffer in
+          let nodeText = text v rope.buffer in
           let textOffsets =
-            Unicode.count_to nodeText u32_difference Unicode.Utf32
+            Unicode.count_to nodeText u32_difference Utf32
           in
           Unicode.create_offsets
             (textOffsets.utf8_pos + cur_u8)
             (textOffsets.utf16_pos + cur_u16)
             find_offset
     | PE ->
-        if tree = PE then Unicode.create_offsets 0 0 0
+        if rope.pieces = PE then Unicode.create_offsets 0 0 0
         else failwith "impossible Piece_tree.offsets_from_ut32 case"
   in
-  off (utf8_size_left tree) (utf16_size_left tree) (utf32_size_left tree) tree
+  off (utf8_size_left rope.pieces) (utf16_size_left rope.pieces) (utf32_size_left rope.pieces) rope.pieces
 
-let offsets_from_ut16 find_offset tree buffer =
+let offsets_from_ut16 find_offset rope =
   let rec off cur_u8 cur_u16 cur_u32 node =
     match node with
     | PT (_, l, _, v, _, r) ->
@@ -335,21 +306,21 @@ let offsets_from_ut16 find_offset tree buffer =
           (* Trying to find middle of this node. We must get this node's text and count offsets from the string. *)
         else
           let u16_difference = find_offset - cur_u16 in
-          let nodeText = text v buffer in
+          let nodeText = text v rope.buffer in
           let textOffsets =
-            Unicode.count_to nodeText u16_difference Unicode.Utf16
+            Unicode.count_to nodeText u16_difference Utf16
           in
           Unicode.create_offsets
             (textOffsets.utf8_pos + cur_u8)
             (textOffsets.utf16_pos + cur_u16)
             (textOffsets.utf32_pos + cur_u32)
     | PE ->
-        if tree = PE then Unicode.create_offsets 0 0 0
+        if rope.pieces = PE then Unicode.create_offsets 0 0 0
         else failwith "impossible Piece_tree.offsets_from_ut16 case"
   in
-  off (utf8_size_left tree) (utf16_size_left tree) (utf32_size_left tree) tree
+  off (utf8_size_left rope.pieces) (utf16_size_left rope.pieces) (utf32_size_left rope.pieces) rope.pieces
 
-let offsets_from_ut8 find_offset tree buffer =
+let offsets_from_ut8 find_offset rope =
   let rec off cur_u8 cur_u16 cur_u32 node =
     match node with
     | PT (_, l, _, v, _, r) ->
@@ -384,25 +355,25 @@ let offsets_from_ut8 find_offset tree buffer =
           (* Trying to find middle of this node. We must get this node's text and count offsets from the string. *)
         else
           let u16_difference = find_offset - cur_u16 in
-          let nodeText = text v buffer in
+          let nodeText = text v rope.buffer in
           let textOffsets =
-            Unicode.count_to nodeText u16_difference Unicode.Utf8
+            Unicode.count_to nodeText u16_difference Utf8
           in
           Unicode.create_offsets
             (textOffsets.utf8_pos + cur_u8)
             (textOffsets.utf16_pos + cur_u16)
             (textOffsets.utf32_pos + cur_u32)
     | PE ->
-        if tree = PE then Unicode.create_offsets 0 0 0
+        if rope.pieces = PE then Unicode.create_offsets 0 0 0
         else failwith "impossible Piece_tree.offsets_from_ut8 case"
   in
-  off (utf8_size_left tree) (utf16_size_left tree) (utf32_size_left tree) tree
+  off (utf8_size_left rope.pieces) (utf16_size_left rope.pieces) (utf32_size_left rope.pieces) rope.pieces
 
-let offsets find_offset tree buffer enc : Unicode.index_offsets =
+let offsets find_offset rope enc : index_offsets =
   match enc with
-  | Unicode.Utf8 -> offsets_from_ut8 find_offset tree buffer
-  | Unicode.Utf16 -> offsets_from_ut16 find_offset tree buffer
-  | Unicode.Utf32 -> offsets_from_ut32 find_offset tree buffer
+  | Utf8 -> offsets_from_ut8 find_offset rope
+  | Utf16 -> offsets_from_ut16 find_offset rope
+  | Utf32 -> offsets_from_ut32 find_offset rope
 
 (** Adds the given piece to the start of the given tree. *)
 let prepend insNode tree =
@@ -499,7 +470,7 @@ let insert_tree insIndex insNode tree buffer =
         else
           let nodeText = text v buffer in
           let offsets =
-            Unicode.count_to nodeText difference_u32 Unicode.Utf32
+            Unicode.count_to nodeText difference_u32 Utf32
           in
           let difference_u8 = offsets.utf8_pos in
           let difference_u16 = offsets.utf16_pos in
@@ -562,7 +533,7 @@ let delete_tree start length tree buffer =
               balR l' v' r |> cont
             else
               let nodeText = at_start_and_length newStart newLength buffer in
-              let offsets = Unicode.count_to nodeText newLength Unicode.Utf32 in
+              let offsets = Unicode.count_to nodeText newLength Utf32 in
               let v' =
                 create_node newStart offsets.utf8_pos offsets.utf16_pos
                   newLength newLines
@@ -578,7 +549,7 @@ let delete_tree start length tree buffer =
               balL l v' r' |> cont
             else
               let nodeText = at_start_and_length v.start length buffer in
-              let offsets = Unicode.count_to nodeText length Unicode.Utf32 in
+              let offsets = Unicode.count_to nodeText length Utf32 in
               let v' =
                 create_node v.start offsets.utf8_pos offsets.utf16_pos length
                   lines
@@ -598,8 +569,8 @@ let delete_tree start length tree buffer =
         else
           let p1_text = at_start_and_length v.start p1Length buffer in
           let p2_text = at_start_and_length p2Start p2Length buffer in
-          let p1_offset = Unicode.count_to p1_text p1Length Unicode.Utf32 in
-          let p2_offset = Unicode.count_to p2_text p2Length Unicode.Utf32 in
+          let p1_offset = Unicode.count_to p1_text p1Length Utf32 in
+          let p2_offset = Unicode.count_to p2_text p2Length Utf32 in
           let r'node =
             create_node p2Start p2_offset.utf8_pos p2_offset.utf16_pos p2Length
               p2Lines
@@ -620,7 +591,7 @@ let delete_tree start length tree buffer =
   in
   del (utf32_size_left tree) tree top_level_cont
 
-let substring start length tree buffer =
+let substring start length rope =
   let finish = start + length in
   let rec sub curIndex node acc cont =
     match node with
@@ -629,14 +600,14 @@ let substring start length tree buffer =
     (* The end of the current substring range is in this node, |whi|ch means the start of this node. *)
     | PT (_, _, _, v, _, r)
       when end_is_in_range start curIndex finish (curIndex + v.utf32_length) ->
-        let nodeText = text_at_end curIndex start v buffer in
+        let nodeText = text_at_end curIndex start v rope.buffer in
         let recurseRightIndex = curIndex + v.utf32_length + utf32_size_left r in
         sub recurseRightIndex r acc (fun x -> nodeText :: x |> cont)
     (* The currennt node is |fully| within the substring range. *)
     | PT (_, l, _, v, _, r)
       when in_range start curIndex finish (curIndex + v.utf32_length) ->
         let nodeEndIndex = curIndex + v.utf32_length in
-        let nodeText = text v buffer in
+        let nodeText = text v rope.buffer in
 
         let recurseRightIndex = nodeEndIndex + utf32_size_left r in
         let recurseLeftIndex = curIndex - utf32_length l - utf32_size_right l in
@@ -647,14 +618,14 @@ let substring start length tree buffer =
     | PT (_, l, _, v, _, _)
       when start_is_in_range start curIndex finish (curIndex + v.utf32_length)
       ->
-        let nodeText = text_at_start curIndex finish v buffer in
+        let nodeText = text_at_start curIndex finish v rope.buffer in
         let recurseLeftIndex = curIndex - utf32_length l - utf32_size_right l in
         sub recurseLeftIndex l (nodeText :: acc) (fun x -> x |> cont)
     (* The mi|d|dle of the current node is in the substring range. *)
     | PT (_, _, _, v, _, _)
       when middle_is_in_range start curIndex finish (curIndex + v.utf32_length)
       ->
-        [ text_in_range curIndex start finish v buffer ] |> cont
+        [ text_in_range curIndex start finish v rope.buffer ] |> cont
     (* Below two cases navigate to the next node when the substring range is outside the current node. *)
     (* When the current node is after the substring's end range. *)
     | PT (_, l, _, _, _, _) when start < curIndex ->
@@ -666,7 +637,7 @@ let substring start length tree buffer =
         sub recurseRightIndex r acc (fun x -> x |> cont)
     | PT (_, _, _, _, _, _) -> failwith "unreachable Buffer.substring case"
   in
-  String.concat "" (sub (utf32_size_left tree) tree [] top_level_cont)
+  String.concat "" (sub (utf32_size_left rope.pieces) rope.pieces [] top_level_cont)
 
 (* Delete/substring if-statements adapted to work with lines. *)
 let node_is_in_line nodeStartLine searchLine nodeEndLine =
@@ -681,7 +652,7 @@ let start_of_line_in_node nodeStartLine searchLine nodeEndLine =
 let line_is_in_node nodeStartLine searchLine nodeEndLine =
   nodeStartLine < searchLine && nodeEndLine > searchLine
 
-let get_line line tree buffer =
+let get_line line rope =
   let rec get cur_line cur_u32 node acc cont =
     match node with
     | PE -> (acc, None) |> cont
@@ -693,7 +664,7 @@ let get_line line tree buffer =
           Array.unsafe_get v.lines (Array.length v.lines - 1) + 1
         in
         let length = v.utf32_length - lineStart + v.start in
-        let nodeText = at_start_and_length lineStart length buffer in
+        let nodeText = at_start_and_length lineStart length rope.buffer in
 
         (* Index where line starts in terms of piece tree (not buffer). *)
         let lineStartIndex = Some (cur_u32 + v.utf32_length - lineStart) in
@@ -706,7 +677,7 @@ let get_line line tree buffer =
     | PT (_, l, _, v, _, r)
       when node_is_in_line cur_line line (cur_line + Array.length v.lines) ->
         let nodeEndLine = cur_line + Array.length v.lines in
-        let nodeText = text v buffer in
+        let nodeText = text v rope.buffer in
 
         let recurseRightLine = nodeEndLine + lines_left r in
         let recurseLeftLine = cur_line - n_lines l - lines_right l in
@@ -725,7 +696,7 @@ let get_line line tree buffer =
       ->
         (* + 1 gives us \n in string and - v.Start takes us to piece offset *)
         let length : int = Array.unsafe_get v.lines 0 + 1 - v.start in
-        let nodeText = at_start_and_length v.start length buffer in
+        let nodeText = at_start_and_length v.start length rope.buffer in
 
         let recurseLeftLine = cur_line - n_lines l - lines_right l in
         let recurseLeftIndex = cur_u32 - utf32_length l - utf32_size_right l in
@@ -744,7 +715,7 @@ let get_line line tree buffer =
         in
 
         let lineStartIndex = Some (lineStart - v.start - cur_u32) in
-        ([ at_start_and_length lineStart lineLength buffer ], lineStartIndex)
+        ([ at_start_and_length lineStart lineLength rope.buffer ], lineStartIndex)
         |> cont
     | PT (_, l, _, _, _, _) when line < cur_line ->
         let recurseLeftLine = cur_line - n_lines l - lines_right l in
@@ -757,13 +728,13 @@ let get_line line tree buffer =
     | PT (_, _, _, _, _, _) -> failwith "unreachable Piece_tree.get_line case"
   in
   let strList, lineStartIndex =
-    get (lines_left tree) (utf32_size_left tree) tree [] top_level_cont
+    get (lines_left rope.pieces) (utf32_size_left rope.pieces) rope.pieces [] top_level_cont
   in
   let str = String.concat "" strList in
 
   match lineStartIndex with
   | Some idx ->
-      let offsets = offsets_from_ut32 idx tree buffer in
+      let offsets = offsets_from_ut32 idx rope in
       {
         line = str;
         utf32_offset = idx;
@@ -774,29 +745,29 @@ let get_line line tree buffer =
 
 let empty = PE
 
-let fold_text tree buffer state folder =
+let fold_text rope state folder =
   fold
     (fun x pc ->
-      folder x (Piece_buffer.substring pc.start pc.utf32_length buffer))
-    state tree
+      folder x (Piece_buffer.substring pc.start pc.utf32_length rope.buffer))
+    state rope.pieces
 
-let get_text tree buffer =
-  let lst = fold_text tree buffer [] (fun acc str -> str :: acc) in
+let get_text rope =
+  let lst = fold_text rope [] (fun acc str -> str :: acc) in
   List.rev lst |> String.concat ""
 
-let fold_lines tree buffer state folder =
-  let metadata = tree_size tree in
+let fold_lines rope state folder =
+  let metadata = tree_size rope.pieces in
   let total_lines = metadata.subtree_lines in
   let rec fld lineNum state =
     if lineNum >= total_lines && lineNum <> 0 then state
     else
-      let line = get_line lineNum tree buffer in
+      let line = get_line lineNum rope in
       let state = folder state line in
       fld (lineNum + 1) state
   in
   fld 0 state
 
-let fold_match_indices str tree buffer initial_state folder =
+let fold_match_indices str rope initial_state folder =
   let chr = String.unsafe_get str 0 in
   let _, length, _ = Unicode.count_string_stats str 0 in
 
@@ -806,7 +777,7 @@ let fold_match_indices str tree buffer initial_state folder =
       let cur_chr = String.unsafe_get text str_idx in
       let char_length = Unicode.utf8_length cur_chr in
       if cur_chr = chr then
-        let substr = substring utf32_pos length tree buffer in
+        let substr = substring utf32_pos length rope in
         let acc =
           if substr = str then folder acc (utf32_pos + tree_pos) else acc
         in
@@ -818,26 +789,26 @@ let fold_match_indices str tree buffer initial_state folder =
     fold
       (fun (acc, pos) piece ->
         let text =
-          Piece_buffer.substring piece.start piece.utf32_length buffer
+          Piece_buffer.substring piece.start piece.utf32_length rope.buffer
         in
         let acc = fnd 0 0 text acc pos in
         (acc, pos + piece.utf32_length))
-      (initial_state, 0) tree
+      (initial_state, 0) rope.pieces
   in
   result
 
-let find_matches find_string tree buffer =
+let find_matches find_string rope =
   let lst =
-    fold_match_indices find_string tree buffer [] (fun acc idx -> idx :: acc)
+    fold_match_indices find_string rope [] (fun acc idx -> idx :: acc)
   in
   List.rev lst |> Array.of_list
 
-let find_and_replace find_string find_string_length (replace_node : node) tree
-    buffer =
+let find_and_replace find_string find_string_length (replace_node : node) rope =
   let length_difference = find_string_length - replace_node.utf32_length in
-  fold_match_indices find_string tree buffer (tree, 0)
-    (fun (acc_tree, acc_diff) idx ->
-      let idx = idx + acc_diff in
-      let acc_tree = delete_tree idx find_string_length acc_tree buffer in
-      ( insert_tree idx replace_node acc_tree buffer,
-        acc_diff + length_difference ))
+  let folder (acc_tree, acc_diff) idx =
+    let idx = idx + acc_diff in
+    let acc_tree = delete_tree idx find_string_length acc_tree rope.buffer in
+    ( insert_tree idx replace_node acc_tree rope.buffer,
+      acc_diff + length_difference )
+  in
+  fold_match_indices find_string rope (rope.pieces, 0) folder
