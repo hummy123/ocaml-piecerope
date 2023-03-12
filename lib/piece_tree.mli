@@ -90,7 +90,7 @@ val insert_tree : int -> node -> piece_tree -> piece_buffer -> piece_tree
 
     Returns:
     The Piece_tree with the node inserted at the given index.
-  *)
+*)
 
 val delete_tree : int -> int -> piece_tree -> piece_buffer -> piece_tree
 (**
