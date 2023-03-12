@@ -60,7 +60,7 @@ let substring start length piecerope =
 
 let get_line line piecerope = Piece_tree.get_line line piecerope
 let get_text piecerope = Piece_tree.get_text piecerope
-let create str = insert 0 str empty
+let of_string str = insert 0 str empty
 let stats piecerope = Piece_tree.stats piecerope.pieces
 
 let find_matches find_string piecerope =
@@ -83,3 +83,8 @@ let find_and_replace find_string replace_string piecerope =
     Piece_tree.find_and_replace find_string utf32_length ins_node piecerope
   in
   { buffer; pieces }
+
+let fold_text = Piece_tree.fold_text
+let fold_lines = Piece_tree.fold_lines
+let fold_match_indices = Piece_tree.fold_match_indices
+let offsets = Piece_tree.offsets

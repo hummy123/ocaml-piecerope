@@ -31,17 +31,15 @@ val create_node : int -> int -> int -> int -> int array -> node
 
 val offsets : int -> piece_rope -> encoding -> index_offsets
 (**
-    This function, given an index, returns an index_offsets instance describing the offset in the three Unicode encodings.
-    If the given index is in UTF-8 or UTF-16 and in the middle of a valid UTF-32 offset, the return value clips to the previous valid UTF-32 offset.
+    This function, given an index, returns an index_offsets record describing the offset in UTF-8, UTF-16 and UTF-32.
+    If the given index is in the middle of a valid UTF-32 offset, the return value clips to the previous valid UTF-32 offset.
 
     Accepts:
     The offset to find in. Can be UTF-8, UTF-16 or UTF-32.
-    The Piece_tree to find the offset in.
-    The Piece_buffer belonging to this Piece_tree.
-    The Unicode encoding of the first parameter.
+    The piece_rope to find the offset in.
 
     Returns:
-    The index_offsets instance for the given offset.
+    The index_offsets record for the given offset and piece_rope.
   *)
 
 val prepend : node -> piece_tree -> piece_tree
@@ -82,8 +80,7 @@ val ins_max : node -> piece_tree -> piece_tree
   *)
 
 val insert_tree : int -> node -> piece_tree -> piece_buffer -> piece_tree
-(**
-    This function inserts the given node to the given Piece_tree at the given UTF-32 index.
+(*An function inserts the given node to the given Piece_tree at the given UTF-32 index.
 
     Accepts:
     The index to insert into, in UTF-32.
@@ -116,8 +113,7 @@ val substring : int -> int -> piece_rope -> string
     Accepts:
     The start index to start extracting a substring from, in UTF-32.
     The length to extract, in UTF-32.
-    The Piece_tree to extract a substring from.
-    The Piece_buffer corresponding to the Piece_tree.
+    The piece_rope to extract a substring from.
 
     Returns:
     The extracted substring.
@@ -129,8 +125,7 @@ val get_line : int -> piece_rope -> line_offset
 
     Accepts:
     The line to retrieve.
-    The Piece_tree to retrieve the line from
-    The Piece_buffer corresponding to the Piece_tree.
+    The piece_rope to retrieve the line from
 
     Returns:
     A line_offset instance containing the retrieved line and the offset the line starts at.
@@ -138,11 +133,10 @@ val get_line : int -> piece_rope -> line_offset
 
 val get_text : piece_rope -> string
 (**
-    This function returns all the text for the given Piece_tree.
+    This function returns all the text for the given piece_rope..
 
     Accepts:
-    The Piece_tree to retrieve text from.
-    The Piece_buffer corresponding to the Piece_tree.
+    The piece_rope to retrieve text from.
 
     Returns:
     String containing all text in the Piece_tree.
@@ -151,12 +145,12 @@ val get_text : piece_rope -> string
 val find_matches : string -> piece_rope -> int array
 (**
     This function finds all matches of a given string in the given Piece_tree and returns an int array with the UTF-32 indices the string was found at.
+    The array contains the matches are in order, where array.[0] is the first match.
     If no matches are found, returns an empty array.
 
     Accepts:
     The string to find.
-    The Piece_tree to find within.
-    The Piece_buffer corresponding to the Piece_tree.
+    The piece_rope to find within.
 
     Returns:
     An int array representing the indices in terms of UTF-32 offsets.
@@ -170,11 +164,10 @@ val find_and_replace : string -> int -> node -> piece_rope -> piece_tree
     The string to find.
     The length of the string in UTF-32, used for deleting the string from the tree.
     The node to replace the given string with.
-    The Piece_tree to replace within.
-    The Piece_buffer corresponding to the Piece_tree.
+    The piece_rope to replace within.
 
     Returns:
-    A Piece_tree with all instances of the string replaced.
+    A piece_tree with all instances of the string replaced.
   *)
 
 val fold_text : piece_rope -> 'a -> ('a -> string -> 'a) -> 'a

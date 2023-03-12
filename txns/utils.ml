@@ -1,5 +1,3 @@
-open Piecerope
-
 (* Times any function and returns the output of that function. *)
 let time_func title f =
   let title = "\nStarting " ^ title ^ "...\n" in
@@ -10,7 +8,7 @@ let time_func title f =
   let _ = Printf.printf "Execution time: %f ms\n" endTime in
   x
 
-(* Runs an empty ropr throught the edit trace, resulting rope when done. *)
+(* Runs an empty rope throught the edit trace, resulting rope when done. *)
 let run_txns_result (arr : (int * int * string) array) =
   let rope, count =
     Array.fold_left
@@ -31,10 +29,10 @@ let run_txns_result (arr : (int * int * string) array) =
 let run_txns title arr = time_func title (fun _ -> run_txns_result arr)
 
 let run_substring_result rope =
-  let half_length = (Piece_rope.metadata rope).utf32_subtree / 2 in
+  let stats = Piece_rope.stats rope in
+  let half_length = stats.utf32_length / 2 in
   let quarter_length = half_length / 2 in
-  let str = Piece_rope.substring quarter_length half_length rope in
-  str
+  Piece_rope.substring quarter_length half_length rope
 
 let run_substring title rope =
   time_func title (fun _ -> run_substring_result rope)

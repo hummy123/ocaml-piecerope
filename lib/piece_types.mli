@@ -34,9 +34,7 @@ type encoding =
   | Utf8
   | Utf16
   | Utf32
-      (**
-   The encoding type is used by some functions to let you choose how you want to query an offset.
- *)
+      (** The encoding type is used by some functions to let you choose how you want to query an offset. *)
 
 type index_offsets = { utf8_pos : int; utf16_pos : int; utf32_pos : int }
 (**
