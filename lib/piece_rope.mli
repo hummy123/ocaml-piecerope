@@ -74,7 +74,7 @@ val get_line : int -> piece_rope -> line_offset
     This function retrieves a given line from a Piece_tree.
 
     Accepts:
-    The line to retrieve.
+    The line to retrieve. This is zero-indexed, just like string indices are.
     The piece_rope to retrieve the line from
 
     Returns:
@@ -108,7 +108,7 @@ val stats : piece_rope -> tree_stats
     This function returns statistics for the given piece_rope.
     The statistics returned are:
     - The number of lines in the piece_rope.
-    - The length of the piece_rope in UTF-8, UTF-6 and UTF-32.
+    - The length of the piece_rope in UTF-8, UTF-16 and UTF-32.
 
     Accepts:
     The Piece_tree to retrieve statistics about.
@@ -146,7 +146,7 @@ val find_matches : string -> piece_rope -> int array
 
 val find_and_replace : string -> string -> piece_rope -> piece_rope
 (**
-    This function finds all matches of a given string and replaces them with the given string.
+    This function finds all matches of one string and replaces them with another.
 
     Accepts:
     The string to find.
