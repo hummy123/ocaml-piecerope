@@ -264,7 +264,8 @@ let offsets_from_ut32 find_offset rope : index_offsets =
             (textOffsets.utf16_pos + cur_u16)
             find_offset
     | PE ->
-        Unicode.create_offsets cur_u8 cur_u16 cur_u32 
+        if rope.pieces = PE then Unicode.create_offsets 0 0 0
+        else failwith "impossible offsets_from_ut32 case"
   in
   off
     (utf8_size_left rope.pieces)
@@ -314,7 +315,8 @@ let offsets_from_ut16 find_offset rope =
             (textOffsets.utf16_pos + cur_u16)
             (textOffsets.utf32_pos + cur_u32)
     | PE ->
-        Unicode.create_offsets cur_u8 cur_u16 cur_u32 
+        if rope.pieces = PE then Unicode.create_offsets 0 0 0
+        else failwith "impossible offsets_from_ut16 case"
   in
   off
     (utf8_size_left rope.pieces)
@@ -364,7 +366,8 @@ let offsets_from_ut8 find_offset rope =
             (textOffsets.utf16_pos + cur_u16)
             (textOffsets.utf32_pos + cur_u32)
     | PE ->
-        Unicode.create_offsets cur_u8 cur_u16 cur_u32 
+        if rope.pieces = PE then Unicode.create_offsets 0 0 0
+        else failwith "impossible offsets_from_ut8 case"
   in
   off
     (utf8_size_left rope.pieces)
@@ -669,7 +672,7 @@ let get_line line rope =
         let nodeText = at_start_and_length lineStart length rope.buffer in
 
         (* Index where line starts in terms of piece tree (not buffer). *)
-        let lineStartIndex = Some (cur_u32 + v.utf32_length - lineStart) in
+        let lineStartIndex = Some (cur_u32 + v.utf32_length - length) in
 
         let recurseRightLine = cur_line + Array.length v.lines + lines_left r in
         let recurseRightIndex = cur_u32 + v.utf32_length + utf32_size_left r in

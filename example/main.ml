@@ -86,12 +86,18 @@ let get_stats model =
   let offset_str = Format.sprintf "offset %i of %i" model.offset stats.utf32_length in
   let col_str = Format.sprintf "col %i of %i cols for current line" model.col_num line_length in
   let line_str = Format.sprintf "line %i of %i" model.line_num stats.lines in
+  let line_offset_str = Format.sprintf "current line start idx: %i" line_offset.utf32_offset in
   
+  let newline_i = I.string A.empty "" in
   let offset_i = I.string A.empty offset_str in
   let col_i = I.string A.empty col_str in
   let line_i = I.string A.empty line_str in
+  let line_o_i = I.string A.empty line_offset_str in
 
-  I.(<->) offset_i col_i |> I.(<->) line_i
+  I.(<->) offset_i col_i 
+  |> I.(<->) line_i
+  |> I.(<->) line_o_i
+  |> I.(<->) newline_i
 
 let rec main t model =
   let str = Piece_rope.get_text model.text in
