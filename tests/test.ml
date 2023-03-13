@@ -47,7 +47,7 @@ let () =
               Alcotest.(check int)
                 "folds each match in string" expected count_of_a);
         ] );
-      ( "Piece_rope.find_and_replace can replace when",
+      ( "Piece_rope.find_and_replace",
         [
           test "replace_string is same length" (fun () ->
               let start = "a bc b bc c bc d b" in

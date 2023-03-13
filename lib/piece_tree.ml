@@ -804,7 +804,7 @@ let find_matches find_string rope =
 
 let find_and_replace find_string (replace_node : node) rope =
   let _, find_string_length, _ = Unicode.count_string_stats find_string 0 in
-  let length_difference = find_string_length - replace_node.utf32_length in
+  let length_difference = replace_node.utf32_length - find_string_length in
   let folder (acc_tree, acc_diff) idx =
     let idx = idx + acc_diff in
     let acc_tree = delete_tree idx find_string_length acc_tree rope.buffer in
