@@ -71,7 +71,7 @@ let find_and_replace find_string replace_string piecerope =
   let buffer_length = Piece_buffer.size piecerope.buffer in
   let utf8_length = String.length replace_string in
   let utf16_length, utf32_length, line_breaks =
-    Unicode.count_string_stats find_string buffer_length
+    Unicode.count_string_stats replace_string buffer_length
   in
   let buffer =
     Piece_buffer.append replace_string utf32_length piecerope.buffer
