@@ -47,6 +47,28 @@ let () =
               Alcotest.(check int)
                 "folds each match in string" expected count_of_a);
         ] );
+      ( "Piece_rope.find_matches",
+        [
+          test "returns indices in order" (fun () ->
+              let rope = Piece_rope.of_string "a bc b bc c bc d b" in
+              let expected_indices = [| 2; 7; 12 |] in
+              let expected_0 = Array.get expected_indices 0 in
+              let expected_1 = Array.get expected_indices 1 in
+              let expected_2 = Array.get expected_indices 2 in
+
+              let result = Piece_rope.find_matches "bc" rope in
+              let result_0 = Array.get result 0 in
+              let result_1 = Array.get result 1 in
+              let result_2 = Array.get result 2 in
+
+              let _ =
+                Alcotest.(check int) "first is same" expected_0 result_0
+              in
+              let _ =
+                Alcotest.(check int) "second is same" expected_1 result_1
+              in
+              Alcotest.(check int) "third is same" expected_2 result_2);
+        ] );
       ( "Piece_rope.find_and_replace",
         [
           test "replace_string is same length" (fun () ->
