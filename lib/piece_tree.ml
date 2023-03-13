@@ -264,8 +264,7 @@ let offsets_from_ut32 find_offset rope : index_offsets =
             (textOffsets.utf16_pos + cur_u16)
             find_offset
     | PE ->
-        if rope.pieces = PE then Unicode.create_offsets 0 0 0
-        else failwith "impossible Piece_tree.offsets_from_ut32 case"
+        Unicode.create_offsets cur_u8 cur_u16 cur_u32 
   in
   off
     (utf8_size_left rope.pieces)
@@ -315,8 +314,7 @@ let offsets_from_ut16 find_offset rope =
             (textOffsets.utf16_pos + cur_u16)
             (textOffsets.utf32_pos + cur_u32)
     | PE ->
-        if rope.pieces = PE then Unicode.create_offsets 0 0 0
-        else failwith "impossible Piece_tree.offsets_from_ut16 case"
+        Unicode.create_offsets cur_u8 cur_u16 cur_u32 
   in
   off
     (utf8_size_left rope.pieces)
@@ -366,8 +364,7 @@ let offsets_from_ut8 find_offset rope =
             (textOffsets.utf16_pos + cur_u16)
             (textOffsets.utf32_pos + cur_u32)
     | PE ->
-        if rope.pieces = PE then Unicode.create_offsets 0 0 0
-        else failwith "impossible Piece_tree.offsets_from_ut8 case"
+        Unicode.create_offsets cur_u8 cur_u16 cur_u32 
   in
   off
     (utf8_size_left rope.pieces)
