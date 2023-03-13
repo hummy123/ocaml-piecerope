@@ -802,7 +802,8 @@ let find_matches find_string rope =
   in
   List.rev lst |> Array.of_list
 
-let find_and_replace find_string find_string_length (replace_node : node) rope =
+let find_and_replace find_string (replace_node : node) rope =
+  let _, find_string_length, _ = Unicode.count_string_stats find_string 0 in
   let length_difference = find_string_length - replace_node.utf32_length in
   let folder (acc_tree, acc_diff) idx =
     let idx = idx + acc_diff in

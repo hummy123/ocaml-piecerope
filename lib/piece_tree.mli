@@ -156,13 +156,12 @@ val find_matches : string -> piece_rope -> int array
     An int array representing the indices in terms of UTF-32 offsets.
   *)
 
-val find_and_replace : string -> int -> node -> piece_rope -> piece_tree
+val find_and_replace : string -> node -> piece_rope -> piece_tree
 (**
     This function finds all matches of a given string and replaces them with the given node.
 
     Accepts:
     The string to find.
-    The length of the string in UTF-32, used for deleting the string from the tree.
     The node to replace the given string with.
     The piece_rope to replace within.
 

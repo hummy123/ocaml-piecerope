@@ -80,9 +80,7 @@ let find_and_replace find_string replace_string piecerope =
     Piece_tree.create_node buffer_length utf8_length utf16_length utf32_length
       line_breaks
   in
-  let pieces =
-    Piece_tree.find_and_replace find_string utf32_length ins_node piecerope
-  in
+  let pieces = Piece_tree.find_and_replace find_string ins_node piecerope in
   { buffer; pieces }
 
 let fold_text = Piece_tree.fold_text
