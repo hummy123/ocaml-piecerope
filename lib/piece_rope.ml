@@ -4,14 +4,15 @@ let empty = { buffer = Piece_buffer.empty; pieces = Piece_tree.empty }
 
 let insert index (str : string) piecerope =
   if str <> "" then
-    let pcStart = Piece_buffer.size piecerope.buffer in
+    let buffer_length = Piece_buffer.size piecerope.buffer in
     let utf16length, utf32length, pcLines =
-      Unicode.count_string_stats str pcStart
+      Unicode.count_string_stats str buffer_length
     in
     let utf8length = String.length str in
     let buffer = Piece_buffer.append str utf32length piecerope.buffer in
     let node =
-      Piece_tree.create_node pcStart utf8length utf16length utf32length pcLines
+      Piece_tree.create_node buffer_length utf8length utf16length utf32length
+        pcLines
     in
     let pieces =
       Piece_tree.insert_tree index node piecerope.pieces piecerope.buffer
@@ -67,17 +68,17 @@ let find_matches find_string piecerope =
   Piece_tree.find_matches find_string piecerope
 
 let find_and_replace find_string replace_string piecerope =
-  let utf16_length, utf32_length, line_breaks =
-    Unicode.count_string_stats find_string 0
-  in
   let buffer_length = Piece_buffer.size piecerope.buffer in
+  let utf8_length = String.length replace_string in
+  let utf16_length, utf32_length, line_breaks =
+    Unicode.count_string_stats find_string buffer_length
+  in
   let buffer =
     Piece_buffer.append replace_string utf32_length piecerope.buffer
   in
   let ins_node =
-    Piece_tree.create_node buffer_length
-      (String.length replace_string)
-      utf16_length utf32_length line_breaks
+    Piece_tree.create_node buffer_length utf8_length utf16_length utf32_length
+      line_breaks
   in
   let pieces =
     Piece_tree.find_and_replace find_string utf32_length ins_node piecerope
