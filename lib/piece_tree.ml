@@ -263,7 +263,9 @@ let offsets_from_ut32 find_offset rope : index_offsets =
             (textOffsets.utf8_pos + cur_u8)
             (textOffsets.utf16_pos + cur_u16)
             find_offset
-    | PE -> Unicode.create_offsets 0 0 0
+    | PE -> 
+        if rope.pieces = PE then Unicode.create_offsets 0 0 0
+        else failwith "impossible offsets_from_ut32 case"
   in
   off
     (utf8_size_left rope.pieces)
@@ -312,7 +314,9 @@ let offsets_from_ut16 find_offset rope =
             (textOffsets.utf8_pos + cur_u8)
             (textOffsets.utf16_pos + cur_u16)
             (textOffsets.utf32_pos + cur_u32)
-    | PE -> Unicode.create_offsets 0 0 0
+    | PE -> 
+        if rope.pieces = PE then Unicode.create_offsets 0 0 0
+        else failwith "impossible offsets_from_ut32 case"
   in
   off
     (utf8_size_left rope.pieces)
@@ -361,7 +365,9 @@ let offsets_from_ut8 find_offset rope =
             (textOffsets.utf8_pos + cur_u8)
             (textOffsets.utf16_pos + cur_u16)
             (textOffsets.utf32_pos + cur_u32)
-    | PE -> Unicode.create_offsets 0 0 0
+    | PE -> 
+        if rope.pieces = PE then Unicode.create_offsets 0 0 0
+        else failwith "impossible offsets_from_ut32 case"
   in
   off
     (utf8_size_left rope.pieces)
@@ -713,7 +719,7 @@ let get_line line rope =
           Array.unsafe_get v.lines lineDifference - lineStart + 1
         in
 
-        let lineStartIndex = Some (lineStart - v.start - cur_u32) in
+        let lineStartIndex = Some (cur_u32 + lineStart - v.start) in
         ( [ at_start_and_length lineStart lineLength rope.buffer ],
           lineStartIndex )
         |> cont

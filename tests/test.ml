@@ -1,7 +1,7 @@
 (*
     I personally find Expecto (F#) and Jest (Javascript)
     to have syntactically cleaner testing styles with a better signal-to-noise ratio.
-    The partial function below helps mimic that syntax.
+    The partially applied function below helps mimic that syntax.
 *)
 let test title f = Alcotest.test_case title `Quick f
 
