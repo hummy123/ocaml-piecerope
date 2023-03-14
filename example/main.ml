@@ -5,7 +5,7 @@ type model = {
   col_num : int;
   line_num : int;
   offset : int;
-  text : Piece_rope__.Piece_types.piece_rope;
+  text : Piece_rope.t;
 }
 
 let initial_model =

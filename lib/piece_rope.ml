@@ -1,5 +1,7 @@
 open Piece_types
 
+type t = piece_rope
+
 let empty = { buffer = Piece_buffer.empty; pieces = Piece_tree.empty }
 
 let insert index (str : string) piecerope =
