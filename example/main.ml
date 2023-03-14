@@ -17,6 +17,7 @@ type actions =
   | CaretLeft
   | CaretRight
   | TypeChar of char
+  | Backspace
   | Enter
 
 let dispatch model = function
@@ -81,6 +82,23 @@ let dispatch model = function
         text = rope;
         offset = model.offset + 1;
       }
+  | Backspace ->
+      if model.offset = 0 then model
+      else if model.col_num > 0 then
+        let rope = Piece_rope.delete (model.offset - 1) 1 model.text in
+        {
+          model with
+          col_num = model.col_num - 1;
+          text = rope;
+          offset = model.offset - 1;
+        }
+      else
+        let offset = model.offset - 1 in
+        let rope = Piece_rope.delete offset 1 model.text in
+        let line_offset = Piece_rope.get_line (model.line_num - 1) rope in
+        let col_num = String.length line_offset.line in
+        let line_num = model.line_num - 1 in
+        { col_num; line_num; offset; text = rope }
   | Enter ->
       let rope = Piece_rope.insert model.offset "\n" model.text in
       {
@@ -148,6 +166,9 @@ let rec main t model =
       main t model
   | `Key (`Enter, _) ->
       let model = dispatch model Enter in
+      main t model
+  | `Key (`Backspace, _) ->
+      let model = dispatch model Backspace in
       main t model
   | _ -> main t model
 
