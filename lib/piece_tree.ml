@@ -758,7 +758,7 @@ let fold_lines rope state folder =
   let metadata = tree_size rope.pieces in
   let total_lines = metadata.subtree_lines in
   let rec fld lineNum state =
-    if lineNum >= total_lines && lineNum <> 0 then state
+    if lineNum = total_lines + 1 then state
     else
       let line = get_line lineNum rope in
       let state = folder state line in

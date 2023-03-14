@@ -95,4 +95,23 @@ let () =
               let expected = "a 000 b 000 c 000 d b" in
               Alcotest.(check string) "replace string is longer" expected result);
         ] );
+      ( "Piece_rope.fold_lines",
+        [
+          test "executes folder when there is only one line" (fun () ->
+              let rope = Piece_rope.of_string "qwerty" in
+              let result =
+                Piece_rope.fold_lines rope 0 (fun acc _ -> acc + 1)
+              in
+              let expected = 1 in
+              Alcotest.(check int) "folder executes once" expected result);
+          test "executes folder on every line" (fun () ->
+              let rope =
+                Piece_rope.of_string "one line \n two lines \n three lines"
+              in
+              let result =
+                Piece_rope.fold_lines rope 0 (fun acc _ -> acc + 1)
+              in
+              let expected = 3 in
+              Alcotest.(check int) "folder executes once" expected result);
+        ] );
     ]
