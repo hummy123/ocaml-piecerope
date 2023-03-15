@@ -211,3 +211,6 @@ val fold_match_indices : string -> piece_rope -> 'a -> ('a -> int -> 'a) -> 'a
     Returns:
     The result of the accumulator after applying the folder on each index.
   *)
+
+val fold : ('a -> node -> 'a) -> 'a -> piece_tree -> 'a
+val fold_back : ('a -> node -> 'a) -> 'a -> piece_tree -> 'a

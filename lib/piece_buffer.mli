@@ -39,3 +39,5 @@ val substring : int -> int -> piece_buffer -> string
     Returns:
     The specified substring.
   *)
+
+val fold_back : ('a -> string -> 'a) -> 'a -> piece_buffer -> 'a

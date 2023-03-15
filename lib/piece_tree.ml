@@ -26,6 +26,17 @@ let fold f x t =
   in
   fld x t top_level_cont
 
+let fold_back f x t =
+  let rec fld x t cont =
+    match t with
+    | PE -> cont x
+    | PT (_, l, _, v, _, r) ->
+        fld x r (fun x ->
+            let x = f x v in
+            fld x l (fun x -> cont x))
+  in
+  fld x t top_level_cont
+
 (* Getting narious node data. *)
 let utf8_length node =
   match node with PE -> 0 | PT (_, _, _, v, _, _) -> v.utf8_length

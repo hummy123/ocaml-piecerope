@@ -1,5 +1,18 @@
 open Piece_types
 
+let top_level_cont x = x
+
+let fold_back f x t =
+  let rec fld x t cont =
+    match t with
+    | BE -> cont x
+    | BT (_, l, _, v, _, r, _) ->
+        fld x r (fun x ->
+            let x = f x v in
+            fld x l (fun x -> cont x))
+  in
+  fld x t top_level_cont
+
 let target_size = 1024
 
 let size = function
@@ -30,7 +43,6 @@ let balR a x xl bc =
     | x -> x
   else mk a x xl bc
 
-let top_level_cont x = x
 let empty = BE
 
 let append str strLength buffer =
