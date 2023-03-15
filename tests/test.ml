@@ -114,4 +114,16 @@ let () =
               let expected = 3 in
               Alcotest.(check int) "folder executes once" expected result);
         ] );
+      ( "Piece_rope.serialise",
+        [
+          test "returns true" (fun () ->
+              let file_path = "svelte_data.json" in
+              let expected = true in
+              let rope, _ =
+                Txns.Utils.run_txns_result Txns.Sveltecomponent.data
+              in
+              let result = Piece_rope.serialise file_path rope in
+              let _ = Sys.remove file_path in
+              Alcotest.(check bool) "returns true" expected result);
+        ] );
     ]
