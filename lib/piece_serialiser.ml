@@ -19,7 +19,6 @@ let fold_back f x t =
   fld x t top_level_cont
 
 let weight = 4
-let ratio = 2
 let size = function WE -> 0 | WT (_, count, _, _) -> count
 let n_con v l r = WT (v, 1 + size l + size r, l, r)
 
@@ -80,13 +79,6 @@ let rank x tree =
   in
   rnk 0 tree
 
-let rec fold state folder = function
-  | WE -> state
-  | WT (v, _, l, r) ->
-      let state = fold state folder l in
-      let state = folder state v in
-      fold state folder r
-
 let convert_to_json_doc (piecerope : piece_rope) : json_doc =
   (* Helper functions. *)
   let build_json_tree_from_piece_tree pc_tree json_tree =
@@ -145,3 +137,11 @@ let convert_to_json_doc (piecerope : piece_rope) : json_doc =
     undo = undo_json;
     redo = redo_json;
   }
+
+let serialise file_path piecerope =
+  let out_buffer = Buffer.create (1024 * 1024) in
+  let doc = convert_to_json_doc piecerope in
+  let _ = Json_types_j.write_json_doc out_buffer doc in
+  let oc = open_out file_path in
+  let _ = Buffer.output_buffer oc out_buffer in
+  true

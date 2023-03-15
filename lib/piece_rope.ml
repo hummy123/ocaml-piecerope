@@ -29,6 +29,8 @@ let redo piecerope =
       { piecerope with pieces; undo; redo; add_to_history = true }
   | [] -> piecerope
 
+let serialise = Piece_serialiser.serialise
+
 (* Repetitive logic to manage undo/redo stack when inserting/deleting. *)
 let update_piecerope new_tree new_buffer piecerope =
   let undo =
