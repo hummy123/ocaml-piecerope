@@ -180,7 +180,7 @@ let convert_from_json_doc (doc : json_doc) : piece_rope =
       Piece_tree.empty piece_list
   in
 
-  let recreate_stack stack = List.map (fun el -> recreate_tree el) stack in
+  let recreate_stack stack = List.map (fun el -> recreate_tree el) stack |> List.rev in
 
   (* Recreate current tree. *)
   let current_tree = recreate_tree doc.current in

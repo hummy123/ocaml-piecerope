@@ -5,10 +5,13 @@ type t = piece_rope
    The Piece_rope.t type implements an efficient data structure for inserting, deleting and retrieving text.
  *)
 
+val can_undo : piece_rope -> bool
+val can_redo : piece_rope -> bool
 val undo : piece_rope -> piece_rope
 val redo : piece_rope -> piece_rope
 val serialise : string -> piece_rope -> bool
 val deserialise : string -> piece_rope
+val add_to_history : piece_rope -> piece_rope
 
 val empty : piece_rope
 (** The empty Piece_rope.t. *)

@@ -11,6 +11,19 @@ let empty =
     add_to_history = true;
   }
 
+let can_undo piecerope =
+  match piecerope.undo with
+  | [] -> false
+  | _ -> true
+
+let can_redo piecerope =
+  match piecerope.redo with
+  | [] -> false
+  | _ -> true
+
+let add_to_history piecerope =
+  { piecerope with add_to_history = true; }
+
 let undo piecerope =
   match piecerope.undo with
   | head :: tail ->
