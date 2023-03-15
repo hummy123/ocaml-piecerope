@@ -30,6 +30,7 @@ let redo piecerope =
   | [] -> piecerope
 
 let serialise = Piece_serialiser.serialise
+let deserialise = Piece_serialiser.deserialise
 
 (* Repetitive logic to manage undo/redo stack when inserting/deleting. *)
 let update_piecerope new_tree new_buffer piecerope =

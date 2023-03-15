@@ -198,5 +198,6 @@ let convert_from_json_doc (doc : json_doc) : piece_rope =
 let deserialise file_path =
   let ch = open_in file_path in
   let json_string = really_input_string ch (in_channel_length ch) in
+  let _ = close_in ch in
   let json_doc = Json_types_j.json_doc_of_string json_string in
   convert_from_json_doc json_doc

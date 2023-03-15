@@ -126,4 +126,17 @@ let () =
               let _ = Sys.remove file_path in
               Alcotest.(check bool) "returns true" expected result);
         ] );
+        ("Piece_rope.deserialise",
+      [
+        test "returns same rope we serialised" (fun () ->
+              let file_path = "svelte_data.json" in
+          let input_rope, _ = Txns.Utils.run_txns_result Txns.Sveltecomponent.data in
+          let input_text = Piece_rope.get_text input_rope in
+          let _ = Piece_rope.serialise file_path input_rope in
+          let output_rope = Piece_rope.deserialise file_path in
+              let output_text = Piece_rope.get_text output_rope in
+              let _ = Sys.remove file_path in
+              Alcotest.(check string) "is same" input_text output_text
+        )
+        ])
     ]

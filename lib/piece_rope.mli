@@ -8,6 +8,7 @@ type t = piece_rope
 val undo : piece_rope -> piece_rope
 val redo : piece_rope -> piece_rope
 val serialise : string -> piece_rope -> bool
+val deserialise : string -> piece_rope 
 
 val empty : piece_rope
 (** The empty Piece_rope.t. *)
