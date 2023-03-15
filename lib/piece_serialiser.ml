@@ -126,7 +126,7 @@ let convert_to_json_doc (piecerope : piece_rope) : json_doc =
   let undo_json = stack_to_json_list piecerope.undo json_tree in
   let redo_json = stack_to_json_list piecerope.redo json_tree in
 
-  (* When undo and redo stacks are created, build them as well. *)
+  (* Create list of strings for buffer. *)
   let buffer_list =
     Piece_buffer.fold_back (fun acc str -> str :: acc) [] piecerope.buffer
   in
@@ -146,3 +146,57 @@ let serialise file_path piecerope =
   let _ = Buffer.output_buffer oc out_buffer in
   let _ = close_out oc in
   true
+
+let convert_from_json_doc (doc : json_doc) : piece_rope =
+  (* Recreate Piece_buffer. *)
+  let buffer =
+    List.fold_left
+      (fun acc str ->
+        let _, utf32_length, _ = Unicode.count_string_stats str 0 in
+        Piece_buffer.append str utf32_length acc)
+      Piece_buffer.empty doc.buffer
+  in
+
+  (* Pieces to find for piece_trees. *)
+  let all_pieces = Array.of_list doc.pieces in
+
+  (* Helper functions to recreate trees and stacks. *)
+  let recreate_tree piece_list =
+    List.fold_left
+      (fun acc_tree idx ->
+        let piece = Array.get all_pieces idx in
+        let piece_string =
+          Piece_buffer.substring piece.start piece.length buffer
+        in
+        let utf16_length, utf32_length, line_breaks =
+          Unicode.count_string_stats piece_string piece.start
+        in
+        let utf8_length = String.length piece_string in
+        let node =
+          Piece_tree.create_node piece.start utf8_length utf16_length
+            utf32_length line_breaks
+        in
+        Piece_tree.ins_max node acc_tree)
+      Piece_tree.empty piece_list
+  in
+
+  let recreate_stack stack = List.map (fun el -> recreate_tree el) stack in
+
+  (* Recreate current tree. *)
+  let current_tree = recreate_tree doc.current in
+  let undo_stack = recreate_stack doc.undo in
+  let redo_stack = recreate_stack doc.redo in
+
+  {
+    buffer;
+    pieces = current_tree;
+    undo = undo_stack;
+    redo = redo_stack;
+    add_to_history = true;
+  }
+
+let deserialise file_path =
+  let ch = open_in file_path in
+  let json_string = really_input_string ch (in_channel_length ch) in
+  let json_doc = Json_types_j.json_doc_of_string json_string in
+  convert_from_json_doc json_doc

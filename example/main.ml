@@ -111,10 +111,7 @@ let dispatch model = function
   | Serialise ->
       let file_path = "current.json" in
       let result = Piece_rope.serialise file_path model.text in
-      if result = true then
-        model
-      else
-        failwith "unexepected serialise error"
+      if result = true then model else failwith "unexepected serialise error"
 
 let get_stats model =
   let stats = Piece_rope.stats model.text in
@@ -159,7 +156,7 @@ let rec main t model =
   (* Below cases terminate program. *)
   | `Key (`Escape, []) | `Key (`ASCII 'C', [ `Ctrl ]) -> ()
   (* Serialise to file. *)
-  | `Key (`ASCII 'Q', [ `Ctrl ]) -> 
+  | `Key (`ASCII 'Q', [ `Ctrl ]) ->
       let _ = dispatch model Serialise in
       main t model
   (* Cursor movements. *)
