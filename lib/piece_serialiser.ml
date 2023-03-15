@@ -108,6 +108,7 @@ let convert_to_json_doc (piecerope : piece_rope) : json_doc =
         let cur_list = piece_tree_to_json_list pc_tree json_tree in
         cur_list :: acc_list)
       [] stack
+    |> List.rev
   in
   (* Calling helper functions to build wb_tree containing json_pieces. *)
   let json_tree =
@@ -180,7 +181,7 @@ let convert_from_json_doc (doc : json_doc) : piece_rope =
       Piece_tree.empty piece_list
   in
 
-  let recreate_stack stack = List.map (fun el -> recreate_tree el) stack |> List.rev in
+  let recreate_stack stack = List.map (fun el -> recreate_tree el) stack in
 
   (* Recreate current tree. *)
   let current_tree = recreate_tree doc.current in

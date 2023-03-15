@@ -21,6 +21,12 @@ type actions =
   | Enter
   | Serialise
   | Deserialise
+  | Undo
+  | Redo
+
+let add_to_history model =
+  let rope = Piece_rope.add_to_history model.text in
+  { model with text = rope }
 
 let dispatch model = function
   | CaretUp ->
@@ -117,6 +123,16 @@ let dispatch model = function
       let file_path = "current.json" in
       let rope = Piece_rope.deserialise file_path in
       { text = rope; line_num = 0; col_num = 0; offset = 0 }
+  | Undo ->
+      let rope = Piece_rope.undo model.text in
+      let col_num = 0 in
+      let line_num = 0 in
+      { model with text = rope; col_num; line_num }
+  | Redo ->
+      let rope = Piece_rope.redo model.text in
+      let col_num = 0 in
+      let line_num = 0 in
+      { model with text = rope; col_num; line_num }
 
 let get_stats model =
   let stats = Piece_rope.stats model.text in
@@ -145,6 +161,7 @@ let get_stats model =
   |> I.( <-> ) newline_i
 
 let rec main t model =
+  let model = add_to_history model in
   let str = Piece_rope.get_text model.text in
   let strList = String.split_on_char '\n' str in
   let text =
@@ -167,6 +184,12 @@ let rec main t model =
   (* Deserialise. *)
   | `Key (`ASCII 'W', [ `Ctrl ]) ->
       let model = dispatch model Deserialise in
+      main t model
+  | `Key (`ASCII 'Z', [ `Ctrl ]) ->
+      let model = dispatch model Undo in
+      main t model
+  | `Key (`ASCII 'Y', [ `Ctrl ]) ->
+      let model = dispatch model Redo in
       main t model
   (* Cursor movements. *)
   | `Key (`Arrow d, _) ->

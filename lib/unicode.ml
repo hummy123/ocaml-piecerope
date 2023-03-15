@@ -41,7 +41,7 @@ let count_string_stats (str : string) (buffer_length : int) =
       in
       get (utf8_pos + utf8_length)
         (utf16_cntr + utf16_length)
-        (utf32_cntr + 1) line_breaks (chr = '\n')
+        (utf32_cntr + 1) line_breaks (chr = '\r')
   in
   get 0 0 0 [] false
 
