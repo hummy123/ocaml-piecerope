@@ -144,4 +144,5 @@ let serialise file_path piecerope =
   let _ = Json_types_j.write_json_doc out_buffer doc in
   let oc = open_out file_path in
   let _ = Buffer.output_buffer oc out_buffer in
+  let _ = close_out oc in
   true
