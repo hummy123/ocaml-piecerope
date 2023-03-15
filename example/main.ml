@@ -20,6 +20,7 @@ type actions =
   | Backspace
   | Enter
   | Serialise
+  | Deserialise
 
 let dispatch model = function
   | CaretUp ->
@@ -112,6 +113,10 @@ let dispatch model = function
       let file_path = "current.json" in
       let result = Piece_rope.serialise file_path model.text in
       if result = true then model else failwith "unexepected serialise error"
+  | Deserialise ->
+      let file_path = "current.json" in
+      let rope = Piece_rope.deserialise file_path in
+      { text = rope; line_num = 0; col_num = 0; offset = 0 }
 
 let get_stats model =
   let stats = Piece_rope.stats model.text in
@@ -158,6 +163,10 @@ let rec main t model =
   (* Serialise to file. *)
   | `Key (`ASCII 'Q', [ `Ctrl ]) ->
       let _ = dispatch model Serialise in
+      main t model
+  (* Deserialise. *)
+  | `Key (`ASCII 'W', [ `Ctrl ]) ->
+      let model = dispatch model Deserialise in
       main t model
   (* Cursor movements. *)
   | `Key (`Arrow d, _) ->
