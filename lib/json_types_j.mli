@@ -7,6 +7,8 @@ type json_doc = Json_types_t.json_doc = {
   buffer : string list;
   pieces : json_piece list;
   current : int list;
+  undo : int list list;
+  redo : int list list;
 }
 
 val write_json_piece : Buffer.t -> json_piece -> unit

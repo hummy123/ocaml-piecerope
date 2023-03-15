@@ -73,7 +73,7 @@ let rec add x = function
 let rank x tree =
   let rec rnk acc = function
     | WE -> failwith "piece_serialiser.rank: element not found"
-    | WT (v, n, l, r) ->
+    | WT (v, _, l, r) ->
         if x < v then rnk acc l
         else if x > v then rnk (acc + size l + 1) r
         else acc + size l
@@ -89,7 +89,7 @@ let rec fold state folder = function
 
 let convert_to_json_doc (piecerope : piece_rope) : json_doc =
   (* Helper functions. *)
-  let build_json_tree_from_iece_tree pc_tree json_tree =
+  let build_json_tree_from_piece_tree pc_tree json_tree =
     Piece_tree.fold
       (fun acc node ->
         let piece = { start = node.start; length = node.utf32_length } in
@@ -99,7 +99,7 @@ let convert_to_json_doc (piecerope : piece_rope) : json_doc =
   let build_json_tree_from_stack tree_list json_tree =
     List.fold_left
       (fun acc_json_tree pc_tree ->
-        build_json_tree_from_iece_tree pc_tree acc_json_tree)
+        build_json_tree_from_piece_tree pc_tree acc_json_tree)
       json_tree tree_list
   in
   let piece_tree_to_json_list pc_tree json_tree =
@@ -117,19 +117,31 @@ let convert_to_json_doc (piecerope : piece_rope) : json_doc =
         cur_list :: acc_list)
       [] stack
   in
-  (* Calling helper functions to build structure. *)
+  (* Calling helper functions to build wb_tree containing json_pieces. *)
   let json_tree =
-    build_json_tree_from_iece_tree piecerope.pieces WE
-    (* When undo and redo stacks are created, deserialise them as well. *)
+    build_json_tree_from_piece_tree piecerope.pieces WE
+    |> build_json_tree_from_stack piecerope.undo
+    |> build_json_tree_from_stack piecerope.redo
   in
 
+  (* wb_tree of json_pieces to json_piece list for serialisation. *)
   let json_pieces =
     fold_back (fun acc json_piece -> json_piece :: acc) [] json_tree
   in
+
+  (* Convert piece_tree, undo_stack and redo_stack to formats suitable to serialise. *)
   let current_tree_json = piece_tree_to_json_list piecerope.pieces json_tree in
+  let undo_json = stack_to_json_list piecerope.undo json_tree in
+  let redo_json = stack_to_json_list piecerope.redo json_tree in
 
   (* When undo and redo stacks are created, build them as well. *)
   let buffer_list =
     Piece_buffer.fold_back (fun acc str -> str :: acc) [] piecerope.buffer
   in
-  { buffer = buffer_list; pieces = json_pieces; current = current_tree_json }
+  {
+    buffer = buffer_list;
+    pieces = json_pieces;
+    current = current_tree_json;
+    undo = undo_json;
+    redo = redo_json;
+  }
