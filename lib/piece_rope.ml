@@ -15,6 +15,14 @@ let can_undo piecerope = match piecerope.undo with [] -> false | _ -> true
 let can_redo piecerope = match piecerope.redo with [] -> false | _ -> true
 let add_to_history piecerope = { piecerope with add_to_history = true }
 
+let count_string_stats str =
+  let utf16_length, utf32_length, line_breaks =
+    Unicode.count_string_stats str 0
+  in
+  let utf8_length = String.length str in
+  let line_breaks = Array.length line_breaks in
+  { utf8_length; utf16_length; utf32_length; line_breaks }
+
 let undo piecerope =
   match piecerope.undo with
   | head :: tail ->

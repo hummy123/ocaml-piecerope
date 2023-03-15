@@ -71,11 +71,11 @@ let rec add x = function
 
 let rank x tree =
   let rec rnk acc = function
-    | WE -> failwith "piece_serialiser.rank: element not found"
     | WT (v, _, l, r) ->
         if x < v then rnk acc l
         else if x > v then rnk (acc + size l + 1) r
         else acc + size l
+    | WE -> failwith "piece_serialiser.rank: element not found"
   in
   rnk 0 tree
 

@@ -58,6 +58,16 @@ type line_offset = {
    It contains the line string itself and the line's start index in different Unicode encodings.
  *)
 
+type string_stats = {
+  utf8_length : int;
+  utf16_length : int;
+  utf32_length : int;
+  line_breaks : int;
+}
+(**
+   The string_stats type contains the number of lines and the text length in different encodings for a given string.
+ *)
+
 type tree_stats = {
   lines : int;
   utf32_length : int;

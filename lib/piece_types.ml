@@ -78,6 +78,13 @@ type line_offset = {
   utf8_offset : int;
 }
 
+type string_stats = {
+  utf8_length : int;
+  utf16_length : int;
+  utf32_length : int;
+  line_breaks : int;
+}
+
 type tree_stats = {
   lines : int;
   utf32_length : int;
