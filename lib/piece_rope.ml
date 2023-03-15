@@ -2,7 +2,41 @@ open Piece_types
 
 type t = piece_rope
 
-let empty = { buffer = Piece_buffer.empty; pieces = Piece_tree.empty }
+let empty =
+  {
+    buffer = Piece_buffer.empty;
+    pieces = Piece_tree.empty;
+    undo = [];
+    redo = [];
+    add_to_history = true;
+  }
+
+let undo piecerope =
+  match piecerope.undo with
+  | head :: tail ->
+      let pieces = head in
+      let undo = tail in
+      let redo = piecerope.pieces :: piecerope.redo in
+      { piecerope with pieces; undo; redo; add_to_history = true }
+  | [] -> piecerope
+
+let redo piecerope =
+  match piecerope.redo with
+  | head :: tail ->
+      let pieces = head in
+      let redo = tail in
+      let undo = piecerope.pieces :: piecerope.undo in
+      { piecerope with pieces; undo; redo; add_to_history = true }
+  | [] -> piecerope
+
+(* Repetitive logic to manage undo/redo stack when inserting/deleting. *)
+let update_piecerope new_tree new_buffer piecerope =
+  let undo =
+    if piecerope.add_to_history then piecerope.pieces :: piecerope.undo
+    else piecerope.undo
+  in
+  let redo = [] in
+  { buffer = new_buffer; pieces = new_tree; undo; redo; add_to_history = false }
 
 let insert index (str : string) piecerope =
   if str <> "" then
@@ -19,7 +53,7 @@ let insert index (str : string) piecerope =
     let pieces =
       Piece_tree.insert_tree index node piecerope.pieces piecerope.buffer
     in
-    { buffer; pieces }
+    update_piecerope pieces buffer piecerope
   else piecerope
 
 let prepend (str : string) piecerope =
@@ -34,7 +68,7 @@ let prepend (str : string) piecerope =
       Piece_tree.create_node pcStart utf8length utf16length utf32length pcLines
     in
     let pieces = Piece_tree.prepend node piecerope.pieces in
-    { buffer; pieces }
+    update_piecerope pieces buffer piecerope
   else piecerope
 
 let append (str : string) piecerope =
@@ -49,14 +83,14 @@ let append (str : string) piecerope =
       Piece_tree.create_node pcStart utf8length utf16length utf32length pcLines
     in
     let pieces = Piece_tree.append node piecerope.pieces in
-    { buffer; pieces }
+    update_piecerope pieces buffer piecerope
   else piecerope
 
 let delete start length piecerope =
   let pieces =
     Piece_tree.delete_tree start length piecerope.pieces piecerope.buffer
   in
-  { piecerope with pieces }
+  update_piecerope pieces piecerope.buffer piecerope
 
 let substring start length piecerope =
   Piece_tree.substring start length piecerope
@@ -83,7 +117,7 @@ let find_and_replace find_string replace_string piecerope =
       line_breaks
   in
   let pieces = Piece_tree.find_and_replace find_string ins_node piecerope in
-  { buffer; pieces }
+  update_piecerope pieces buffer piecerope
 
 let fold_text = Piece_tree.fold_text
 let fold_lines = Piece_tree.fold_lines

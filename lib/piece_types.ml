@@ -50,7 +50,13 @@ type piece_tree =
     and reading the string each piece points to reconstructs the expected string.
  *)
 
-type piece_rope = { buffer : piece_buffer; pieces : piece_tree }
+type piece_rope = {
+  buffer : piece_buffer;
+  pieces : piece_tree;
+  undo : piece_tree list;
+  redo : piece_tree list;
+  add_to_history : bool;
+}
 (*
     The piece_rope type is just a wrapper around a Piece Tree and a Buffer,
     as they must be used together to provide any string contents at all.

@@ -23,7 +23,13 @@ type piece_tree =
   | PE
   | PT of int * piece_tree * metadata * node * metadata * piece_tree
 
-type piece_rope = { buffer : piece_buffer; pieces : piece_tree }
+type piece_rope = {
+  buffer : piece_buffer;
+  pieces : piece_tree;
+  undo : piece_tree list;
+  redo : piece_tree list;
+  add_to_history : bool;
+}
 (**
    The piece_rope type implements an efficient data structure for inserting, deleting and retrieving text.
  *)
