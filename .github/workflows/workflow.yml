@@ -1,10 +1,10 @@
-- name: Main workflow
+name: Main workflow
 
 on:
   - pull_request
   - push
-  
-  jobs:
+
+jobs:
   build:
     strategy:
       fail-fast: false
@@ -14,11 +14,12 @@ on:
           - ubuntu-latest
           - windows-latest
         ocaml-compiler:
-          - 5.0.x
           - 4.13.x
-          
+          - 4.08.x
+          - 4.06.x
+
     runs-on: ${{ matrix.os }}
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -39,7 +40,6 @@ on:
         with:
           name: ${{ matrix.os }}-${{ matrix.ocaml-version }}-world.exe
           path: _build/default/world.exe
-
 
   lint-doc:
     runs-on: ubuntu-latest
