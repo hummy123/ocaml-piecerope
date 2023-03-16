@@ -13,8 +13,6 @@
 
 (license  MIT)
 
-(documentation https://url/to/documentation)
-
 (package
  (name piece_rope)
  (synopsis "A data structure for efficiently manipulating strings")

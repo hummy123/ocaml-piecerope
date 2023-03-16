@@ -4,6 +4,8 @@
 
 This is a text buffer based on [Ropes](https://en.wikipedia.org/wiki/Rope_(data_structure)) and [Piece Trees](http://e98cuenc.free.fr/wordprocessor/piecetable.html), exploiting several nice properties of the latter.
 
+Documentation is available by running `dune build @doc` or reading through the piece_rope.mli file.
+
 Here is the list of available features:
 - Insert, prepend, append
 - Delete
