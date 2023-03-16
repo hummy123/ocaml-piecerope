@@ -103,12 +103,7 @@ let convert_to_json_doc (piecerope : piece_rope) : json_doc =
       [] pc_tree
   in
   let stack_to_json_list stack json_tree =
-    List.fold_left
-      (fun acc_list pc_tree ->
-        let cur_list = piece_tree_to_json_list pc_tree json_tree in
-        cur_list :: acc_list)
-      [] stack
-    |> List.rev
+    List.map (fun pc_tree -> piece_tree_to_json_list pc_tree json_tree) stack
   in
   (* Calling helper functions to build wb_tree containing json_pieces. *)
   let json_tree =
