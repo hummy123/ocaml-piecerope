@@ -66,8 +66,9 @@ let utf32_sub (str : string) (start : int) (length : int) =
     to handle UTF-8/16 cases when the specified index is inside a code point.
 *)
 let count_to_utf32 (str : string) (count_to : int) =
-  let rec cnt utf8_pos utf16_pos utf32_pos =
-    if utf32_pos = count_to then create_offsets utf8_pos utf16_pos utf32_pos
+  let rec cnt utf8_pos utf16_pos utf32_pos line_count prev_is_cr =
+    if utf32_pos = count_to then
+      create_offsets utf8_pos utf16_pos utf32_pos line_count
     else
       let chr = String.unsafe_get str utf8_pos in
       let u8_length = utf8_length chr in
@@ -76,13 +77,18 @@ let count_to_utf32 (str : string) (count_to : int) =
       let nextUtf8 = utf8_pos + u8_length in
       let nextUtf16 = utf16_pos + u16_length in
       let nextUtf32 = utf32_pos + 1 in
-      cnt nextUtf8 nextUtf16 nextUtf32
+      let line_count =
+        if chr = '\r' || (chr = '\n' && not prev_is_cr) then line_count + 1
+        else line_count
+      in
+      cnt nextUtf8 nextUtf16 nextUtf32 line_count (chr = '\r')
   in
-  cnt 0 0 0
+  cnt 0 0 0 0 false
 
 let count_to_utf16 (str : string) (count_to : int) =
-  let rec cnt utf8_pos utf16_pos utf32_pos =
-    if utf16_pos = count_to then create_offsets utf8_pos utf16_pos utf32_pos
+  let rec cnt utf8_pos utf16_pos utf32_pos line_count prev_is_cr =
+    if utf16_pos = count_to then
+      create_offsets utf8_pos utf16_pos utf32_pos line_count
     else
       let chr = String.unsafe_get str utf8_pos in
       let u8_length = utf8_length chr in
@@ -91,14 +97,20 @@ let count_to_utf16 (str : string) (count_to : int) =
       let next_u8 = utf8_pos + u8_length in
       let next_u16 = utf16_pos + u16_length in
       let next_u32 = utf32_pos + 1 in
-      if next_u16 > count_to then create_offsets utf8_pos utf16_pos utf32_pos
-      else cnt next_u8 next_u16 next_u32
+      let next_line_count =
+        if chr = '\r' || (chr = '\n' && not prev_is_cr) then line_count + 1
+        else line_count
+      in
+      if next_u16 > count_to then
+        create_offsets utf8_pos utf16_pos utf32_pos line_count
+      else cnt next_u8 next_u16 next_u32 next_line_count (chr = '\r')
   in
-  cnt 0 0 0
+  cnt 0 0 0 0 false
 
 let count_to_utf8 (str : string) (count_to : int) =
-  let rec cnt utf8_pos utf16_pos utf32_pos =
-    if utf8_pos = count_to then create_offsets utf8_pos utf16_pos utf32_pos
+  let rec cnt utf8_pos utf16_pos utf32_pos line_count prev_is_cr =
+    if utf8_pos = count_to then
+      create_offsets utf8_pos utf16_pos utf32_pos line_count
     else
       let chr = String.unsafe_get str utf8_pos in
       let u8_length = utf8_length chr in
@@ -107,10 +119,15 @@ let count_to_utf8 (str : string) (count_to : int) =
       let next_u8 = utf8_pos + u8_length in
       let next_u16 = utf16_pos + u16_length in
       let next_u32 = utf32_pos + 1 in
-      if next_u8 > count_to then create_offsets utf8_pos utf16_pos utf32_pos
-      else cnt next_u8 next_u16 next_u32
+      let next_line_count =
+        if chr = '\r' || (chr = '\n' && not prev_is_cr) then line_count + 1
+        else line_count
+      in
+      if next_u8 > count_to then
+        create_offsets utf8_pos utf16_pos utf32_pos line_count
+      else cnt next_u8 next_u16 next_u32 next_line_count (chr = '\r')
   in
-  cnt 0 0 0
+  cnt 0 0 0 0 false
 
 let count_to (str : string) (count_towards : int) (enc : encoding) =
   match enc with
