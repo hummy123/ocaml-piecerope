@@ -1,7 +1,7 @@
 open Piece_types
 
-let create_offsets utf8_pos utf16_pos utf32_pos =
-  { utf8_pos; utf16_pos; utf32_pos }
+let create_offsets utf8_pos utf16_pos utf32_pos line_num =
+  { utf8_pos; utf16_pos; utf32_pos; line_num }
 
 (** Given the first byte of a UTF-8 code point, returns the length of that character in UTF-8. *)
 let utf8_length chr =

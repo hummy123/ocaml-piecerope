@@ -69,7 +69,13 @@ type piece_rope = {
 (* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *)
 
 type encoding = Utf8 | Utf16 | Utf32
-type index_offsets = { utf8_pos : int; utf16_pos : int; utf32_pos : int }
+
+type index_offsets = {
+  utf8_pos : int;
+  utf16_pos : int;
+  utf32_pos : int;
+  line_num : int;
+}
 
 type line_offset = {
   line : string;

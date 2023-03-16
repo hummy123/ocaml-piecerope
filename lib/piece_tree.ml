@@ -154,6 +154,13 @@ let try_find_index (predicate : int -> bool) (lines : int array) =
   in
   find 0
 
+let count_lines pc_start offset_difference lines =
+  let find_pos = pc_start + offset_difference in
+  match try_find_index (fun x -> x > find_pos) lines with
+  | Some x ->
+      if x = 0 then 0 else x - 1
+  | None -> Array.length lines
+
 let split_lines rStart (lines : int array) =
   match try_find_index (fun x -> x >= rStart) lines with
   | Some splitPoint ->
@@ -234,7 +241,7 @@ let is_consecutive v pcStart = v.start + v.utf32_length = pcStart
 
 (* Indexing operations for finding offsets in other encodings. *)
 let offsets_from_ut32 find_offset rope : index_offsets =
-  let rec off cur_u8 cur_u16 cur_u32 node =
+  let rec off cur_u8 cur_u16 cur_u32 (cur_line: int) (node: piece_tree) =
     match node with
     | PT (_, l, _, v, _, r) ->
         let u32_node_end = cur_u32 + v.utf32_length in
@@ -242,46 +249,53 @@ let offsets_from_ut32 find_offset rope : index_offsets =
           let next_u8 = cur_u8 - utf8_length l - utf8_size_right l in
           let next_u16 = cur_u16 - utf16_length l - utf16_size_right l in
           let next_u32 = cur_u32 - utf32_length l - utf32_size_right l in
-          off next_u8 next_u16 next_u32 l
+          let next_line = cur_line - n_lines l - lines_right l in
+          off next_u8 next_u16 next_u32 next_line l
         else if find_offset > u32_node_end then
           let next_u8 = cur_u8 + v.utf8_length + utf8_size_left r in
           let next_u16 = cur_u16 + v.utf16_length + utf16_size_left r in
           let next_u32 = u32_node_end + utf32_size_left r in
-          off next_u8 next_u16 next_u32 r
+          let next_line = cur_line + Array.length v.lines + lines_left r in
+          off next_u8 next_u16 next_u32 next_line r
           (* Trying to find start of this node. *)
         else if find_offset = cur_u32 then
-          Unicode.create_offsets cur_u8 cur_u16 cur_u32
+          Unicode.create_offsets cur_u8 cur_u16 cur_u32 cur_line
           (* Trying to find end of this node. *)
         else if find_offset = u32_node_end then
           Unicode.create_offsets (cur_u8 + v.utf8_length)
-            (cur_u16 + v.utf16_length) u32_node_end
+            (cur_u16 + v.utf16_length) u32_node_end (cur_line + Array.length v.lines)
           (* Trying to find middle of this node
              while neither this node or any node we ttavelled to before contain any non-ASCII text. *)
         else if cur_u8 = cur_u32 && v.utf8_length = v.utf32_length then
-          Unicode.create_offsets find_offset find_offset find_offset
+          let line_num = count_lines v.start (find_offset - cur_u32) v.lines in
+          Unicode.create_offsets find_offset find_offset find_offset line_num
           (* Trying to find middle of this node, and this node contains no non-ASCII chars. *)
         else if v.utf8_length = v.utf32_length then
           let u32_difference = find_offset - cur_u32 in
           let u8_offset = cur_u8 + u32_difference in
           let u16_offset = cur_u16 + u32_difference in
-          Unicode.create_offsets u8_offset u16_offset find_offset
+          let line_num = count_lines v.start u32_difference v.lines in
+          Unicode.create_offsets u8_offset u16_offset find_offset line_num
           (* Trying to find middle of this node. We must get this node's text and count offsets from the string. *)
         else
           let u32_difference = find_offset - cur_u32 in
           let nodeText = text v rope.buffer in
           let textOffsets = Unicode.count_to nodeText u32_difference Utf32 in
+          let line_num = count_lines v.start u32_difference v.lines in
           Unicode.create_offsets
             (textOffsets.utf8_pos + cur_u8)
             (textOffsets.utf16_pos + cur_u16)
             find_offset
+            line_num
     | PE ->
-        if rope.pieces = PE then Unicode.create_offsets 0 0 0
+        if rope.pieces = PE then Unicode.create_offsets 0 0 0 0
         else failwith "impossible offsets_from_ut32 case"
   in
   off
     (utf8_size_left rope.pieces)
     (utf16_size_left rope.pieces)
     (utf32_size_left rope.pieces)
+    (lines_left rope.pieces)
     rope.pieces
 
 let offsets_from_ut16 find_offset rope =

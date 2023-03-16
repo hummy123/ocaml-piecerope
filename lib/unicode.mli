@@ -38,7 +38,7 @@ val utf32_sub : string -> int -> int -> string
     Extracted substring.
   *)
 
-val create_offsets : int -> int -> int -> index_offsets
+val create_offsets : int -> int -> int -> int -> index_offsets
 (**
     This function creates an instance of the index_offsets type.
    
@@ -46,6 +46,7 @@ val create_offsets : int -> int -> int -> index_offsets
     Offset in UTF-8.
     Offset in UTF-16.
     Offset in UTF-32.
+    Line number this offset is at.
    
     Returns:
     Instance of index_offsets type.

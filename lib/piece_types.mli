@@ -42,7 +42,12 @@ type encoding =
   | Utf32
       (** The encoding type is used by some functions to let you choose how you want to query an offset. *)
 
-type index_offsets = { utf8_pos : int; utf16_pos : int; utf32_pos : int }
+type index_offsets = {
+  utf8_pos : int;
+  utf16_pos : int;
+  utf32_pos : int;
+  line_num : int;
+}
 (**
    The index_offsets type is returned by some functions to help you query text in different Unicode encodings.
  *)
