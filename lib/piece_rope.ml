@@ -11,11 +11,6 @@ let empty =
     add_to_history = true;
   }
 
-let can_undo piecerope = match piecerope.undo with [] -> false | _ -> true
-let can_redo piecerope = match piecerope.redo with [] -> false | _ -> true
-let add_to_history piecerope = { piecerope with add_to_history = true }
-let rebuild = Piece_builder.rebuild
-
 let count_string_stats str =
   let utf16_length, utf32_length, line_breaks =
     Unicode.count_string_stats str 0
@@ -139,3 +134,25 @@ let fold_text = Piece_tree.fold_text
 let fold_lines = Piece_tree.fold_lines
 let fold_match_indices = Piece_tree.fold_match_indices
 let offsets = Piece_tree.offsets
+
+let can_undo piecerope = match piecerope.undo with [] -> false | _ -> true
+let can_redo piecerope = match piecerope.redo with [] -> false | _ -> true
+let add_to_history piecerope = { piecerope with add_to_history = true }
+let rebuild = Piece_builder.rebuild
+
+let save file_path piecerope = 
+  let tree_stats = Piece_tree.stats piecerope.pieces in
+  let out_buffer = Buffer.create tree_stats.utf8_length in
+  let _ = 
+    Piece_tree.fold_text piecerope () (fun _ txt -> Buffer.add_string out_buffer txt) in
+  let oc = open_out file_path in
+  let _ = Buffer.output_buffer oc out_buffer in
+  let _ = close_out oc in
+  true
+
+let load file_path =
+  let ch = open_in file_path in
+  let str = really_input_string ch (in_channel_length ch) in
+  let _ = close_in ch in
+  append str empty
+
