@@ -12,9 +12,9 @@ The buffer is represented as a Rope-like structure on top of an AVL Tree. The bu
 
 The difference between the buffer and normal ropes is that there is no distinction between concat and leaf nodes. Every node contains left/right subtree metadata and a string. The difference can be seen in the images below.
 
-[img 1]
+![rope diagram](rope-concat.png)
 
-[img 2]
+![buffer diagram](buffer-no-concat.png)
 
 The second image is slightly misleading - each node is still annotated with the size of its left and right subtrees and instead of creaing a new node each time we append we concatenate the string we want to append to the rightmost node until (last node's string length + append string's length) is greater than some maximum limit (currently 1024). If we go over that limit, we create a new node for the append string and rebalance as recursion unwinds. 
 
@@ -94,9 +94,13 @@ The fold_match_indices function is used to implement `find_matches` (the functio
 
 It is also used to implement `find_and_replace` which is a little more involved. For that operation, we first calculate the length of the `find_string` and `replace_string` passed to this method and get the difference. Then on each iteration of fold_match_indices, we delete the length of `find_string` at this index (remember the tree is immutable) and we insert the node representing the `replace_string` into the tree at a certain index. The index we insert at is `accumulated_difference` (starts from 0 and grows by `length_difference` after each delete because the strings we want to find and replace are likely different lengths) + `length_difference`.
 
+Searching by regex isn't something I personally use and so have not implemented (are there any users of this library that want it?) but [the developers who worked on Atom](https://news.ycombinator.com/item?id=15386155) used the partial match API on a Piece Table for this functionality which should work here too.
+
 ### Operations - Serialise, Deserialise
 
 These operations allow persistent undo and redo after an application closes by saving the state of the Piece Rope to a file (JSON in this implementation).
+
+(These serialise and deserialise operations wouldn't exist if the library didn't handle undo and redo by itself because it relies on the latest iteration of the buffer being compatible with the current Piece Tree and all those that came before or are after in the undo/redo stacks.)
 
 This is done by first converting the piece_rope (a recursive discriminated union) to a more compact format for JSON to reduce storage space. This section is dedicated to the conversion algorithm.
 
@@ -108,4 +112,12 @@ The same operation is done for the undo and redo stacks, except instead of a sin
 
 ### Operations - Rebuild
 
+The rebuild operation recreates the Piece Trees in the undo and redo stacks by replacing the buffer with a buffer that contains the text contents of the current Piece Tree. 
 
+For each Piece Tree in the undo and redo stacks, we retrieve the text of each string (using the Piece Tree in combination with the old buffer) and search for the same string in the new buffer. 
+
+If it is found, we rebuild that tree from an empty Piece Tree by appending (remember the append operation merges pieces when possible). Otherwise, we append the string to the new buffer before appending to the new Piece Tree.
+
+The result of this is that the current Piece Tree contains just a single Piece, which is the optimal performance case for this data structure. It also has the effect of eliminating dead memory (the Piece Table/Tree structures always append to the buffers and never delete - when deleting, the collection of Pieces is changed) which was the original motivation for implementing this operation.
+
+The Piece Rope structure doesn't differ that much from other Piece Trees like AbiWord's and VS Code's but I think the functional implementation and some operations (particularly the serialise and deserialise one - I haven't seen anyone else try to implement persistent undo and redo that way before) are new or should at least be better known. Hopefully this design document will be good learning material for others interested in the same problem space and some of those who aren't that interested still find this library useful.

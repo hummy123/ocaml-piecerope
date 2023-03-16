@@ -14,3 +14,7 @@ You are better off reading the main.ml file (easy to read and commented) to unde
 - Ctrl-S to save normally, to `content.txt`.
 - Ctrl-L to load normally from `content.txt`.
 - Ctrl-R to rebuild the structure from the current state while preserving undo and redo, optimising it for speed and memory.
+
+There are also additional operations not used in this example, `find_matches` and `find_and_replace` which do what they say. The first, given a string and a piece_rope, returns the UTF-32 indices where that string occurs. 
+
+The second, given a string to find, a string to replace with and a piece_rope, replaces instances of the string to find with the string to replace.
