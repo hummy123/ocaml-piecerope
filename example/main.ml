@@ -23,6 +23,7 @@ type actions =
   | Deserialise
   | Undo
   | Redo
+  | Rebuild
 
 let add_to_history model =
   let rope = Piece_rope.add_to_history model.text in
@@ -109,12 +110,14 @@ let dispatch model = function
         { col_num; line_num; offset; text = rope }
   | Enter ->
       let rope = Piece_rope.insert model.offset "\n" model.text in
-      {
-        col_num = 0;
-        line_num = model.line_num + 1;
-        text = rope;
-        offset = model.offset + 1;
-      }
+      if model.offset = 0 then model
+      else
+        {
+          col_num = 0;
+          line_num = model.line_num + 1;
+          text = rope;
+          offset = model.offset + 1;
+        }
   | Serialise ->
       let file_path = "current.json" in
       let result = Piece_rope.serialise file_path model.text in
@@ -133,6 +136,9 @@ let dispatch model = function
       let col_num = 0 in
       let line_num = 0 in
       { model with text = rope; col_num; line_num }
+  | Rebuild ->
+      let rope = Piece_rope.rebuild model.text in
+      { model with text = rope }
 
 let get_stats model =
   let stats = Piece_rope.stats model.text in
@@ -185,11 +191,16 @@ let rec main t model =
   | `Key (`ASCII 'W', [ `Ctrl ]) ->
       let model = dispatch model Deserialise in
       main t model
+  (* Undo/redo. *)
   | `Key (`ASCII 'Z', [ `Ctrl ]) ->
       let model = dispatch model Undo in
       main t model
   | `Key (`ASCII 'Y', [ `Ctrl ]) ->
       let model = dispatch model Redo in
+      main t model
+  (* Rebuild. *)
+  | `Key (`ASCII 'R', [ `Ctrl ]) ->
+      let model = dispatch model Rebuild in
       main t model
   (* Cursor movements. *)
   | `Key (`Arrow d, _) ->

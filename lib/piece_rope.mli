@@ -13,6 +13,7 @@ val serialise : string -> piece_rope -> bool
 val deserialise : string -> piece_rope
 val add_to_history : piece_rope -> piece_rope
 val count_string_stats : string -> string_stats
+val rebuild : piece_rope -> piece_rope
 
 val empty : piece_rope
 (** The empty Piece_rope.t. *)
