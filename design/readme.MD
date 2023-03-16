@@ -4,7 +4,19 @@
 
 This data structure consists of two main components: a buffer represented as a Rope-like structure and a Piece Tree, just like a Piece Table but only with one buffer as we are storing all text in RAM in which case the distinction between the add and original bufer is pointless.
 
-All algorithms here are described and implemented recursively (with Continuation Passing Style to avoid stack overflows).
+All algorithms here are described (and implemented) recursively (with Continuation Passing Style to avoid stack overflows).
+
+## Motivation
+
+The implementation of this structure came about after reading about text editors and the data structures driving them. 
+
+It bothered me that persistent/functional implementations of these structures (which are useful for undo and redo) tended to gravitate towards Ropes as their data structure of choice because Ropes edit strings directly (inserting and deleting them) which decreases the amount of data that can be shared between instances.
+
+With a Piece Table (and its variants), the buffer containing string contents is never deleted from. This means every instance can share the same string contents which should decrease the memory usage significantly.
+
+Controlling the undo and redo state within the library itself enables implementations of some nice features, such as the ability to serialise and deserialise because you can guarantee that the contents of each collection of Pieces can be represented by the latest buffer. 
+
+I think this library is a solid implementation of a structure that has been known before with a few niceties.
 
 ## Buffer
 
