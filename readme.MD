@@ -20,7 +20,7 @@ You can see the `/example/` directory for usage instructions and a simple exampl
 ## Credits
 
 The following list enumerates some of the projects helped me in one way or another.
-- [atdgen](https://github.com/ahrefs/atd) and [https://github.com/ocaml-community/yojson](yojson) for help reading and writing JSON.
+- [atdgen](https://github.com/ahrefs/atd) and [yojson](https://github.com/ocaml-community/yojson) for help reading and writing JSON.
 - [Notty](https://github.com/pqwy/notty) for providing a good and simple framework to display example usage in.
 - [crdt-benchmarks](https://github.com/josephg/crdt-benchmarks) which helped provide real world edit traces to profile and improve real-world performance.
 - [The F# Standard Library](https://github.com/dotnet/fsharp) which I pulled a function out of and rewrote to work with arrays (`tryFindIndex`/`try_find_index`).
@@ -28,7 +28,7 @@ The following list enumerates some of the projects helped me in one way or anoth
 
 The licenses for each of these can be found in the third-party folder.
 
-There are also some ideas from various places I found help in, although I can' possibly list them all. Some of them are:
+There are also some ideas from various places I found help in, although I can't possibly list them all. Some of them are:
 - [Ropey](https://github.com/cessen/ropey) for the idea to index the different Unicode encodings, helpful to translate across programming languages.
 - [Proofs from Functional Data Structures](https://isabelle.in.tum.de/library/HOL/HOL-Data_Structures/document.pdf) by Tobias Nipkow for a catalogue to try out different balanced trees and select the best-performing for my case.
 - Efficient Sets - A Balancing Act by Stephen Adams for introducing me to Weight Balanced Trees, which are used for the serialisation logic to transform the structure to a form more compact for secondary storage (through the rank function that assigns a unique index to each value in the tree).
