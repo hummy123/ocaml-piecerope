@@ -34,3 +34,7 @@ There are also some ideas from various places I found help in, although I can't 
 - Efficient Sets - A Balancing Act by Stephen Adams for introducing me to Weight Balanced Trees, which are used for the serialisation logic to transform the structure to a form more compact for secondary storage (through the rank function that assigns a unique index to each value in the tree).
 - Various internet comments by others such as [this one by Raph Levien about how Piece Tables depend on files not changing through a Git checkout for example](https://news.ycombinator.com/item?id=15383193) - that specific comment helped me commit to implementing an in-memory text buffer and not read from files.
 - Of course the articles by developers on [AbiWord](http://e98cuenc.free.fr/wordprocessor/piecetable.html) and [VS Code](https://code.visualstudio.com/blogs/2018/03/23/text-buffer-reimplementation) about Piece Trees which this structure just slightly modifies.
+
+## Contributing
+
+Issues and pull requests are welcome. I have faith in the solidity of the library as it has passed my personal tests (both the unit tests and manual testing through `dune exec example`), but I would like to fix any bugs if anyone encounters them.
