@@ -205,10 +205,6 @@ let rec main t model =
   | `Key (`ASCII chr, _) ->
       let model = dispatch model (TypeChar chr) in
       main t model
-  | `Key (`Uchar chr, _) ->
-      let u = Unescape.uchar in
-      let model = dispatch model (TypeChar chr) in
-      main t model
   | `Key (`Enter, _) ->
       let model = dispatch model Enter in
       main t model

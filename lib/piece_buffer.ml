@@ -130,3 +130,45 @@ let substring start length buffer =
   in
   let strList = sub (size_left buffer) buffer [] top_level_cont in
   String.concat "" strList
+
+let fold_until_some f x t =
+  let rec fld (idx: int) x t cont =
+    match t with
+    | BE -> cont x
+    | BT (_, l, _, v, _, r, length) ->
+        fld (idx - string_length l - size_right l) x l (fun x ->
+            match x with
+            | Some _ -> x
+            | None ->
+              let x = f x idx v length in
+              match x with
+              | Some _ -> x
+              | None ->
+                fld (idx + length + size_left r) x r (fun x -> cont x))
+  in
+  fld (size_left t) x t top_level_cont
+
+let find_match find_string buffer =
+  let chr = String.unsafe_get find_string 0 in
+  let _, length, _ = Unicode.count_string_stats find_string 0 in
+
+  let rec fnd str_idx utf32_pos text acc tree_pos =
+    if str_idx = String.length text then None
+    else
+      let cur_chr = String.unsafe_get text str_idx in
+      let char_length = Unicode.utf8_length cur_chr in
+      if cur_chr = chr then
+        let substr = substring utf32_pos length buffer in
+        if substr = find_string then
+          Some(utf32_pos + tree_pos)
+        else
+          fnd (str_idx + char_length) (utf32_pos + 1) text acc tree_pos
+      else
+        fnd (str_idx + char_length) (utf32_pos + 1) text acc tree_pos
+  in
+  fold_until_some
+  (fun _ pos str _ ->
+    fnd 0 0 str None pos)
+    None buffer
+
+

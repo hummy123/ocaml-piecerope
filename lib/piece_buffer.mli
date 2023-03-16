@@ -1,5 +1,7 @@
 open Piece_types
 
+val find_match : string -> piece_buffer -> int option
+
 val size : piece_buffer -> int
 (**
     This function returns the length of the provided Piece_buffer in UTF-32 code points.

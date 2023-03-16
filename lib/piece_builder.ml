@@ -1,55 +1,37 @@
 open Piece_types
 
-let top_level_cont x = x
+let rebuild piecerope =
+  (* Rebuild current. *)
+  let current_text = Piece_rope.get_text piecerope in
+  let utf8_length = String.length current_text in
+  let (utf16_length, utf32_length, line_breaks) = Unicode.count_string_stats current_text 0 in
+  let buffer = ref (Piece_buffer.empty |> Piece_buffer.append current_text utf32_length) in
+  let current_node = Piece_tree.create_node 0 utf8_length utf16_length utf32_length line_breaks in
+  let current_tree = Piece_tree.empty |> Piece_tree.append current_node in
 
-type wb_tree = WE | WT of node * int * wb_tree * wb_tree
+  let rebuild_stack stack =
+    List.map (fun input_tree -> 
+          Piece_tree.fold (fun build_tree node ->
+            let text = Piece_buffer.substring node.start node.utf32_length piecerope.buffer in
+            let utf8_length = String.length text in
+            let is_found = Piece_buffer.find_match text !buffer in
+            match is_found with
+            | Some x ->
+                let (utf16_length, utf32_length, line_breaks) = Unicode.count_string_stats text x in
+                let node = Piece_tree.create_node x utf8_length utf16_length utf32_length line_breaks in
+                let build_tree = Piece_tree.append node build_tree in
+                build_tree
+            | None ->
+                let buffer_length = Piece_buffer.size !buffer in
+                let _ = buffer := Piece_buffer.append text utf32_length !buffer in
+                let (utf16_length, utf32_length, line_breaks) = Unicode.count_string_stats current_text buffer_length in
+                let node = Piece_tree.create_node buffer_length utf8_length utf16_length utf32_length line_breaks in
+                let build_tree = Piece_tree.append node build_tree in
+                build_tree
+          ) Piece_tree.empty input_tree 
+      ) stack
+  in
 
-let weight = 4
-let size = function WE -> 0 | WT (_, count, _, _) -> count
-let n_con v l r = WT (v, 1 + size l + size r, l, r)
-
-let single_l a x r =
-  match r with
-  | WT (b, _, y, z) -> n_con b (n_con a x y) z
-  | _ -> failwith "unexpected single_l"
-
-let double_l a x r =
-  match r with
-  | WT (c, _, WT (b, _, y1, y2), z) -> n_con b (n_con a x y1) (n_con c y2 z)
-  | _ -> failwith "unexpected double_l"
-
-let single_r b l z =
-  match l with
-  | WT (a, _, x, y) -> n_con a x (n_con b y z)
-  | _ -> failwith "unexpected single_r"
-
-let double_r c l z =
-  match l with
-  | WT (a, _, x, WT (b, _, y1, y2)) -> n_con b (n_con a x y1) (n_con c y2 z)
-  | _ -> failwith "unexpected double_r"
-
-let t_con v l r =
-  let ln = size l in
-  let rn = size r in
-  if ln + rn < 2 then n_con v l r
-  else if rn > weight * ln then
-    match r with
-    | WT (_, _, rl, rr) ->
-        let rln = size rl in
-        let rrn = size rr in
-        if rln < rrn then single_l v l r else double_l v l r
-    | WE -> failwith "unexpected t_con"
-  else if ln > weight * rn then
-    match l with
-    | WT (_, _, ll, lr) ->
-        let lln = size ll in
-        let lrn = size lr in
-        if lrn < lln then single_r v l r else double_r v l r
-    | WE -> failwith "unexpected t_con"
-  else n_con v l r
-
-let rec ins_max x = function
-  | WE -> WT (x, 1, WE, WE)
-  | WT (v, _, l, r) -> t_con v l (ins_max x r)
-
-let from_tree pt = Piece_tree.fold (fun acc node -> ins_max node acc) WE pt
+  let undo = rebuild_stack piecerope.undo in
+  let redo = rebuild_stack piecerope.redo in
+  { piecerope with buffer = !buffer; pieces = current_tree; undo = undo; redo = redo; }
