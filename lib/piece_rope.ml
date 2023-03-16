@@ -11,35 +11,6 @@ let empty =
     add_to_history = true;
   }
 
-let count_string_stats str =
-  let utf16_length, utf32_length, line_breaks =
-    Unicode.count_string_stats str 0
-  in
-  let utf8_length = String.length str in
-  let line_breaks = Array.length line_breaks in
-  { utf8_length; utf16_length; utf32_length; line_breaks }
-
-let undo piecerope =
-  match piecerope.undo with
-  | head :: tail ->
-      let pieces = head in
-      let undo = tail in
-      let redo = piecerope.pieces :: piecerope.redo in
-      { piecerope with pieces; undo; redo; add_to_history = true }
-  | [] -> piecerope
-
-let redo piecerope =
-  match piecerope.redo with
-  | head :: tail ->
-      let pieces = head in
-      let redo = tail in
-      let undo = piecerope.pieces :: piecerope.undo in
-      { piecerope with pieces; undo; redo; add_to_history = true }
-  | [] -> piecerope
-
-let serialise = Piece_serialiser.serialise
-let deserialise = Piece_serialiser.deserialise
-
 (* Repetitive logic to manage undo/redo stack when inserting/deleting. *)
 let update_piecerope new_tree new_buffer piecerope =
   let undo =
@@ -134,17 +105,47 @@ let fold_text = Piece_tree.fold_text
 let fold_lines = Piece_tree.fold_lines
 let fold_match_indices = Piece_tree.fold_match_indices
 let offsets = Piece_tree.offsets
-
 let can_undo piecerope = match piecerope.undo with [] -> false | _ -> true
 let can_redo piecerope = match piecerope.redo with [] -> false | _ -> true
 let add_to_history piecerope = { piecerope with add_to_history = true }
 let rebuild = Piece_builder.rebuild
 
-let save file_path piecerope = 
+let count_string_stats str =
+  let utf16_length, utf32_length, line_breaks =
+    Unicode.count_string_stats str 0
+  in
+  let utf8_length = String.length str in
+  let line_breaks = Array.length line_breaks in
+  { utf8_length; utf16_length; utf32_length; line_breaks }
+
+let undo piecerope =
+  match piecerope.undo with
+  | head :: tail ->
+      let pieces = head in
+      let undo = tail in
+      let redo = piecerope.pieces :: piecerope.redo in
+      { piecerope with pieces; undo; redo; add_to_history = true }
+  | [] -> piecerope
+
+let redo piecerope =
+  match piecerope.redo with
+  | head :: tail ->
+      let pieces = head in
+      let redo = tail in
+      let undo = piecerope.pieces :: piecerope.undo in
+      { piecerope with pieces; undo; redo; add_to_history = true }
+  | [] -> piecerope
+
+let serialise = Piece_serialiser.serialise
+let deserialise = Piece_serialiser.deserialise
+
+let save file_path piecerope =
   let tree_stats = Piece_tree.stats piecerope.pieces in
   let out_buffer = Buffer.create tree_stats.utf8_length in
-  let _ = 
-    Piece_tree.fold_text piecerope () (fun _ txt -> Buffer.add_string out_buffer txt) in
+  let _ =
+    Piece_tree.fold_text piecerope () (fun _ txt ->
+        Buffer.add_string out_buffer txt)
+  in
   let oc = open_out file_path in
   let _ = Buffer.output_buffer oc out_buffer in
   let _ = close_out oc in
@@ -155,4 +156,3 @@ let load file_path =
   let str = really_input_string ch (in_channel_length ch) in
   let _ = close_in ch in
   append str empty
-

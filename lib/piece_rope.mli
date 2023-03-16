@@ -5,18 +5,6 @@ type t = piece_rope
    The Piece_rope.t type implements an efficient data structure for inserting, deleting and retrieving text.
  *)
 
-val can_undo : piece_rope -> bool
-val can_redo : piece_rope -> bool
-val undo : piece_rope -> piece_rope
-val redo : piece_rope -> piece_rope
-val serialise : string -> piece_rope -> bool
-val deserialise : string -> piece_rope
-val add_to_history : piece_rope -> piece_rope
-val count_string_stats : string -> string_stats
-val rebuild : piece_rope -> piece_rope
-val save : piece_rope -> bool
-val load : string -> piece_rope
-
 val empty : piece_rope
 (** The empty Piece_rope.t. *)
 
@@ -173,6 +161,57 @@ val find_and_replace : string -> string -> piece_rope -> piece_rope
     Returns:
     A Piece_rope.t with all instances of the string replaced.
   *)
+
+val can_undo : piece_rope -> bool
+(** This function returns true if there is anything in the undo stack of the given piece_rope. 
+    It is not necessary as calling undo when the undo stack is empty will result in a no-op. *)
+
+val can_redo : piece_rope -> bool
+(** This function returns true if there is anything in the redo stack of the given piece_rope. 
+    It is not necessary as calling redo when the redo stack is empty will result in a no-op. *)
+
+val undo : piece_rope -> piece_rope
+(** This function adds the current state of the piece_rope to the redo stack and pops the most recent state in the undo stack and makes it current.
+    If the undo stack is empty, this will just result in a no-op. *)
+
+val redo : piece_rope -> piece_rope
+(** This function adds the current state of the piece_rope to the undo stack and pops the most recent state in the redo stack and makes it current.
+    If the redo stack is empty, this will just result in a no-op. *)
+
+val serialise : string -> piece_rope -> bool
+(** This function serialises the given piece_rope to a file at the given string.
+    This is useful for persisting the undo and redo stacks across sessions of your application. 
+    To achieve this functionality, all you need to do is to serialise a piece_rope with this function and then call deserialise with the created file path. *)
+
+val deserialise : string -> piece_rope
+(** This function deserialises the file at the file path contained in the given string and returns the corresponding piece_rope, with the undo and redo stacks restored.
+    It is paired with the serialise function as they must both be used together for persistent undo and redo. *)
+
+val add_to_history : piece_rope -> piece_rope
+(** This function sets a flag for the current state of the piece_rope to be added to the undo stack the next time one of these functions is called@
+    - Insert
+    - Append
+    - Prepend
+    - Delete
+    - Find and replace
+ *)
+
+val count_string_stats : string -> string_stats
+(** This function returns a record containing the given string's length in UTF-8, UTF-16 and UTF-32 and the number of line breaks where one line break can be \r \n or \r\n.
+ *)
+
+val rebuild : piece_rope -> piece_rope
+(** This function rebuilds the given piece_rope at the current state so that it performs as well as it did when it was first opened.
+    The undo and redo stacks are preserved and rebuilt as well.
+    Note that this function is unnecessary when your only operation is append as that is the optimal case for this data structure. It will spend time executing but give no benefit.
+    Recommended to run this method asynchronously as it can be computationally expensive.
+ *)
+
+val save : string -> piece_rope -> bool
+(** This function just saves the given piece_rope to the file path in the provided string. It does not do any special processing, unlike serialise. *)
+
+val load : string -> piece_rope
+(** This function loads the file at the given file path and returns a piece_rope. There is no special processing. *)
 
 val fold_text : piece_rope -> 'a -> ('a -> string -> 'a) -> 'a
 (**

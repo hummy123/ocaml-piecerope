@@ -24,6 +24,8 @@ type actions =
   | Undo
   | Redo
   | Rebuild
+  | Save
+  | Load
 
 let add_to_history model =
   let rope = Piece_rope.add_to_history model.text in
@@ -139,6 +141,14 @@ let dispatch model = function
   | Rebuild ->
       let rope = Piece_rope.rebuild model.text in
       { model with text = rope }
+  | Save ->
+      let file_path = "content.txt" in
+      let _ = Piece_rope.save file_path model.text in
+      model
+  | Load ->
+      let file_path = "content.txt" in
+      let rope = Piece_rope.load file_path in
+      { text = rope; offset = 0; line_num = 0; col_num = 0 }
 
 let get_stats model =
   let stats = Piece_rope.stats model.text in
@@ -201,6 +211,13 @@ let rec main t model =
   (* Rebuild. *)
   | `Key (`ASCII 'R', [ `Ctrl ]) ->
       let model = dispatch model Rebuild in
+      main t model
+  (* Load, save. *)
+  | `Key (`ASCII 'S', [ `Ctrl ]) ->
+      let model = dispatch model Save in
+      main t model
+  | `Key (`ASCII 'L', [ `Ctrl ]) ->
+      let model = dispatch model Load in
       main t model
   (* Cursor movements. *)
   | `Key (`Arrow d, _) ->
