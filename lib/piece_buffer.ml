@@ -132,19 +132,22 @@ let substring start length buffer =
   String.concat "" strList
 
 let fold_until_some f x t =
-  let rec fld (idx: int) x t cont =
+  let rec fld (idx : int) x t cont =
     match t with
     | BE -> cont x
     | BT (_, l, _, v, _, r, length) ->
-        fld (idx - string_length l - size_right l) x l (fun x ->
+        fld
+          (idx - string_length l - size_right l)
+          x l
+          (fun x ->
             match x with
             | Some _ -> x
-            | None ->
-              let x = f x idx v length in
-              match x with
-              | Some _ -> x
-              | None ->
-                fld (idx + length + size_left r) x r (fun x -> cont x))
+            | None -> (
+                let x = f x idx v length in
+                match x with
+                | Some _ -> x
+                | None -> fld (idx + length + size_left r) x r (fun x -> cont x)
+                ))
   in
   fld (size_left t) x t top_level_cont
 
@@ -159,16 +162,8 @@ let find_match find_string buffer =
       let char_length = Unicode.utf8_length cur_chr in
       if cur_chr = chr then
         let substr = substring utf32_pos length buffer in
-        if substr = find_string then
-          Some(utf32_pos + tree_pos)
-        else
-          fnd (str_idx + char_length) (utf32_pos + 1) text acc tree_pos
-      else
-        fnd (str_idx + char_length) (utf32_pos + 1) text acc tree_pos
+        if substr = find_string then Some (utf32_pos + tree_pos)
+        else fnd (str_idx + char_length) (utf32_pos + 1) text acc tree_pos
+      else fnd (str_idx + char_length) (utf32_pos + 1) text acc tree_pos
   in
-  fold_until_some
-  (fun _ pos str _ ->
-    fnd 0 0 str None pos)
-    None buffer
-
-
+  fold_until_some (fun _ pos str _ -> fnd 0 0 str None pos) None buffer

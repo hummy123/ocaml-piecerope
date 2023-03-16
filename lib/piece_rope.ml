@@ -14,6 +14,7 @@ let empty =
 let can_undo piecerope = match piecerope.undo with [] -> false | _ -> true
 let can_redo piecerope = match piecerope.redo with [] -> false | _ -> true
 let add_to_history piecerope = { piecerope with add_to_history = true }
+let rebuild = Piece_builder.rebuild
 
 let count_string_stats str =
   let utf16_length, utf32_length, line_breaks =
