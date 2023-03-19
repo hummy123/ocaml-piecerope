@@ -17,7 +17,7 @@
  (name piece_rope)
  (synopsis "A data structure for efficiently manipulating strings")
  (description "Supports UTF-8, UTF-16 and UTF-32 for interacting with external systems. Provides extensibility points for you to implement domain-specific functions. Documented and designed to be simple to use.")
- (depends ocaml dune)
+ (depends ocaml dune atdgen yojson)
  (tags
   (text "piece table" "piece tree" rope unicode)))
 

@@ -1,4 +1,3 @@
 (executable
- (public_name bench)
- (name main)
+ (name bench)
  (libraries piece_rope txns))
