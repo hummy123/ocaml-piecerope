@@ -12,9 +12,9 @@ bug-reports: "https://github.com/hummy123/ocaml-piecerope/issues"
 depends: [
   "ocaml"
   "dune" {>= "3.6"}
-  "atdgen"
-  "yojson"
-  "alcotest"
+  "atdgen" {>= "2.11.0"}
+  "yojson" {>= "2.0.2"}
+  "alcotest" {>= "1.7.0"}
   "odoc" {with-doc}
 ]
 build: [
