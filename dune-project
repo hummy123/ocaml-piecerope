@@ -20,9 +20,9 @@
  (depends 
    ocaml 
    dune 
-   (atdgen >= 2.11.0) 
-   (yojson >= 2.0.2) 
-   (alcotest >= 1.7.0))
+   (atdgen (>= 2.11.0)) 
+   (yojson (>= 2.0.2))
+   (alcotest (>= 1.7.0)))
  (tags
   (text "piece table" "piece tree" rope unicode)))
 
