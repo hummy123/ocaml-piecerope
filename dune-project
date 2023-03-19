@@ -18,7 +18,7 @@
  (synopsis "A data structure for efficiently manipulating strings")
  (description "Supports UTF-8, UTF-16 and UTF-32 for interacting with external systems. Provides extensibility points for you to implement domain-specific functions. Documented and designed to be simple to use.")
  (depends 
-   ocaml 
+   (ocaml (>= 4.13.0)) 
    dune 
    (atdgen (>= 2.11.0)) 
    (yojson (>= 2.0.2))

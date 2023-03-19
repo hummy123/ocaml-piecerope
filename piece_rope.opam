@@ -10,7 +10,7 @@ tags: ["text" "piece table" "piece tree" "rope" "unicode"]
 homepage: "https://github.com/hummy123/ocaml-piecerope"
 bug-reports: "https://github.com/hummy123/ocaml-piecerope/issues"
 depends: [
-  "ocaml"
+  "ocaml" {>= "4.13.0"}
   "dune" {>= "3.6"}
   "atdgen" {>= "2.11.0"}
   "yojson" {>= "2.0.2"}
