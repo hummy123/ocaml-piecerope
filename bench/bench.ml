@@ -1,5 +1,3 @@
-open Txns
-
 let () =
   let svelte, _ = Utils.run_txns "Svelete" Sveltecomponent.data in
   let rust, _ = Utils.run_txns "Rustcode" Rustcode.data in

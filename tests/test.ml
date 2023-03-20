@@ -119,9 +119,14 @@ let () =
           test "returns true" (fun () ->
               let file_path = "svelte_data.json" in
               let expected = true in
-              let rope, _ =
-                Txns.Utils.run_txns_result Txns.Sveltecomponent.data
-              in
+              (* Arrange: create piece_rope with random edits. *)
+              let rope =
+                Piece_rope.empty
+                |> Piece_rope.insert 0 "12344092firheu"
+                |> Piece_rope.delete 0 8
+                |> Piece_rope.prepend "1234ecdfc"
+                |> Piece_rope.append "123454" in
+              (* Assert: test if true is returned. *)
               let result = Piece_rope.serialise file_path rope in
               let _ = Sys.remove file_path in
               Alcotest.(check bool) "returns true" expected result);
@@ -130,14 +135,20 @@ let () =
         [
           test "returns same rope we serialised" (fun () ->
               let file_path = "svelte_data.json" in
-              let input_rope, _ =
-                Txns.Utils.run_txns_result Txns.Sveltecomponent.data
-              in
+              (* Arrange: create piece_rope with random edits. *)
+              let input_rope =
+                Piece_rope.empty
+                |> Piece_rope.insert 0 "12344092firheu"
+                |> Piece_rope.delete 0 8
+                |> Piece_rope.prepend "1234ecdfc"
+                |> Piece_rope.append "123454" in
+              (* Act: serialise and deserialise. *)
               let input_text = Piece_rope.get_text input_rope in
               let _ = Piece_rope.serialise file_path input_rope in
               let output_rope = Piece_rope.deserialise file_path in
-              let output_text = Piece_rope.get_text output_rope in
               let _ = Sys.remove file_path in
+              (* Assert: does input (before serialisation) contain same text as output (after serialisation)? *)
+              let output_text = Piece_rope.get_text output_rope in
               Alcotest.(check string) "is same" input_text output_text);
         ] );
     ]
