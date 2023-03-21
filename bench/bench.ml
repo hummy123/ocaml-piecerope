@@ -21,6 +21,23 @@ in
 
 let zed_delete pos del_num rope = Zed_rope.remove rope pos del_num in
 
+(* OCaml-bazaar rope insertion and deletion functoins. *)
+let bazaar_insert pos (ins_str : string) rope =
+  Bazaar_rope.S.insert rope pos (Bazaar_rope.S.of_string ins_str)
+in
+
+(* The OCaml-bazaar rope doesn't provide a function to delete a range of text as far as I can see,
+   but just a function to delete one character. *)
+let bazaar_delete pos del_num rope =
+  let rec del rope length_left =
+    if length_left = 0 then rope
+    else
+      let rope = Bazaar_rope.S.delete rope pos in
+      del rope (length_left - 1)
+  in
+  del rope del_num
+in
+
 let () =
   (* Below functions run the edit traces with each dataset. *)
   (* Structure:
@@ -66,6 +83,23 @@ let () =
   let _ =
     Utils.run_txns_time "Automerge Zed" Automerge.data (Zed_rope.empty ())
       zed_insert zed_delete
+  in
+  (* Running the datasets on Bazaar_rope. *)
+  let _ =
+    Utils.run_txns_time "Svelte Bazaar" Sveltecomponent.data Bazaar_rope.S.empty
+      bazaar_insert bazaar_delete
+  in
+  let _ =
+    Utils.run_txns_time "Rustcode Bazaar_rope" Rustcode.data Bazaar_rope.S.empty
+      bazaar_insert bazaar_delete
+  in
+  let _ =
+    Utils.run_txns_time "Sephblog Bazaar_rope" Sephblog.data Bazaar_rope.S.empty
+      bazaar_insert bazaar_delete
+  in
+  let _ =
+    Utils.run_txns_time "Automerge Bazaar_rope" Automerge.data
+      Bazaar_rope.S.empty bazaar_insert bazaar_delete
   in
   ()
 in
