@@ -46,7 +46,7 @@ let () =
   in
 
   let _ =
-    Utils.run_txns_time "Svelte Zed" Rustcode.data (Zed_rope.empty())
+    Utils.run_txns_time "Svelte Zed" Sveltecomponent.data (Zed_rope.empty())
       zed_insert zed_delete
   in
   let _ =
