@@ -9,25 +9,20 @@ let time_func title f =
   x
 
 (* Runs an empty rope throught the edit trace, resulting rope when done. *)
-let run_txns_result_generic initial (arr : (int * int * string) array) f_ins f_del =
+let run_txns_result_generic initial (arr : (int * int * string) array) f_ins
+    f_del =
   Array.fold_left
     (fun rope (pos, del_num, ins_str) ->
-      let rope = 
-        if del_num > 0 then
-          f_del pos del_num rope else rope
-      in
-      if ins_str <> String.empty then f_ins pos ins_str rope else rope
-    ) initial arr
+      let rope = if del_num > 0 then f_del pos del_num rope else rope in
+      if ins_str <> String.empty then f_ins pos ins_str rope else rope)
+    initial arr
 
-let run_txns_time title arr initial f_ins f_del = 
+let run_txns_time title arr initial f_ins f_del =
   time_func title (fun _ -> run_txns_result_generic initial arr f_ins f_del)
 
 let run_txns_piece_rope title (arr : (int * int * string) array) =
-  run_txns_time 
-    title 
-    arr 
-    Piece_rope.empty 
-    (fun pos ins_str rope -> Piece_rope.insert pos ins_str rope) 
+  run_txns_time title arr Piece_rope.empty
+    (fun pos ins_str rope -> Piece_rope.insert pos ins_str rope)
     (fun pos del_num rope -> Piece_rope.delete pos del_num rope)
 
 let run_substring_result rope =
