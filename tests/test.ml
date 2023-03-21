@@ -125,7 +125,8 @@ let () =
                 |> Piece_rope.insert 0 "12344092firheu"
                 |> Piece_rope.delete 0 8
                 |> Piece_rope.prepend "1234ecdfc"
-                |> Piece_rope.append "123454" in
+                |> Piece_rope.append "123454"
+              in
               (* Assert: test if true is returned. *)
               let result = Piece_rope.serialise file_path rope in
               let _ = Sys.remove file_path in
@@ -141,7 +142,8 @@ let () =
                 |> Piece_rope.insert 0 "12344092firheu"
                 |> Piece_rope.delete 0 8
                 |> Piece_rope.prepend "1234ecdfc"
-                |> Piece_rope.append "123454" in
+                |> Piece_rope.append "123454"
+              in
               (* Act: serialise and deserialise. *)
               let input_text = Piece_rope.get_text input_rope in
               let _ = Piece_rope.serialise file_path input_rope in

@@ -44,8 +44,10 @@ let add_to_history model =
 (* This is the main function calling the Piece_rope API. *)
 let dispatch model = function
   | CaretUp ->
-      (* If the user has pressed up and is already at line number 0, do nothing as this makes no sense. *)
-      if model.line_num = 0 then model
+      if model.line_num = 0 then
+        (* It's a common behavior that, when you press the up arrow on the first line in a text box,
+           your cursor will move to the start of the text box. This just replicates the same behaviour. *)
+        { model with col_num = 0; offset = 0 }
       else
         (* Retrieve the previous line, count its UTF-32 length,
            get the maximum columns the line can have and clip the column to one of the edges if it is outside the allowable range,
@@ -80,7 +82,13 @@ let dispatch model = function
         in
         let offset = line_offset.utf32_offset + col_num in
         { model with line_num = next_line; offset; col_num }
-      else model
+      else
+        (* Implements common behaviour where pressing down while on the last line in a text box
+           takes you to the last place in it. *)
+        let line_offset = Piece_rope.get_line model.line_num model.text in
+        let col_num = String.length line_offset.line in
+        let offset = line_offset.utf32_offset + col_num in
+        { model with offset; col_num }
   | CaretLeft ->
       (* Doesn't make sense to move left if offset is at zero and we're at start,
          and in the normal case we can just decrement the offset and column number by 1.
