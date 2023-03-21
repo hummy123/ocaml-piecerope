@@ -71,7 +71,7 @@ let dispatch model = function
       if next_line <= stats.lines then
         let line_offset = Piece_rope.get_line next_line model.text in
         let line_stats = Piece_rope.count_string_stats line_offset.line in
-        let max_col_num = line_stats.utf32_length - 1 in
+        let max_col_num = line_stats.utf32_length in
         let col_num =
           if model.col_num <= max_col_num && model.col_num >= 0 then
             model.col_num
