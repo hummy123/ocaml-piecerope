@@ -17,9 +17,15 @@ Here is the list of available features:
 - Translate between Unicode offsets - UTF-8, UTF-16, UTF-32 (also known as code point offsets).
 - Uses UTF-32 offsets for functions as validation so an invalid Unicode string is never created.
 
+## Installation
+
+The easiest way to install this package is `opam install piece_rope`.
+
 ## Example usage and benchmarks
 
-You can see the `/example/` directory for usage instructions and a simple example program. The example program can be run with `dune exec example/example.exe`.
+You can see the `/example/` directory for usage instructions and a simple example program tha. 
+
+The example program can be run with `dune exec example/example.exe` and requires you to have installed notty with `opam install notty`.
 
 Benchmarks can be run with `dune exec bench/bench.exe`.
 
