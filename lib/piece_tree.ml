@@ -706,6 +706,15 @@ let chop_last_char_if_not_crln str =
     if second_last_char = '\r' && last_char = '\n' then str
     else String.sub str 0 (String.length str - 1)
 
+let chop_first_char_if_ln str =
+  if String.length str = 1 then str
+  else
+    let first_char = String.unsafe_get str 0 in
+    if first_char = '\n' then String.sub str 1 (String.length str - 1) else str
+
+let format_line_break str =
+  str |> chop_first_char_if_ln |> chop_last_char_if_not_crln
+
 let get_line line rope =
   let rec get cur_line cur_u32 node acc cont =
     match node with
@@ -751,8 +760,7 @@ let get_line line rope =
         (* + 2 in length gives us \r\n in string and - v.Start takes us to piece offset *)
         let length : int = Array.unsafe_get v.lines 0 + 2 - v.start in
         let nodeText =
-          at_start_and_length v.start length rope.buffer
-          |> chop_last_char_if_not_crln
+          at_start_and_length v.start length rope.buffer |> format_line_break
         in
 
         let recurseLeftLine = cur_line - n_lines l - lines_right l in
@@ -773,7 +781,7 @@ let get_line line rope =
         in
         let text =
           at_start_and_length lineStart lineLength rope.buffer
-          |> chop_last_char_if_not_crln
+          |> format_line_break
         in
 
         let lineStartIndex = Some (cur_u32 + lineStart - v.start) in

@@ -151,7 +151,6 @@ let () =
               let result = Piece_rope.get_line 0 rope in
               Alcotest.(check string) "returns first line" expected result.line);
           test "returns second line when we split string with \n" (fun () ->
-              (* No lines in input string. *)
               let str = "asdfvrefvij" in
               let rope = Piece_rope.of_string str in
               let rope = Piece_rope.insert 1 "\n" rope in
@@ -159,13 +158,62 @@ let () =
               let result = Piece_rope.get_line 1 rope in
               Alcotest.(check string) "returns second line" expected result.line);
           test "returns first line when we split string with \r\n" (fun () ->
-              (* No lines in input string. *)
               let str = "asdfvrefvij" in
               let rope = Piece_rope.of_string str in
               let rope = Piece_rope.insert 1 "\r\n" rope in
               let expected = "a\r\n" in
               let result = Piece_rope.get_line 0 rope in
               Alcotest.(check string) "returns first line" expected result.line);
+          test "returns line when line spans multiple pieces (a)" (fun () ->
+              let initial_str = "a\nsdf" in
+              let rope = Piece_rope.of_string initial_str in
+              let rope = Piece_rope.prepend "zxcv" rope in
+              let expected = "zxcva\n" in
+              let result = Piece_rope.get_line 0 rope in
+              Alcotest.(check string) "returns line" expected result.line);
+          test "returns line when line spans multiple pieces (b)" (fun () ->
+              let initial_str = "a\nsdf" in
+              let rope = Piece_rope.of_string initial_str in
+              let rope = Piece_rope.prepend "zxcv" rope in
+              let rope = Piece_rope.append "qw\nerty" rope in
+              let expected = "zxcva\n" in
+              let result = Piece_rope.get_line 0 rope in
+              let _ =
+                Alcotest.(check string) "returns line" expected result.line
+              in
+              let expected = "sdfqw\n" in
+              let result = Piece_rope.get_line 1 rope in
+              let _ =
+                Alcotest.(check string) "returns line" expected result.line
+              in
+              let expected = "erty" in
+              let result = Piece_rope.get_line 2 rope in
+              Alcotest.(check string) "returns line" expected result.line);
+          test "returns middle '\n' when there are 3 '\n' in piece" (fun () ->
+              let str = "asdf\nqwer\nzxcv" in
+              let rope = Piece_rope.of_string str in
+              let expected = "qwer\n" in
+              let result = Piece_rope.get_line 1 rope in
+              Alcotest.(check string) "returns middle line" expected result.line);
+          test "returns middle '\r\n' when there are 3 '\r\n' in piece"
+            (fun () ->
+              let str = "asdf\r\nqwer\r\nzxcv" in
+              let rope = Piece_rope.of_string str in
+              let expected = "qwer\r\n" in
+              let result = Piece_rope.get_line 1 rope in
+              Alcotest.(check string) "returns middle line" expected result.line);
+          test "returns '\n' when there are consecutive '\n's" (fun () ->
+              let str = "\n\n\n" in
+              let rope = Piece_rope.of_string str in
+              let expected = "\n" in
+              let result = Piece_rope.get_line 1 rope in
+              Alcotest.(check string) "returns '\n'" expected result.line);
+          test "returns '\r\n' when there are consecutive '\r\n's" (fun () ->
+              let str = "\r\n\r\n\r\n" in
+              let rope = Piece_rope.of_string str in
+              let expected = "\r\n" in
+              let result = Piece_rope.get_line 1 rope in
+              Alcotest.(check string) "returns '\r'\n" expected result.line);
         ] );
       ( "Piece_rope.serialise",
         [
