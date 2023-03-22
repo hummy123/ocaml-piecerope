@@ -213,13 +213,13 @@ let text_at_end curIndex start piece buffer =
 let at_start_and_length start length buffer =
   Piece_buffer.substring start length buffer
 
-let is_at_line_break piece_pos lines =
+let is_at_line_break piece_pos_prev piece_pos_next lines =
   let len = Array.length lines in
   let rec find n =
     if n >= len then false
     else
       let cur = Array.unsafe_get lines n in
-      if cur = piece_pos then true
+      if cur = piece_pos_prev || cur = piece_pos_next then true
       else find (n + 1)
   in
   find 0
