@@ -79,7 +79,7 @@ val get_line : int -> piece_rope -> line_offset
     This function retrieves a given line from a Piece_tree.
 
     Accepts:
-    The line to retrieve. This is zero-indexed, just like string indices are.
+    The line to retrieve. This is zero-indexed where line 1 can be accessed with index 0, just like string indices are.
     The Piece_rope.t to retrieve the line from
 
     Returns:
