@@ -157,24 +157,18 @@ let try_find_index (predicate : int -> bool) (lines : int array) =
 let take_while predicate lines =
   let len = Array.length lines in
   let rec take n =
-    if n >= len then
-      lines
-    else if predicate (Array.unsafe_get lines n) then
-      take (n + 1)
-    else
-      Array.sub lines 0 n
+    if n >= len then lines
+    else if predicate (Array.unsafe_get lines n) then take (n + 1)
+    else Array.sub lines 0 n
   in
   take 0
 
 let skip_while predicate lines =
   let len = Array.length lines in
   let rec skip n =
-    if n >= len then
-      [||]
-    else if predicate (Array.unsafe_get lines n) then
-      skip (n + 1)
-    else
-      Array.sub lines n (len - n)
+    if n >= len then [||]
+    else if predicate (Array.unsafe_get lines n) then skip (n + 1)
+    else Array.sub lines n (len - n)
   in
   skip 0
 
@@ -182,7 +176,7 @@ let count_lines pc_start offset_difference lines =
   let find_pos = pc_start + offset_difference in
   let lines = skip_while (fun x -> x <= find_pos) lines in
   Array.length lines
- 
+
 let split_lines rStart (lines : int array) =
   match try_find_index (fun x -> x >= rStart) lines with
   | Some splitPoint ->
@@ -219,8 +213,7 @@ let is_at_line_break piece_pos_prev piece_pos_next lines =
     if n >= len then false
     else
       let cur = Array.unsafe_get lines n in
-      if cur = piece_pos_prev || cur = piece_pos_next then true
-      else find (n + 1)
+      if cur = piece_pos_prev || cur = piece_pos_next then true else find (n + 1)
   in
   find 0
 
@@ -229,27 +222,20 @@ let delete_at_start curIndex finish piece buffer =
   let new_start = piece.start + difference in
   let newLength = piece.utf32_length - difference in
   let newLines = skip_while (fun x -> x < new_start) piece.lines in
-  if is_at_line_break new_start piece.lines then
+  if is_at_line_break (new_start - 1) new_start piece.lines then
     let txt = at_start_and_length (new_start - 1) 2 buffer in
-    if txt = "\r\n" then
-      (new_start - 1, newLength - 1, newLines)
-    else
-      (new_start, newLength, newLines)
-  else
-    (new_start, newLength, newLines)
+    if txt = "\r\n" then (new_start - 1, newLength - 1, newLines)
+    else (new_start, newLength, newLines)
+  else (new_start, newLength, newLines)
 
 let delete_at_end curIndex start piece buffer =
   let length = start - curIndex in
   let length_offset = length + piece.start in
   let lines = skip_while (fun x -> x <= length_offset) piece.lines in
-  if is_at_line_break length_offset piece.lines then
-    let txt = at_start_and_length (length_offset - 1) 2 buffer in 
-    if txt = "\r\n" then
-      length - 1, lines
-    else
-      length, lines
-  else
-    (length, lines)
+  if is_at_line_break (length_offset - 1) length_offset piece.lines then
+    let txt = at_start_and_length (length_offset - 1) 2 buffer in
+    if txt = "\r\n" then (length - 1, lines) else (length, lines)
+  else (length, lines)
 
 let delete_in_range curIndex start finish piece buffer =
   let finish_difference = finish - curIndex in
@@ -260,22 +246,15 @@ let delete_in_range curIndex start finish piece buffer =
   let p2Lines = skip_while (fun x -> x < p2_start) piece.lines in
   let p2Length = piece.utf32_length - finish_difference in
   let p1_length =
-    if is_at_line_break p1_length_offset piece.lines then
+    if is_at_line_break (p1_length_offset - 1) p1_length_offset piece.lines then
       let txt = at_start_and_length (p1_length_offset - 1) 2 buffer in
-      if txt = "\r\n" then
-        p1_length - 1
-      else
-        p1_length
-    else
-      p1_length
+      if txt = "\r\n" then p1_length - 1 else p1_length
+    else p1_length
   in
   let p2_start =
-    if is_at_line_break p2_start piece.lines then
+    if is_at_line_break (p2_start - 1) p2_start piece.lines then
       let txt = at_start_and_length (p2_start - 1) 2 buffer in
-      if txt = "\r\n" then
-        p2_start + 1
-      else
-        p2_start
+      if txt = "\r\n" then p2_start + 1 else p2_start
     else p2_start
   in
   (p1_length, p1Lines, p2_start, p2Length, p2Lines)
@@ -610,7 +589,7 @@ let delete_tree start length tree buffer =
             let newStart, newLength, newLines =
               delete_at_start curIndex finish v buffer
             in
-           if v.utf8_length = v.utf32_length then
+            if v.utf8_length = v.utf32_length then
               let v' =
                 create_node newStart newLength newLength newLength newLines
               in
