@@ -160,6 +160,30 @@ let count_lines pc_start offset_difference lines =
   | Some x -> if x = 0 then 0 else x - 1
   | None -> Array.length lines
 
+let take_while predicate lines =
+  let len = Array.length lines in
+  let rec take n =
+    if n >= len then
+      lines
+    else if predicate (Array.unsafe_get lines n) then
+      take (n + 1)
+    else
+      Array.sub lines 0 n
+  in
+  take 0
+
+let skip_while predicate lines =
+  let len = Array.length lines in
+  let rec skip n =
+    if n >= len then
+      [||]
+    else if predicate (Array.unsafe_get lines n) then
+      skip (n + 1)
+    else
+      Array.sub lines n (len - n)
+  in
+  skip 0
+  
 let split_lines rStart (lines : int array) =
   match try_find_index (fun x -> x >= rStart) lines with
   | Some splitPoint ->
@@ -170,28 +194,15 @@ let split_lines rStart (lines : int array) =
       (arrLeft, arrRight)
   | None -> (lines, Array.make 0 0)
 
-let delete_lines_in_range p1Length p2Start lines =
-  let p1Lines =
-    match try_find_index (fun x -> x >= p1Length) lines with
-    | Some x -> Array.sub lines 0 x
-    | None -> lines
-  in
-  let p2Lines =
-    match try_find_index (fun x -> x >= p2Start) lines with
-    | Some x -> Array.sub lines x (Array.length lines - x)
-    | None -> Array.make 0 0
-  in
-  (p1Lines, p2Lines)
-
 let delete_in_range curIndex start finish piece =
-  let finishDifference = finish - curIndex in
-  let p1Length = start - curIndex in
-  let p2Start = finishDifference + piece.start in
-  let p1Lines, p2Lines =
-    delete_lines_in_range (p1Length + piece.start) p2Start piece.lines
-  in
-  let p2Length = piece.utf32_length - finishDifference in
-  (p1Length, p1Lines, p2Start, p2Length, p2Lines)
+  let finish_difference = finish - curIndex in
+  let p1_length = start - curIndex in
+  let p2_start = finish_difference + piece.start in
+  let p1_length_offset = p1_length + piece.start in
+  let p1Lines = take_while (fun x -> x < p1_length_offset) piece.lines in
+  let p2Lines = skip_while (fun x -> x < p2_start) piece.lines in
+  let p2Length = piece.utf32_length - finish_difference in
+  (p1_length, p1Lines, p2_start, p2Length, p2Lines)
 
 let delete_at_start curIndex finish piece =
   let difference = finish - curIndex in
