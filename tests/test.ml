@@ -254,6 +254,30 @@ let () =
               let expected = "_+!£%&()" in
               let result = Piece_rope.get_text rope in
               Alcotest.(check string) "deletes \r\n" expected result);
+          test "deletes \n at start properly try deleting at start" (fun () ->
+              let rope = Piece_rope.of_string "\nxcvbnm" in
+              let rope = Piece_rope.delete 0 1 rope in
+              let expected = "xcvbnm" in
+              let result = Piece_rope.get_text rope in
+              Alcotest.(check string) "deletes start" expected result);
+          test
+            "deletes \r\n\
+            \ at end when \r\n\
+            \ is at end and we only try deleting \r" (fun () ->
+              let rope = Piece_rope.of_string "qwerty\r\n" in
+              let rope = Piece_rope.delete 6 1 rope in
+              let expected = "qwerty" in
+              let result = Piece_rope.get_text rope in
+              Alcotest.(check string) "deletes end" expected result);
+          test
+            "deletes \r\n\
+            \ at end when \r\n\
+            \ is at end and we only try deleting \n" (fun () ->
+              let rope = Piece_rope.of_string "qwerty\r\n" in
+              let rope = Piece_rope.delete 7 1 rope in
+              let expected = "qwerty" in
+              let result = Piece_rope.get_text rope in
+              Alcotest.(check string) "deletes end" expected result);
         ] );
       ( "Piece_rope.serialise",
         [
