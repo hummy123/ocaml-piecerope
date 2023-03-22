@@ -222,9 +222,9 @@ let delete_at_start curIndex finish piece buffer =
   let new_start = piece.start + difference in
   let newLength = piece.utf32_length - difference in
   let newLines = skip_while (fun x -> x < new_start) piece.lines in
-  if is_at_line_break (new_start - 1) new_start piece.lines then
+  if is_at_line_break new_start (new_start - 1) piece.lines then
     let txt = at_start_and_length (new_start - 1) 2 buffer in
-    if txt = "\r\n" then (new_start - 1, newLength - 1, newLines)
+    if txt = "\r\n" then (new_start + 1, newLength - 1, newLines)
     else (new_start, newLength, newLines)
   else (new_start, newLength, newLines)
 
