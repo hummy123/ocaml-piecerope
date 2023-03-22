@@ -157,28 +157,32 @@ let () =
               let expected = "sdfvrefvij" in
               let result = Piece_rope.get_line 1 rope in
               Alcotest.(check string) "returns second line" expected result.line);
-          test "returns second line when we insert into string with \r\n" (fun () ->
+          test "returns second line when we insert into string with \r\n"
+            (fun () ->
               let str = "asdfvrefvij" in
               let rope = Piece_rope.of_string str in
               let rope = Piece_rope.insert 1 "\r\n" rope in
               let expected = "sdfvrefvij" in
               let result = Piece_rope.get_line 1 rope in
               Alcotest.(check string) "returns first line" expected result.line);
-          test "returns whole line when we delete only line break in string" (fun () ->
+          test "returns whole line when we delete only line break in string"
+            (fun () ->
               let str = "asdf\nvrefvij" in
               let rope = Piece_rope.of_string str in
               let rope = Piece_rope.delete 4 1 rope in
               let expected = "asdfvrefvij" in
               let result = Piece_rope.get_line 0 rope in
               Alcotest.(check string) "returns whole line" expected result.line);
-          test "returns string with \r when we try to delete last char of \r\n" (fun () ->
+          test "returns string with \r when we try to delete last char of \r\n"
+            (fun () ->
               let str = "asdf\r\n1234" in
               let rope = Piece_rope.of_string str in
               let rope = Piece_rope.delete 5 1 rope in
               let expected = "asdf\r1234" in
               let result = Piece_rope.get_text rope in
               Alcotest.(check string) "returns string with \r" expected result);
-          test "returns string with \n when we try to delete first char of \r\n" (fun () ->
+          test "returns string with \n when we try to delete first char of \r\n"
+            (fun () ->
               let str = "asdf\r\n1234" in
               let rope = Piece_rope.of_string str in
               let rope = Piece_rope.delete 4 1 rope in

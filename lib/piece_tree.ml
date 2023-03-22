@@ -737,7 +737,7 @@ let get_line line rope =
     | PT (_, l, _, v, _, r)
       when node_is_in_line cur_line line (cur_line + Array.length v.lines) ->
         let nodeEndLine = cur_line + Array.length v.lines in
-        let nodeText = text v rope.buffer |> chop_first_char_if_ln in
+        let nodeText = text v rope.buffer in
 
         let recurseRightLine = nodeEndLine + lines_left r in
         let recurseLeftLine = cur_line - n_lines l - lines_right l in
@@ -757,7 +757,8 @@ let get_line line rope =
         (* + 2 in length gives us \r\n in string and - v.Start takes us to piece offset *)
         let length : int = Array.unsafe_get v.lines 0 + 2 - v.start in
         let nodeText =
-          at_start_and_length v.start length rope.buffer |> chop_last_char_if_not_crln
+          at_start_and_length v.start length rope.buffer
+          |> chop_last_char_if_not_crln
         in
 
         let recurseLeftLine = cur_line - n_lines l - lines_right l in
@@ -778,7 +779,7 @@ let get_line line rope =
         in
         let text =
           at_start_and_length lineStart lineLength rope.buffer
-          |> chop_last_char_if_not_crln 
+          |> chop_last_char_if_not_crln
         in
 
         let lineStartIndex = Some (cur_u32 + lineStart - v.start) in

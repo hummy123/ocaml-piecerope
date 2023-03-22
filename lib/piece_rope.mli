@@ -5,7 +5,7 @@ type t = piece_rope
    The Piece_rope.t type implements an efficient data structure for inserting, deleting and retrieving text.
  *)
 
-exception Out_of_bounds of string 
+exception Out_of_bounds of string
 (**
    The Out_of_bounds exception is raised to indicate out-of-bounds access.
    The string arguments indicates the function that triggered the exception and what the problem was.

@@ -2,7 +2,9 @@ open Piece_types
 
 type t = piece_rope
 
-exception Out_of_bounds of string (* Throw exception if querying a range that does not exist. *)
+exception
+  Out_of_bounds of
+    string (* Throw exception if querying a range that does not exist. *)
 
 let empty =
   {
@@ -42,7 +44,10 @@ let insert index (str : string) piecerope =
       update_piecerope pieces buffer piecerope
     else piecerope
   else
-    raise (Out_of_bounds "Piece_rope.insert: either attempted to insert before index 0 or after Piece_rope's UTF-32 length")
+    raise
+      (Out_of_bounds
+         "Piece_rope.insert: either attempted to insert before index 0 or \
+          after Piece_rope's UTF-32 length")
 
 let prepend (str : string) piecerope =
   if str <> "" then
@@ -76,12 +81,21 @@ let append (str : string) piecerope =
 
 let delete start length piecerope =
   if length = 0 then piecerope
-  else if start < 0 then raise (Out_of_bounds "Piece_rope.delete: attempted to delete before index 0")
-  else if length <= 0 then raise (Out_of_bounds "Piece_rope.delete: provided a negative length to delete with")
+  else if start < 0 then
+    raise
+      (Out_of_bounds "Piece_rope.delete: attempted to delete before index 0")
+  else if length <= 0 then
+    raise
+      (Out_of_bounds
+         "Piece_rope.delete: provided a negative length to delete with")
   else
     let stats = Piece_tree.stats piecerope.pieces in
     let finish = start + length in
-    if finish >= stats.utf32_length then raise (Out_of_bounds "Piece_rope.delete: attempted to delete after the Piece_rope's contents")
+    if finish >= stats.utf32_length then
+      raise
+        (Out_of_bounds
+           "Piece_rope.delete: attempted to delete after the Piece_rope's \
+            contents")
     else
       let pieces =
         Piece_tree.delete_tree start length piecerope.pieces piecerope.buffer
@@ -90,22 +104,37 @@ let delete start length piecerope =
 
 let substring start length piecerope =
   if length = 0 then ""
-  else if start < 0 then raise (Out_of_bounds "Piece_rope.substring: attempted to get substring before index 0")
-  else if length <= 0 then raise (Out_of_bounds "Piece_rope.substring: provided a negative length to get a substring with")
+  else if start < 0 then
+    raise
+      (Out_of_bounds
+         "Piece_rope.substring: attempted to get substring before index 0")
+  else if length <= 0 then
+    raise
+      (Out_of_bounds
+         "Piece_rope.substring: provided a negative length to get a substring \
+          with")
   else
     let stats = Piece_tree.stats piecerope.pieces in
     let finish = start + length in
-    if finish >= stats.utf32_length then raise (Out_of_bounds "Piece_rope.substring: attempted to get substring after the Piece_rope's contents")
-    else
-      Piece_tree.substring start length piecerope
+    if finish >= stats.utf32_length then
+      raise
+        (Out_of_bounds
+           "Piece_rope.substring: attempted to get substring after the \
+            Piece_rope's contents")
+    else Piece_tree.substring start length piecerope
 
-let get_line line piecerope = 
-  if line < 0 then raise (Out_of_bounds "Piece_rope.get_line: attempted to get line number before first")
+let get_line line piecerope =
+  if line < 0 then
+    raise
+      (Out_of_bounds
+         "Piece_rope.get_line: attempted to get line number before first")
   else
     let stats = Piece_tree.stats piecerope.pieces in
-    if line >= stats.lines then raise (Out_of_bounds "Piece_rope.get_line: attempted to get line number after last line")
-    else
-      Piece_tree.get_line line piecerope
+    if line >= stats.lines then
+      raise
+        (Out_of_bounds
+           "Piece_rope.get_line: attempted to get line number after last line")
+    else Piece_tree.get_line line piecerope
 
 let get_text piecerope = Piece_tree.get_text piecerope
 let of_string str = append str empty
