@@ -114,6 +114,23 @@ let () =
               let expected = 3 in
               Alcotest.(check int) "folder executes once" expected result);
         ] );
+      ( "Piece_rope.get_line",
+        [
+          test
+            "returns first line when there are no line breaks and we ask for \
+             the first line" (fun () ->
+              let expected = "asdflkjhg" in
+              let rope = Piece_rope.of_string expected in
+              let result = Piece_rope.get_line 0 rope in
+              Alcotest.(check string)
+                "returns first line when no line breaks" expected result.line);
+          test "returns first line when there is one line break" (fun () ->
+              let str = "asdf\nvjriouvr" in
+              let expected = "asdf\n" in
+              let rope = Piece_rope.of_string str in
+              let result = Piece_rope.get_line 0 rope in
+              Alcotest.(check string) "returns first line" expected result.line);
+        ] );
       ( "Piece_rope.serialise",
         [
           test "returns true" (fun () ->

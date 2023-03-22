@@ -703,11 +703,8 @@ let chop_last_char_if_not_crln str =
   else
     let last_char = String.unsafe_get str (String.length str - 1) in
     let second_last_char = String.unsafe_get str (String.length str - 2) in
-    if
-      (second_last_char = '\r' && last_char = '\n')
-      || (second_last_char <> '\r' && second_last_char <> '\n')
-    then str
-    else String.sub str 0 (String.length str - 2)
+    if second_last_char = '\r' && last_char = '\n' then str
+    else String.sub str 0 (String.length str - 1)
 
 let get_line line rope =
   let rec get cur_line cur_u32 node acc cont =
