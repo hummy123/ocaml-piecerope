@@ -336,8 +336,8 @@ let create_offsets utf8_pos utf16_pos utf32_pos line_num =
 
 (** Given the first byte of a UTF-8 code point, returns the length of that character in UTF-8. *)
 let utf8_length chr =
-  <span data-count="1232">m</span>atch chr with
-  | <span data-count="1224">'</span>\x00' .. '\x7f' -&gt; 1
+  <span data-count="1255">m</span>atch chr with
+  | <span data-count="1247">'</span>\x00' .. '\x7f' -&gt; 1
   | <span data-count="8">'</span>\xc0' .. '\xdf' -&gt; 2
   | <span data-count="0">'</span>\xe0' .. '\xef' -&gt; 3
   | <span data-count="0">'</span>\xf0' .. '\xf7' -&gt; 4
@@ -349,26 +349,26 @@ let utf8_length chr =
     but the additional allocation a tuple has bothered me.
  *)
 let utf16_length chr =
-  <span data-count="1109">m</span>atch chr with
-  | <span data-count="1109">'</span>\x00' .. '\xef' -&gt; 1
+  <span data-count="1132">m</span>atch chr with
+  | <span data-count="1132">'</span>\x00' .. '\xef' -&gt; 1
   | <span data-count="0">'</span>\xf0' .. '\xf7' -&gt; 2
   | <span data-count="0">_</span> -&gt; failwith "invalid utf-8 start"
 
 (** Counts the length of the string in UTF-16 and Unicode code points, 
     and builds an array of line breaks in terms of UTF-8 as that is OCaml's native string encoding. *)
 let count_string_stats (str : string) (buffer_length : int) =
-  <span data-count="58">l</span>et rec get utf8_pos utf16_cntr utf32_cntr line_breaks prev_is_cr =
-    <span data-count="1151">i</span>f utf8_pos &gt;= String.lengt<span data-count="1151">h</span> str then
-      <span data-count="58">(</span>utf16_cntr, utf32_cntr, line_breaks |&gt; List.rev |&gt; <span data-count="58">A</span>rray.of_lis<span data-count="58">t</span>)
+  <span data-count="61">l</span>et rec get utf8_pos utf16_cntr utf32_cntr line_breaks prev_is_cr =
+    <span data-count="1177">i</span>f utf8_pos &gt;= String.lengt<span data-count="1177">h</span> str then
+      <span data-count="61">(</span>utf16_cntr, utf32_cntr, line_breaks |&gt; List.rev |&gt; <span data-count="61">A</span>rray.of_lis<span data-count="61">t</span>)
     else
-      <span data-count="1093">l</span>et chr = String.unsafe_get str utf8_pos in
-      <span data-count="1093">l</span>et utf8_length = utf8_length chr in
-      <span data-count="1093">l</span>et utf16_length = utf16_length chr in
+      <span data-count="1116">l</span>et chr = String.unsafe_get str utf8_pos in
+      <span data-count="1116">l</span>et utf8_length = utf8_length chr in
+      <span data-count="1116">l</span>et utf16_length = utf16_length chr in
 
-      <span data-count="1093">l</span>et line_breaks =
-        if chr = '\r<span data-count="11">'</span> || (chr = '\n' &amp;&amp; <span data-count="26">n</span>ot prev_is_cr<span data-count="15">)</span> then
-          <span data-count="26">(</span>utf32_cntr + buffer_length) :: line_breaks
-        else <span data-count="1067">l</span>ine_breaks
+      <span data-count="1116">l</span>et line_breaks =
+        if chr = '\r<span data-count="13">'</span> || (chr = '\n' &amp;&amp; <span data-count="29">n</span>ot prev_is_cr<span data-count="16">)</span> then
+          <span data-count="29">(</span>utf32_cntr + buffer_length) :: line_breaks
+        else <span data-count="1087">l</span>ine_breaks
       in
       get (utf8_pos + utf8_length)
         (utf16_cntr + utf16_length)

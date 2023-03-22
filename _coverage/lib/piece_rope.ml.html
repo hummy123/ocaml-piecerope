@@ -393,9 +393,9 @@ let empty =
 
 (* Repetitive logic to manage undo/redo stack when inserting/deleting. *)
 let update_piecerope new_tree new_buffer piecerope =
-  <span data-count="53">l</span>et undo =
-    if piecerope.add_to_history then <span data-count="31">p</span>iecerope.pieces :: piecerope.undo
-    else <span data-count="22">p</span>iecerope.undo
+  <span data-count="59">l</span>et undo =
+    if piecerope.add_to_history then <span data-count="34">p</span>iecerope.pieces :: piecerope.undo
+    else <span data-count="25">p</span>iecerope.undo
   in
   let redo = [] in
   { buffer = new_buffer; pieces = new_tree; undo; redo; add_to_history = false }
@@ -434,34 +434,34 @@ let prepend (str : string) piecerope =
   else <span data-count="0">p</span>iecerope
 
 let append (str : string) piecerope =
-  <span data-count="33">i</span>f str &lt;&gt; "" then
-    <span data-count="33">l</span>et pcStart = Piece_buffer.size piecerope.buffer in
-    <span data-count="33">l</span>et utf16length, utf32length, pcLines =
+  <span data-count="36">i</span>f str &lt;&gt; "" then
+    <span data-count="36">l</span>et pcStart = Piece_buffer.size piecerope.buffer in
+    <span data-count="36">l</span>et utf16length, utf32length, pcLines =
       Unicode.count_string_stats str pcStart
     in
-    <span data-count="33">l</span>et utf8length = String.length str in
-    <span data-count="33">l</span>et buffer = Piece_buffer.append str utf32length piecerope.buffer in
-    <span data-count="33">l</span>et node =
+    <span data-count="36">l</span>et utf8length = String.length str in
+    <span data-count="36">l</span>et buffer = Piece_buffer.append str utf32length piecerope.buffer in
+    <span data-count="36">l</span>et node =
       Piece_tree.create_node pcStart utf8length utf16length utf32length pcLines
     in
-    <span data-count="33">l</span>et pieces = Piece_tree.append node piecerope.pieces in
-    <span data-count="33">u</span>pdate_piecerope pieces buffer piecerope
+    <span data-count="36">l</span>et pieces = Piece_tree.append node piecerope.pieces in
+    <span data-count="36">u</span>pdate_piecerope pieces buffer piecerope
   else <span data-count="0">p</span>iecerope
 
 let delete start length piecerope =
-  <span data-count="7">i</span>f length = 0 then <span data-count="0">p</span>iecerope
+  <span data-count="10">i</span>f length = 0 then <span data-count="0">p</span>iecerope
   else
-    <span data-count="7">l</span>et pieces =
+    <span data-count="10">l</span>et pieces =
       Piece_tree.delete_tree start length piecerope.pieces piecerope.buffer
     in
-    <span data-count="7">u</span>pdate_piecerope pieces piecerope.buffer piecerope
+    <span data-count="10">u</span>pdate_piecerope pieces piecerope.buffer piecerope
 
 let substring start length piecerope =
   <span data-count="0">i</span>f length = 0 then <span data-count="0">"</span>" else <span data-count="0">P</span>iece_tree.substring start length piecerope
 
 let get_line line piecerope = <span data-count="16">P</span>iece_tree.get_line line piecerope
-let get_text piecerope = <span data-count="12">P</span>iece_tree.get_text piecerope
-let of_string str = <span data-count="29">a</span>ppend str empty
+let get_text piecerope = <span data-count="15">P</span>iece_tree.get_text piecerope
+let of_string str = <span data-count="32">a</span>ppend str empty
 let stats piecerope = <span data-count="0">P</span>iece_tree.stats piecerope.pieces
 
 let find_matches find_string piecerope =

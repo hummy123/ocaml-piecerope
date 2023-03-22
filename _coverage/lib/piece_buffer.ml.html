@@ -415,7 +415,7 @@
 </pre>
 <pre><code class="ocaml">open Piece_types
 
-let top_level_cont x = <span data-count="156">x</span>
+let top_level_cont x = <span data-count="167">x</span>
 
 let fold_back f x t =
   <span data-count="2">l</span>et rec fld x t cont =
@@ -431,12 +431,12 @@ let fold_back f x t =
 let target_size = 1024
 
 let size = function
-  | <span data-count="31">B</span>E -&gt; 0
+  | <span data-count="34">B</span>E -&gt; 0
   | <span data-count="15">B</span>T (_, _, lm, _, rm, _, length) -&gt; lm + length + rm
 
-let string_length = function <span data-count="25">B</span>E -&gt; 0 | <span data-count="0">B</span>T (_, _, _, _, _, _, length) -&gt; length
-let size_left = function <span data-count="42">B</span>E -&gt; 0 | <span data-count="107">B</span>T (_, _, lm, _, _, _, _) -&gt; lm
-let size_right = function <span data-count="25">B</span>E -&gt; 0 | <span data-count="0">B</span>T (_, _, _, _, rm, _, _) -&gt; rm
+let string_length = function <span data-count="28">B</span>E -&gt; 0 | <span data-count="0">B</span>T (_, _, _, _, _, _, length) -&gt; length
+let size_left = function <span data-count="46">B</span>E -&gt; 0 | <span data-count="115">B</span>T (_, _, lm, _, _, _, _) -&gt; lm
+let size_right = function <span data-count="28">B</span>E -&gt; 0 | <span data-count="0">B</span>T (_, _, _, _, rm, _, _) -&gt; rm
 
 (* AVL Tree-specific functions. *)
 let ht = function <span data-count="0">B</span>E -&gt; 0 | <span data-count="0">B</span>T (h, _, _, _, _, _, _) -&gt; h
@@ -461,9 +461,9 @@ let balR a x xl bc =
 let empty = BE
 
 let append str strLength buffer =
-  <span data-count="47">l</span>et rec ins_max node cont =
-    <span data-count="47">m</span>atch node with
-    | <span data-count="32">B</span>E -&gt; BT (1, BE, 0, str, 0, BE, strLength) |&gt; cont
+  <span data-count="50">l</span>et rec ins_max node cont =
+    <span data-count="50">m</span>atch node with
+    | <span data-count="35">B</span>E -&gt; BT (1, BE, 0, str, 0, BE, strLength) |&gt; cont
     | <span data-count="15">B</span>T (h, l, lm, v, rm, BE, length)
       when String.lengt<span data-count="15">h</span> v + String.lengt<span data-count="15">h</span> str &lt;= target_size -&gt;
         <span data-count="15">B</span>T (h, l, lm, v ^ str, rm, BE, length + strLength) |&gt; cont
@@ -473,24 +473,24 @@ let append str strLength buffer =
   ins_max buffer top_level_cont
 
 let in_range start curIndex finish nodeEndIndex =
-  <span data-count="107">s</span>tart &lt;= curIndex &amp;&amp; <span data-count="27">f</span>inish &gt;= nodeEndIndex
+  <span data-count="115">s</span>tart &lt;= curIndex &amp;&amp; <span data-count="30">f</span>inish &gt;= nodeEndIndex
 
 let start_is_in_range start curIndex finish nodeEndIndex =
-  <span data-count="98">s</span>tart &lt;= curIndex &amp;&amp; <span data-count="18">f</span>inish &lt; nodeEndIndex &amp;&amp; <span data-count="18">c</span>urIndex &lt; finish
+  <span data-count="106">s</span>tart &lt;= curIndex &amp;&amp; <span data-count="21">f</span>inish &lt; nodeEndIndex &amp;&amp; <span data-count="21">c</span>urIndex &lt; finish
 
 let end_is_in_range start curIndex finish nodeEndIndex =
-  <span data-count="82">s</span>tart &gt; curIndex &amp;&amp; <span data-count="80">f</span>inish &gt;= nodeEndIndex &amp;&amp; <span data-count="33">s</span>tart &lt;= nodeEndIndex
+  <span data-count="87">s</span>tart &gt; curIndex &amp;&amp; <span data-count="85">f</span>inish &gt;= nodeEndIndex &amp;&amp; <span data-count="37">s</span>tart &lt;= nodeEndIndex
 
 let middle_is_in_range start curIndex finish nodeEndIndex =
-  <span data-count="49">s</span>tart &gt;= curIndex &amp;&amp; <span data-count="49">f</span>inish &lt;= nodeEndIndex
+  <span data-count="50">s</span>tart &gt;= curIndex &amp;&amp; <span data-count="50">f</span>inish &lt;= nodeEndIndex
 
 let substring start length buffer =
-  <span data-count="107">l</span>et finish = start + length in
+  <span data-count="115">l</span>et finish = start + length in
   let rec sub (curIndex : int) node (acc : string list) cont =
-    <span data-count="174">m</span>atch node with
-    | <span data-count="67">B</span>E -&gt; acc |&gt; cont
-    | <span data-count="107">B</span>T (_, l, _, v, _, r, vLen)
-      when in_rang<span data-count="107">e</span> start curIndex finish (curIndex + vLen) -&gt;
+    <span data-count="189">m</span>atch node with
+    | <span data-count="74">B</span>E -&gt; acc |&gt; cont
+    | <span data-count="115">B</span>T (_, l, _, v, _, r, vLen)
+      when in_rang<span data-count="115">e</span> start curIndex finish (curIndex + vLen) -&gt;
         <span data-count="9">l</span>et nodeEndIndex = curIndex + vLen in
 
         sub
@@ -502,37 +502,37 @@ let substring start length buffer =
               (curIndex - string_lengt<span data-count="9">h</span> l - size_righ<span data-count="9">t</span> l)
               l middle
               (fun x -&gt; <span data-count="9">x</span> |&gt; cont))
-    | <span data-count="98">B</span>T (_, l, _, v, _, _, vLen)
-      when start_is_in_rang<span data-count="98">e</span> start curIndex finish (curIndex + vLen) -&gt;
-        <span data-count="16">l</span>et length = finish - curIndex in
+    | <span data-count="106">B</span>T (_, l, _, v, _, _, vLen)
+      when start_is_in_rang<span data-count="106">e</span> start curIndex finish (curIndex + vLen) -&gt;
+        <span data-count="19">l</span>et length = finish - curIndex in
 
         let acc =
-          if vLen = String.lengt<span data-count="16">h</span> v then <span data-count="14">S</span>tring.su<span data-count="14">b</span> v 0 length :: acc
+          if vLen = String.lengt<span data-count="19">h</span> v then <span data-count="17">S</span>tring.su<span data-count="17">b</span> v 0 length :: acc
           else <span data-count="2">U</span>nicode.utf32_su<span data-count="2">b</span> v 0 length :: acc
         in
 
         sub
-          (curIndex - string_lengt<span data-count="16">h</span> l - size_righ<span data-count="16">t</span> l)
+          (curIndex - string_lengt<span data-count="19">h</span> l - size_righ<span data-count="19">t</span> l)
           l acc
-          (fun x -&gt; <span data-count="16">x</span> |&gt; cont)
-    | <span data-count="82">B</span>T (_, _, _, v, _, r, vLen)
-      when end_is_in_rang<span data-count="82">e</span> start curIndex finish (curIndex + vLen) -&gt;
-        <span data-count="33">l</span>et strStart = start - curIndex in
+          (fun x -&gt; <span data-count="19">x</span> |&gt; cont)
+    | <span data-count="87">B</span>T (_, _, _, v, _, r, vLen)
+      when end_is_in_rang<span data-count="87">e</span> start curIndex finish (curIndex + vLen) -&gt;
+        <span data-count="37">l</span>et strStart = start - curIndex in
         let len = vLen - strStart in
 
         let nodeText =
-          if vLen = String.lengt<span data-count="33">h</span> v then <span data-count="29">S</span>tring.su<span data-count="29">b</span> v strStart len
+          if vLen = String.lengt<span data-count="37">h</span> v then <span data-count="33">S</span>tring.su<span data-count="33">b</span> v strStart len
           else <span data-count="4">U</span>nicode.utf32_su<span data-count="4">b</span> v strStart len
         in
 
         sub
-          (curIndex + vLen + size_lef<span data-count="33">t</span> r)
+          (curIndex + vLen + size_lef<span data-count="37">t</span> r)
           r acc
-          (fun x -&gt; <span data-count="33">n</span>odeText :: x |&gt; cont)
-    | <span data-count="49">B</span>T (_, _, _, v, _, _, vLen)
-      when middle_is_in_rang<span data-count="49">e</span> start curIndex finish (curIndex + vLen) -&gt;
-        <span data-count="49">l</span>et strStart = start - curIndex in
-        if vLen = String.lengt<span data-count="49">h</span> v then <span data-count="47">[</span> String.su<span data-count="47">b</span> v strStart length ] |&gt; cont
+          (fun x -&gt; <span data-count="37">n</span>odeText :: x |&gt; cont)
+    | <span data-count="50">B</span>T (_, _, _, v, _, _, vLen)
+      when middle_is_in_rang<span data-count="50">e</span> start curIndex finish (curIndex + vLen) -&gt;
+        <span data-count="50">l</span>et strStart = start - curIndex in
+        if vLen = String.lengt<span data-count="50">h</span> v then <span data-count="48">[</span> String.su<span data-count="48">b</span> v strStart length ] |&gt; cont
         else <span data-count="2">[</span> Unicode.utf32_su<span data-count="2">b</span> v strStart length ] |&gt; cont
     | <span data-count="0">B</span>T (_, l, _, _, _, _, _) when start &lt; curIndex -&gt;
         <span data-count="0">s</span>ub
@@ -543,8 +543,8 @@ let substring start length buffer =
         <span data-count="0">s</span>ub (curIndex + vLen + size_lef<span data-count="0">t</span> r) r acc (fun x -&gt; <span data-count="0">x</span> |&gt; cont)
     | <span data-count="0">_</span> -&gt; failwith "unreachable Buffer.substring case"
   in
-  let strList = sub (size_lef<span data-count="107">t</span> buffer) buffer [] top_level_cont in
-  <span data-count="107">S</span>tring.concat "" strList
+  let strList = sub (size_lef<span data-count="115">t</span> buffer) buffer [] top_level_cont in
+  <span data-count="115">S</span>tring.concat "" strList
 
 let fold_until_some f x t =
   <span data-count="0">l</span>et rec fld (idx : int) x t cont =

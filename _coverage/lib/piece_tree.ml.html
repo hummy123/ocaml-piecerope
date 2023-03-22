@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8"/>
     <title>piece_tree.ml &mdash; Coverage report</title>
-    <meta name="description" content="67.27% coverage in lib/piece_tree.ml">
+    <meta name="description" content="69.38% coverage in lib/piece_tree.ml">
     <link rel="stylesheet" href="../coverage.css"/>
     <script src="../highlight.pack.js"></script>
     <script>hljs.initHighlightingOnLoad();</script>
@@ -15,7 +15,7 @@
           <span class="dirname">lib/</span>piece_tree.ml
         </a>
       </h1>
-      <h2>67.27%</h2>
+      <h2>69.38%</h2>
     </div>
     <div id="navbar">
       <span class="some-visited" style="top:4.64%"></span>
@@ -48,12 +48,7 @@
       <span class="unvisited" style="top:20.31%"></span>
       <span class="unvisited" style="top:20.42%"></span>
       <span class="unvisited" style="top:20.64%"></span>
-      <span class="unvisited" style="top:25.17%"></span>
-      <span class="unvisited" style="top:25.61%"></span>
-      <span class="unvisited" style="top:25.83%"></span>
-      <span class="unvisited" style="top:25.94%"></span>
-      <span class="unvisited" style="top:26.05%"></span>
-      <span class="unvisited" style="top:26.16%"></span>
+      <span class="some-visited" style="top:26.16%"></span>
       <span class="unvisited" style="top:26.27%"></span>
       <span class="unvisited" style="top:32.78%"></span>
       <span class="unvisited" style="top:32.89%"></span>
@@ -155,11 +150,6 @@
       <span class="unvisited" style="bottom:35.98%"></span>
       <span class="unvisited" style="bottom:35.76%"></span>
       <span class="unvisited" style="bottom:35.65%"></span>
-      <span class="unvisited" style="bottom:33.00%"></span>
-      <span class="unvisited" style="bottom:32.78%"></span>
-      <span class="unvisited" style="bottom:32.67%"></span>
-      <span class="unvisited" style="bottom:32.56%"></span>
-      <span class="unvisited" style="bottom:32.45%"></span>
       <span class="unvisited" style="bottom:32.23%"></span>
       <span class="unvisited" style="bottom:32.12%"></span>
       <span class="unvisited" style="bottom:32.01%"></span>
@@ -415,16 +405,16 @@
 <a id="L225"></a><span class="visited"> </span>
 <a id="L226"></a><span class="visited"> </span>
 <a id="L227"></a><span class="visited"> </span>
-<a id="L228"></a><span class="unvisited"> </span>
+<a id="L228"></a><span class="visited"> </span>
 <a id="L229"></a><span class="visited"> </span>
 <a id="L230"></a><span > </span>
 <a id="L231"></a><span > </span>
-<a id="L232"></a><span class="unvisited"> </span>
+<a id="L232"></a><span class="visited"> </span>
 <a id="L233"></a><span > </span>
-<a id="L234"></a><span class="unvisited"> </span>
-<a id="L235"></a><span class="unvisited"> </span>
-<a id="L236"></a><span class="unvisited"> </span>
-<a id="L237"></a><span class="unvisited"> </span>
+<a id="L234"></a><span class="visited"> </span>
+<a id="L235"></a><span class="visited"> </span>
+<a id="L236"></a><span class="visited"> </span>
+<a id="L237"></a><span class="some-visited"> </span>
 <a id="L238"></a><span class="unvisited"> </span>
 <a id="L239"></a><span > </span>
 <a id="L240"></a><span > </span>
@@ -794,12 +784,12 @@
 <a id="L604"></a><span class="visited"> </span>
 <a id="L605"></a><span class="visited"> </span>
 <a id="L606"></a><span class="visited"> </span>
-<a id="L607"></a><span class="unvisited"> </span>
+<a id="L607"></a><span class="visited"> </span>
 <a id="L608"></a><span > </span>
-<a id="L609"></a><span class="unvisited"> </span>
-<a id="L610"></a><span class="unvisited"> </span>
-<a id="L611"></a><span class="unvisited"> </span>
-<a id="L612"></a><span class="unvisited"> </span>
+<a id="L609"></a><span class="visited"> </span>
+<a id="L610"></a><span class="visited"> </span>
+<a id="L611"></a><span class="visited"> </span>
+<a id="L612"></a><span class="visited"> </span>
 <a id="L613"></a><span > </span>
 <a id="L614"></a><span class="unvisited"> </span>
 <a id="L615"></a><span class="unvisited"> </span>
@@ -2007,10 +1997,10 @@
 </pre>
 <pre><code class="ocaml">open Piece_types
 
-let top_level_cont x = <span data-count="167">x</span>
+let top_level_cont x = <span data-count="177">x</span>
 
 let create_metadata utf8 utf16 utf32 lines : metadata =
-  <span data-count="105">{</span>
+  <span data-count="106">{</span>
     utf8_subtree = utf8;
     utf16_subtree = utf16;
     utf32_subtree = utf32;
@@ -2020,16 +2010,16 @@ let create_metadata utf8 utf16 utf32 lines : metadata =
 let emptyMetadata =
   { utf8_subtree = 0; utf16_subtree = 0; utf32_subtree = 0; subtree_lines = 0 }
 
-let ht = function <span data-count="363">P</span>E -&gt; 0 | <span data-count="266">P</span>T (h, _, _, _, _, _) -&gt; h
+let ht = function <span data-count="387">P</span>E -&gt; 0 | <span data-count="269">P</span>T (h, _, _, _, _, _) -&gt; h
 
 let fold f x t =
-  <span data-count="21">l</span>et rec fld x t cont =
-    <span data-count="119">m</span>atch t with
-    | <span data-count="70">P</span>E -&gt; cont x
-    | <span data-count="49">P</span>T (_, l, _, v, _, r) -&gt;
+  <span data-count="24">l</span>et rec fld x t cont =
+    <span data-count="130">m</span>atch t with
+    | <span data-count="77">P</span>E -&gt; cont x
+    | <span data-count="53">P</span>T (_, l, _, v, _, r) -&gt;
         fld x l (fun x -&gt;
-            <span data-count="49">l</span>et x = f x v in
-            <span data-count="49">f</span>ld x r (fun x -&gt; <span data-count="49">c</span>ont x))
+            <span data-count="53">l</span>et x = f x v in
+            <span data-count="53">f</span>ld x r (fun x -&gt; <span data-count="53">c</span>ont x))
   in
   fld x t top_level_cont
 
@@ -2052,19 +2042,19 @@ let utf16_length node =
   <span data-count="3">m</span>atch node with <span data-count="0">P</span>E -&gt; 0 | <span data-count="3">P</span>T (_, _, _, v, _, _) -&gt; v.utf16_length
 
 let utf32_length node =
-  <span data-count="23">m</span>atch node with <span data-count="17">P</span>E -&gt; 0 | <span data-count="6">P</span>T (_, _, _, v, _, _) -&gt; v.utf32_length
+  <span data-count="24">m</span>atch node with <span data-count="18">P</span>E -&gt; 0 | <span data-count="6">P</span>T (_, _, _, v, _, _) -&gt; v.utf32_length
 
 let n_lines node =
   <span data-count="19">m</span>atch node with <span data-count="13">P</span>E -&gt; 0 | <span data-count="6">P</span>T (_, _, _, v, _, _) -&gt; Array.length v.lines
 
 let tree_size node =
-  <span data-count="320">m</span>atch node with
-  | <span data-count="215">P</span>E -&gt; emptyMetadata
-  | <span data-count="105">P</span>T (_, _, lm, v, rm, _) -&gt;
+  <span data-count="334">m</span>atch node with
+  | <span data-count="228">P</span>E -&gt; emptyMetadata
+  | <span data-count="106">P</span>T (_, _, lm, v, rm, _) -&gt;
       let utf8 = lm.utf8_subtree + rm.utf8_subtree + v.utf8_length in
       let utf16 = lm.utf16_subtree + rm.utf16_subtree + v.utf16_length in
       let utf32 = lm.utf32_subtree + rm.utf32_subtree + v.utf32_length in
-      let lines = lm.subtree_lines + rm.subtree_lines + Array.lengt<span data-count="105">h</span> v.lines in
+      let lines = lm.subtree_lines + rm.subtree_lines + Array.lengt<span data-count="106">h</span> v.lines in
       create_metadata utf8 utf16 utf32 lines
 
 let utf8_size_left node =
@@ -2074,7 +2064,7 @@ let utf16_size_left node =
   <span data-count="21">m</span>atch node with <span data-count="0">P</span>E -&gt; 0 | <span data-count="21">P</span>T (_, _, lm, _, _, _) -&gt; lm.utf16_subtree
 
 let utf32_size_left node =
-  <span data-count="134">m</span>atch node with <span data-count="18">P</span>E -&gt; 0 | <span data-count="116">P</span>T (_, _, lm, _, _, _) -&gt; lm.utf32_subtree
+  <span data-count="138">m</span>atch node with <span data-count="19">P</span>E -&gt; 0 | <span data-count="119">P</span>T (_, _, lm, _, _, _) -&gt; lm.utf32_subtree
 
 let utf8_size_right node =
   <span data-count="3">m</span>atch node with <span data-count="0">P</span>E -&gt; 0 | <span data-count="3">P</span>T (_, _, _, _, rm, _) -&gt; rm.utf8_subtree
@@ -2083,7 +2073,7 @@ let utf16_size_right node =
   <span data-count="3">m</span>atch node with <span data-count="0">P</span>E -&gt; 0 | <span data-count="3">P</span>T (_, _, _, _, rm, _) -&gt; rm.utf16_subtree
 
 let utf32_size_right node =
-  <span data-count="23">m</span>atch node with <span data-count="17">P</span>E -&gt; 0 | <span data-count="6">P</span>T (_, _, _, _, rm, _) -&gt; rm.utf32_subtree
+  <span data-count="24">m</span>atch node with <span data-count="18">P</span>E -&gt; 0 | <span data-count="6">P</span>T (_, _, _, _, rm, _) -&gt; rm.utf32_subtree
 
 let lines_left node =
   <span data-count="57">m</span>atch node with <span data-count="11">P</span>E -&gt; 0 | <span data-count="46">P</span>T (_, _, lm, _, _, _) -&gt; lm.subtree_lines
@@ -2102,7 +2092,7 @@ let stats tree =
 
 (* Creating and editing node data. *)
 let create_node start utf8length utf16length utf32length lines =
-  <span data-count="84">{</span>
+  <span data-count="91">{</span>
     start;
     utf8_length = utf8length;
     utf16_length = utf16length;
@@ -2112,11 +2102,11 @@ let create_node start utf8length utf16length utf32length lines =
 
 (* AVL tree balance functions. *)
 let mk l a r =
-  <span data-count="159">l</span>et h = (if h<span data-count="159">t</span> l &gt; h<span data-count="159">t</span> r then <span data-count="14">h</span><span data-count="14">t</span> l else <span data-count="145">h</span><span data-count="145">t</span> r) + 1 in
-  PT (h, l, tree_siz<span data-count="159">e</span> l, a, tree_siz<span data-count="159">e</span> r, r)
+  <span data-count="166">l</span>et h = (if h<span data-count="166">t</span> l &gt; h<span data-count="166">t</span> r then <span data-count="14">h</span><span data-count="14">t</span> l else <span data-count="152">h</span><span data-count="152">t</span> r) + 1 in
+  PT (h, l, tree_siz<span data-count="166">e</span> l, a, tree_siz<span data-count="166">e</span> r, r)
 
 let balL ab x c =
-  <span data-count="23">i</span>f h<span data-count="23">t</span> ab = h<span data-count="23">t</span> c + 2 then
+  <span data-count="24">i</span>f h<span data-count="24">t</span> ab = h<span data-count="24">t</span> c + 2 then
     <span data-count="0">m</span>atch ab with
     | <span data-count="0">P</span>T (_, a, _, y, _, b) -&gt; (
         if h<span data-count="0">t</span> a &gt;= h<span data-count="0">t</span> b then <span data-count="0">m</span>k a y (m<span data-count="0">k</span> b x c)
@@ -2125,10 +2115,10 @@ let balL ab x c =
           | <span data-count="0">P</span>T (_, b1, _, bx, _, b2) -&gt; mk (m<span data-count="0">k</span> a y b1) bx (m<span data-count="0">k</span> b2 x c)
           | <span data-count="0">_</span> -&gt; mk ab x c)
     | <span data-count="0">_</span> -&gt; mk ab x c
-  else <span data-count="23">m</span>k ab x c
+  else <span data-count="24">m</span>k ab x c
 
 let balR a x bc =
-  <span data-count="40">i</span>f h<span data-count="40">t</span> bc = h<span data-count="40">t</span> a + 2 then
+  <span data-count="42">i</span>f h<span data-count="42">t</span> bc = h<span data-count="42">t</span> a + 2 then
     <span data-count="13">m</span>atch bc with
     | <span data-count="13">P</span>T (_, b, _, y, _, c) -&gt; (
         if h<span data-count="13">t</span> b &lt;= h<span data-count="13">t</span> c then <span data-count="4">m</span>k (m<span data-count="4">k</span> a x b) y c
@@ -2137,7 +2127,7 @@ let balR a x bc =
           | <span data-count="9">P</span>T (_, b1, _, bx, _, b2) -&gt; mk (m<span data-count="9">k</span> a x b1) bx (m<span data-count="9">k</span> b2 y c)
           | <span data-count="0">_</span> -&gt; mk a x bc)
     | <span data-count="0">_</span> -&gt; mk a x bc
-  else <span data-count="27">m</span>k a x bc
+  else <span data-count="29">m</span>k a x bc
 
 let split_max tree =
   <span data-count="0">l</span>et rec split node cont =
@@ -2162,19 +2152,19 @@ let try_find_index (predicate : int -&gt; bool) (lines : int array) =
   find 0
 
 let take_while predicate lines =
-  <span data-count="13">l</span>et len = Array.length lines in
-  <span data-count="13">l</span>et rec take n =
-    <span data-count="15">i</span>f n &gt;= len then <span data-count="11">l</span>ines
-    else <span data-count="4">i</span>f predicate (Array.unsafe_ge<span data-count="4">t</span> lines n) then <span data-count="2">t</span>ake (n + 1)
-    else <span data-count="2">A</span>rray.sub lines 0 n
+  <span data-count="14">l</span>et len = Array.length lines in
+  <span data-count="14">l</span>et rec take n =
+    <span data-count="16">i</span>f n &gt;= len then <span data-count="11">l</span>ines
+    else <span data-count="5">i</span>f predicate (Array.unsafe_ge<span data-count="5">t</span> lines n) then <span data-count="2">t</span>ake (n + 1)
+    else <span data-count="3">A</span>rray.sub lines 0 n
   in
   take 0
 
 let skip_while predicate lines =
-  <span data-count="26">l</span>et len = Array.length lines in
-  <span data-count="26">l</span>et rec skip n =
-    <span data-count="43">i</span>f n &gt;= len then <span data-count="21">[</span>||]
-    else <span data-count="22">i</span>f predicate (Array.unsafe_ge<span data-count="22">t</span> lines n) then <span data-count="17">s</span>kip (n + 1)
+  <span data-count="29">l</span>et len = Array.length lines in
+  <span data-count="29">l</span>et rec skip n =
+    <span data-count="49">i</span>f n &gt;= len then <span data-count="24">[</span>||]
+    else <span data-count="25">i</span>f predicate (Array.unsafe_ge<span data-count="25">t</span> lines n) then <span data-count="20">s</span>kip (n + 1)
     else <span data-count="5">A</span>rray.sub lines n (len - n)
   in
   skip 0
@@ -2195,7 +2185,7 @@ let split_lines rStart (lines : int array) =
   | <span data-count="3">N</span>one -&gt; (lines, Array.mak<span data-count="3">e</span> 0 0)
 
 let text piece buffer =
-  <span data-count="47">P</span>iece_buffer.substring piece.start piece.utf32_length buffer
+  <span data-count="51">P</span>iece_buffer.substring piece.start piece.utf32_length buffer
 
 let text_in_range curIndex start finish piece buffer =
   <span data-count="18">l</span>et textStart = start - curIndex + piece.start in
@@ -2212,56 +2202,56 @@ let text_at_end curIndex start piece buffer =
   Piece_buffer.substring textStart textLength buffer
 
 let at_start_and_length start length buffer =
-  <span data-count="28">P</span>iece_buffer.substring start length buffer
+  <span data-count="32">P</span>iece_buffer.substring start length buffer
 
 let is_at_line_break piece_pos_prev piece_pos_next lines =
-  <span data-count="29">l</span>et len = Array.length lines in
-  <span data-count="29">l</span>et rec find n =
-    <span data-count="31">i</span>f n &gt;= len then <span data-count="22">f</span>alse
+  <span data-count="33">l</span>et len = Array.length lines in
+  <span data-count="33">l</span>et rec find n =
+    <span data-count="35">i</span>f n &gt;= len then <span data-count="22">f</span>alse
     else
-      <span data-count="9">l</span>et cur = Array.unsafe_get lines n in
-      <span data-count="9">i</span>f cur = piece_pos_pre<span data-count="4">v</span> || cur = piece_pos_nex<span data-count="3">t</span> then <span data-count="7">t</span>rue else <span data-count="2">f</span>ind (n + 1)
+      <span data-count="13">l</span>et cur = Array.unsafe_get lines n in
+      <span data-count="13">i</span>f cur = piece_pos_pre<span data-count="5">v</span> || cur = piece_pos_nex<span data-count="6">t</span> then <span data-count="11">t</span>rue else <span data-count="2">f</span>ind (n + 1)
   in
   find 0
 
 let delete_at_start curIndex finish piece buffer =
-  <span data-count="3">l</span>et difference = finish - curIndex in
+  <span data-count="4">l</span>et difference = finish - curIndex in
   let new_start = piece.start + difference in
   let newLength = piece.utf32_length - difference in
-  let newLines = skip_while (fun x -&gt; <span data-count="1">x</span> &lt; new_start) piece.lines in
-  <span data-count="3">i</span>f is_at_line_break new_start (new_start - 1) piece.lines then
-    <span data-count="1">l</span>et txt = at_start_and_length (new_start - 1) 2 buffer in
-    <span data-count="1">i</span>f txt = "\r\n" then <span data-count="1">(</span>new_start + 1, newLength - 1, newLines)
-    else <span data-count="0">(</span>new_start, newLength, newLines)
+  let newLines = skip_while (fun x -&gt; <span data-count="2">x</span> &lt; new_start) piece.lines in
+  <span data-count="4">i</span>f is_at_line_break new_start (new_start - 1) piece.lines then
+    <span data-count="2">l</span>et txt = at_start_and_length (new_start - 1) 2 buffer in
+    <span data-count="2">i</span>f txt = "\r\n" then <span data-count="1">(</span>new_start + 1, newLength - 1, newLines)
+    else <span data-count="1">(</span>new_start, newLength, newLines)
   else <span data-count="2">(</span>new_start, newLength, newLines)
 
 let delete_at_end curIndex start piece buffer =
-  <span data-count="0">l</span>et length = start - curIndex in
+  <span data-count="1">l</span>et length = start - curIndex in
   let length_offset = length + piece.start in
-  let lines = skip_while (fun x -&gt; <span data-count="0">x</span> &lt;= length_offset) piece.lines in
-  <span data-count="0">i</span>f is_at_line_break length_offset (length_offset + 1) piece.lines then
-    <span data-count="0">l</span>et txt = at_start_and_length (length_offset - 1) 2 buffer in
-    <span data-count="0">i</span>f txt = "\r\n" then <span data-count="0">(</span>length - 1, lines) else <span data-count="0">(</span>length, lines)
+  let lines = skip_while (fun x -&gt; <span data-count="1">x</span> &lt;= length_offset) piece.lines in
+  <span data-count="1">i</span>f is_at_line_break length_offset (length_offset - 1) piece.lines then
+    <span data-count="1">l</span>et txt = at_start_and_length (length_offset - 1) 2 buffer in
+    <span data-count="1">i</span>f txt = "\r\n" then <span data-count="1">(</span>length - 1, lines) else <span data-count="0">(</span>length, lines)
   else <span data-count="0">(</span>length, lines)
 
 let delete_in_range curIndex start finish piece buffer =
-  <span data-count="13">l</span>et finish_difference = finish - curIndex in
+  <span data-count="14">l</span>et finish_difference = finish - curIndex in
   let p1_length = start - curIndex in
   let p2_start = finish_difference + piece.start in
   let p1_length_offset = p1_length + piece.start in
-  let p1Lines = take_while (fun x -&gt; <span data-count="4">x</span> &lt; p1_length_offset) piece.lines in
-  <span data-count="13">l</span>et p2Lines = skip_while (fun x -&gt; <span data-count="4">x</span> &lt; p2_start) piece.lines in
-  <span data-count="13">l</span>et p2Length = piece.utf32_length - finish_difference in
+  let p1Lines = take_while (fun x -&gt; <span data-count="5">x</span> &lt; p1_length_offset) piece.lines in
+  <span data-count="14">l</span>et p2Lines = skip_while (fun x -&gt; <span data-count="5">x</span> &lt; p2_start) piece.lines in
+  <span data-count="14">l</span>et p2Length = piece.utf32_length - finish_difference in
   let p1_length =
     if is_at_line_break (p1_length_offset - 1) p1_length_offset piece.lines then
-      <span data-count="4">l</span>et txt = at_start_and_length (p1_length_offset - 1) 2 buffer in
-      <span data-count="4">i</span>f txt = "\r\n" then <span data-count="2">p</span>1_length - 1 else <span data-count="2">p</span>1_length
+      <span data-count="5">l</span>et txt = at_start_and_length (p1_length_offset - 1) 2 buffer in
+      <span data-count="5">i</span>f txt = "\r\n" then <span data-count="2">p</span>1_length - 1 else <span data-count="3">p</span>1_length
     else <span data-count="9">p</span>1_length
   in
   let p2_start =
     if is_at_line_break (p2_start - 1) p2_start piece.lines then
-      <span data-count="2">l</span>et txt = at_start_and_length (p2_start - 1) 2 buffer in
-      <span data-count="2">i</span>f txt = "\r\n" then <span data-count="1">p</span>2_start + 1 else <span data-count="1">p</span>2_start
+      <span data-count="3">l</span>et txt = at_start_and_length (p2_start - 1) 2 buffer in
+      <span data-count="3">i</span>f txt = "\r\n" then <span data-count="2">p</span>2_start + 1 else <span data-count="1">p</span>2_start
     else <span data-count="11">p</span>2_start
   in
   (p1_length, p1Lines, p2_start, p2Length, p2Lines)
@@ -2449,9 +2439,9 @@ let offsets find_offset rope enc : index_offsets =
 
 (** Adds the given piece to the start of the given tree. *)
 let prepend insNode tree =
-  <span data-count="30">l</span>et rec pre node cont =
-    <span data-count="44">m</span>atch node with
-    | <span data-count="30">P</span>E -&gt; mk PE insNode PE |&gt; <span data-count="30">c</span>ont
+  <span data-count="31">l</span>et rec pre node cont =
+    <span data-count="45">m</span>atch node with
+    | <span data-count="31">P</span>E -&gt; mk PE insNode PE |&gt; <span data-count="31">c</span>ont
     | <span data-count="14">P</span>T (_, l, _, v, _, r) -&gt; pre l (fun l' -&gt; <span data-count="14">b</span>alL l' v r |&gt; <span data-count="14">c</span>ont)
   in
   pre tree top_level_cont
@@ -2460,9 +2450,9 @@ let prepend insNode tree =
     If the previous insert on the tree was done at the very end,
     we merge with the last piece rather than creating a new node to keep the tree more shallow. *)
 let append insNode tree =
-  <span data-count="33">l</span>et rec app node cont =
-    <span data-count="36">m</span>atch node with
-    | <span data-count="32">P</span>E -&gt; mk PE insNode PE |&gt; <span data-count="32">c</span>ont
+  <span data-count="36">l</span>et rec app node cont =
+    <span data-count="39">m</span>atch node with
+    | <span data-count="35">P</span>E -&gt; mk PE insNode PE |&gt; <span data-count="35">c</span>ont
     | <span data-count="4">P</span>T (_, l, _, v, _, PE) when is_consecutiv<span data-count="4">e</span> v insNode.start -&gt;
         <span data-count="1">l</span>et v'Lines = Array.append v.lines insNode.lines in
         <span data-count="1">l</span>et v' =
@@ -2561,24 +2551,24 @@ let insert_tree insIndex insNode tree buffer =
 
 (* Repeated if-statements used in both delete and substring. *)
 let in_range start curIndex finish nodeEndIndex =
-  <span data-count="44">s</span>tart &lt;= curIndex &amp;&amp; <span data-count="4">f</span>inish &gt;= nodeEndIndex
+  <span data-count="47">s</span>tart &lt;= curIndex &amp;&amp; <span data-count="5">f</span>inish &gt;= nodeEndIndex
 
 let start_is_in_range start curIndex finish nodeEndIndex =
-  <span data-count="44">s</span>tart &lt;= curIndex &amp;&amp; <span data-count="4">f</span>inish &lt; nodeEndIndex &amp;&amp; <span data-count="4">c</span>urIndex &lt; finish
+  <span data-count="47">s</span>tart &lt;= curIndex &amp;&amp; <span data-count="5">f</span>inish &lt; nodeEndIndex &amp;&amp; <span data-count="5">c</span>urIndex &lt; finish
 
 let end_is_in_range start curIndex finish nodeEndIndex =
-  <span data-count="46">s</span>tart &gt; curIndex &amp;&amp; <span data-count="45">f</span>inish &gt;= nodeEndIndex &amp;&amp; <span data-count="14">s</span>tart &lt;= nodeEndIndex
+  <span data-count="48">s</span>tart &gt; curIndex &amp;&amp; <span data-count="47">f</span>inish &gt;= nodeEndIndex &amp;&amp; <span data-count="15">s</span>tart &lt;= nodeEndIndex
 
 let middle_is_in_range start curIndex finish nodeEndIndex =
-  <span data-count="40">s</span>tart &gt;= curIndex &amp;&amp; <span data-count="40">f</span>inish &lt;= nodeEndIndex
+  <span data-count="41">s</span>tart &gt;= curIndex &amp;&amp; <span data-count="41">f</span>inish &lt;= nodeEndIndex
 
 let delete_tree start length tree buffer =
-  <span data-count="16">l</span>et finish = start + length in
+  <span data-count="19">l</span>et finish = start + length in
   let rec del curIndex node cont =
-    <span data-count="28">m</span>atch node with
-    | <span data-count="3">P</span>E -&gt; PE |&gt; cont
-    | <span data-count="25">P</span>T (_, l, _, v, _, r)
-      when in_rang<span data-count="25">e</span> start curIndex finish (curIndex + v.utf32_length) -&gt;
+    <span data-count="33">m</span>atch node with
+    | <span data-count="5">P</span>E -&gt; PE |&gt; cont
+    | <span data-count="28">P</span>T (_, l, _, v, _, r)
+      when in_rang<span data-count="28">e</span> start curIndex finish (curIndex + v.utf32_length) -&gt;
         <span data-count="0">l</span>et recurseLeftIndex = curIndex - utf32_lengt<span data-count="0">h</span> l - utf32_size_righ<span data-count="0">t</span> l in
         let recurseRightIndex = curIndex + v.utf32_length + utf32_size_lef<span data-count="0">t</span> r in
 
@@ -2588,19 +2578,19 @@ let delete_tree start length tree buffer =
                 else
                   <span data-count="0">l</span>et newLeft, newVal = split_max l' in
                   <span data-count="0">b</span>alR newLeft newVal r' |&gt; <span data-count="0">c</span>ont))
-    | <span data-count="25">P</span>T (_, l, _, v, _, r)
-      when start_is_in_rang<span data-count="25">e</span> start curIndex finish (curIndex + v.utf32_length)
+    | <span data-count="28">P</span>T (_, l, _, v, _, r)
+      when start_is_in_rang<span data-count="28">e</span> start curIndex finish (curIndex + v.utf32_length)
       -&gt;
-        <span data-count="3">l</span>et recurseLeftIndex = curIndex - utf32_lengt<span data-count="3">h</span> l - utf32_size_righ<span data-count="3">t</span> l in
+        <span data-count="4">l</span>et recurseLeftIndex = curIndex - utf32_lengt<span data-count="4">h</span> l - utf32_size_righ<span data-count="4">t</span> l in
         del recurseLeftIndex l (fun l' -&gt;
-            <span data-count="3">l</span>et newStart, newLength, newLines =
+            <span data-count="4">l</span>et newStart, newLength, newLines =
               delete_at_start curIndex finish v buffer
             in
-            <span data-count="3">i</span>f v.utf8_length = v.utf32_length then
-              <span data-count="2">l</span>et v' =
+            <span data-count="4">i</span>f v.utf8_length = v.utf32_length then
+              <span data-count="3">l</span>et v' =
                 create_node newStart newLength newLength newLength newLines
               in
-              <span data-count="2">b</span>alR l' v' r |&gt; <span data-count="2">c</span>ont
+              <span data-count="3">b</span>alR l' v' r |&gt; <span data-count="3">c</span>ont
             else
               <span data-count="1">l</span>et nodeText = at_start_and_length newStart newLength buffer in
               <span data-count="1">l</span>et offsets = Unicode.count_to nodeText newLength Utf32 in
@@ -2609,14 +2599,14 @@ let delete_tree start length tree buffer =
                   newLength newLines
               in
               <span data-count="1">b</span>alR l' v' r)
-    | <span data-count="22">P</span>T (_, l, _, v, _, r)
-      when end_is_in_rang<span data-count="22">e</span> start curIndex finish (curIndex + v.utf32_length) -&gt;
-        <span data-count="0">l</span>et recurseRightIndex = curIndex + v.utf32_length + utf32_size_lef<span data-count="0">t</span> r in
+    | <span data-count="24">P</span>T (_, l, _, v, _, r)
+      when end_is_in_rang<span data-count="24">e</span> start curIndex finish (curIndex + v.utf32_length) -&gt;
+        <span data-count="1">l</span>et recurseRightIndex = curIndex + v.utf32_length + utf32_size_lef<span data-count="1">t</span> r in
         del recurseRightIndex r (fun r' -&gt;
-            <span data-count="0">l</span>et length, lines = delete_at_end curIndex start v buffer in
-            <span data-count="0">i</span>f v.utf32_length = v.utf8_length then
-              <span data-count="0">l</span>et v' = create_node v.start length length length lines in
-              <span data-count="0">b</span>alL l v' r' |&gt; <span data-count="0">c</span>ont
+            <span data-count="1">l</span>et length, lines = delete_at_end curIndex start v buffer in
+            <span data-count="1">i</span>f v.utf32_length = v.utf8_length then
+              <span data-count="1">l</span>et v' = create_node v.start length length length lines in
+              <span data-count="1">b</span>alL l v' r' |&gt; <span data-count="1">c</span>ont
             else
               <span data-count="0">l</span>et nodeText = at_start_and_length v.start length buffer in
               <span data-count="0">l</span>et offsets = Unicode.count_to nodeText length Utf32 in
@@ -2625,17 +2615,17 @@ let delete_tree start length tree buffer =
                   lines
               in
               <span data-count="0">b</span>alL l v' r' |&gt; <span data-count="0">c</span>ont)
-    | <span data-count="22">P</span>T (_, l, _, v, _, r)
-      when middle_is_in_rang<span data-count="22">e</span> start curIndex finish (curIndex + v.utf32_length)
+    | <span data-count="23">P</span>T (_, l, _, v, _, r)
+      when middle_is_in_rang<span data-count="23">e</span> start curIndex finish (curIndex + v.utf32_length)
       -&gt;
-        <span data-count="13">l</span>et p1Length, p1Lines, p2Start, p2Length, p2Lines =
+        <span data-count="14">l</span>et p1Length, p1Lines, p2Start, p2Length, p2Lines =
           delete_in_range curIndex start finish v buffer
         in
-        <span data-count="13">i</span>f v.utf32_length = v.utf8_length then
-          <span data-count="12">l</span>et r'node = create_node p2Start p2Length p2Length p2Length p2Lines in
-          <span data-count="12">l</span>et r' = prepend r'node r in
-          <span data-count="12">l</span>et v' = create_node v.start p1Length p1Length p1Length p1Lines in
-          <span data-count="12">b</span>alR l v' r' |&gt; <span data-count="12">c</span>ont
+        <span data-count="14">i</span>f v.utf32_length = v.utf8_length then
+          <span data-count="13">l</span>et r'node = create_node p2Start p2Length p2Length p2Length p2Lines in
+          <span data-count="13">l</span>et r' = prepend r'node r in
+          <span data-count="13">l</span>et v' = create_node v.start p1Length p1Length p1Length p1Lines in
+          <span data-count="13">b</span>alR l v' r' |&gt; <span data-count="13">c</span>ont
         else
           <span data-count="1">l</span>et p1_text = at_start_and_length v.start p1Length buffer in
           <span data-count="1">l</span>et p2_text = at_start_and_length p2Start p2Length buffer in
@@ -2659,7 +2649,7 @@ let delete_tree start length tree buffer =
         del recurseRightIndex r (fun r' -&gt; <span data-count="9">b</span>alL l v r' |&gt; <span data-count="9">c</span>ont)
     | <span data-count="0">P</span>T (_, _, _, _, _, _) -&gt; failwith "impossible PieceTree.delete case"
   in
-  del (utf32_size_lef<span data-count="16">t</span> tree) tree top_level_cont
+  del (utf32_size_lef<span data-count="19">t</span> tree) tree top_level_cont
 
 let substring start length rope =
   <span data-count="24">l</span>et finish = start + length in
@@ -2846,11 +2836,11 @@ let get_line line rope =
 let empty = PE
 
 let fold_text rope state folder =
-  <span data-count="12">f</span>old (fun x pc -&gt; <span data-count="38">f</span>older x (tex<span data-count="38">t</span> pc rope.buffer)) state rope.pieces
+  <span data-count="15">f</span>old (fun x pc -&gt; <span data-count="42">f</span>older x (tex<span data-count="42">t</span> pc rope.buffer)) state rope.pieces
 
 let get_text rope =
-  <span data-count="12">l</span>et lst = fold_text rope [] (fun acc str -&gt; <span data-count="38">s</span>tr :: acc) in
-  <span data-count="12">L</span>ist.rev lst |&gt; <span data-count="12">S</span>tring.concat ""
+  <span data-count="15">l</span>et lst = fold_text rope [] (fun acc str -&gt; <span data-count="42">s</span>tr :: acc) in
+  <span data-count="15">L</span>ist.rev lst |&gt; <span data-count="15">S</span>tring.concat ""
 
 let fold_lines rope state folder =
   <span data-count="2">l</span>et metadata = tree_size rope.pieces in
