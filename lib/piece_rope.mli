@@ -5,6 +5,12 @@ type t = piece_rope
    The Piece_rope.t type implements an efficient data structure for inserting, deleting and retrieving text.
  *)
 
+exception Out_of_bounds of string 
+(**
+   The Out_of_bounds exception is raised to indicate out-of-bounds access.
+   The string arguments indicates the function that triggered the exception and what the problem was.
+ *)
+
 val empty : piece_rope
 (** The empty Piece_rope.t. *)
 
@@ -20,6 +26,10 @@ val insert : int -> string -> piece_rope -> piece_rope
 
     Returns:
     The Piece_rope.t with the node inserted at the given index.
+
+    Raises Out_of_bounds exception if:
+    - Attempting to insert before index 0.
+    - Attempting to insert after the UTF-32 length queried by Piece_rope.stats.
   *)
 
 val prepend : string -> piece_rope -> piece_rope
@@ -58,6 +68,10 @@ val delete : int -> int -> piece_rope -> piece_rope
 
     Returns:
     The Piece_rope.t with the given range deleted.
+
+    Raises Out_of_bounds exception if:
+    - Provided a negative number for the start or length values.
+    - Attempting to delete after the UTF-32 length queried by Piece_rope.stats.
   *)
 
 val substring : int -> int -> piece_rope -> string
@@ -72,6 +86,10 @@ val substring : int -> int -> piece_rope -> string
 
     Returns:
     The extracted substring.
+
+    Raises Out_of_bounds exception if:
+    - Provided a negative number for the start or length values.
+    - Attempting to get a subsring after the UTF-32 length queried by Piece_rope.stats.
   *)
 
 val get_line : int -> piece_rope -> line_offset
@@ -87,6 +105,10 @@ val get_line : int -> piece_rope -> line_offset
 
     Notes:
     This library counts \r, \n and \r\n as distinct line breaks. 
+
+    Raises Out_of_bounds exception if:
+    - Attempting to get a line before index 0.
+    - Attempting to get a line after the total number of lines queried by Piece_rope.stats.
   *)
 
 val get_text : piece_rope -> string
