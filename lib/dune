@@ -3,4 +3,6 @@
 (library
  (public_name piece_rope)
  (name piece_rope)
- (libraries yojson atdgen))
+ (libraries yojson atdgen)
+ (instrumentation
+  (backend bisect_ppx)))

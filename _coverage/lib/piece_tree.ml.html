@@ -1,0 +1,2934 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <title>piece_tree.ml &mdash; Coverage report</title>
+    <meta name="description" content="64.71% coverage in lib/piece_tree.ml">
+    <link rel="stylesheet" href="../coverage.css"/>
+    <script src="../highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+  </head>
+  <body>
+    <div id="header">
+      <h1>
+        <a href="../index.html">
+          <span class="dirname">lib/</span>piece_tree.ml
+        </a>
+      </h1>
+      <h2>64.71%</h2>
+    </div>
+    <div id="navbar">
+      <span class="some-visited" style="top:4.64%"></span>
+      <span class="some-visited" style="top:4.97%"></span>
+      <span class="some-visited" style="top:7.06%"></span>
+      <span class="some-visited" style="top:7.40%"></span>
+      <span class="some-visited" style="top:8.06%"></span>
+      <span class="some-visited" style="top:8.39%"></span>
+      <span class="unvisited" style="top:9.71%"></span>
+      <span class="unvisited" style="top:9.82%"></span>
+      <span class="unvisited" style="top:12.47%"></span>
+      <span class="unvisited" style="top:12.58%"></span>
+      <span class="unvisited" style="top:12.69%"></span>
+      <span class="unvisited" style="top:12.91%"></span>
+      <span class="unvisited" style="top:13.02%"></span>
+      <span class="unvisited" style="top:13.13%"></span>
+      <span class="unvisited" style="top:13.25%"></span>
+      <span class="unvisited" style="top:14.46%"></span>
+      <span class="unvisited" style="top:14.57%"></span>
+      <span class="unvisited" style="top:15.01%"></span>
+      <span class="unvisited" style="top:15.12%"></span>
+      <span class="unvisited" style="top:15.23%"></span>
+      <span class="unvisited" style="top:15.34%"></span>
+      <span class="unvisited" style="top:15.45%"></span>
+      <span class="unvisited" style="top:15.56%"></span>
+      <span class="unvisited" style="top:16.78%"></span>
+      <span class="unvisited" style="top:16.89%"></span>
+      <span class="some-visited" style="top:19.98%"></span>
+      <span class="unvisited" style="top:20.09%"></span>
+      <span class="unvisited" style="top:20.31%"></span>
+      <span class="unvisited" style="top:20.42%"></span>
+      <span class="unvisited" style="top:20.64%"></span>
+      <span class="unvisited" style="top:24.72%"></span>
+      <span class="unvisited" style="top:24.94%"></span>
+      <span class="unvisited" style="top:25.06%"></span>
+      <span class="unvisited" style="top:25.17%"></span>
+      <span class="unvisited" style="top:25.61%"></span>
+      <span class="unvisited" style="top:25.83%"></span>
+      <span class="unvisited" style="top:25.94%"></span>
+      <span class="unvisited" style="top:26.05%"></span>
+      <span class="unvisited" style="top:26.16%"></span>
+      <span class="unvisited" style="top:26.27%"></span>
+      <span class="unvisited" style="top:32.78%"></span>
+      <span class="unvisited" style="top:32.89%"></span>
+      <span class="unvisited" style="top:33.33%"></span>
+      <span class="unvisited" style="top:33.66%"></span>
+      <span class="unvisited" style="top:33.89%"></span>
+      <span class="unvisited" style="top:34.00%"></span>
+      <span class="unvisited" style="top:34.11%"></span>
+      <span class="unvisited" style="top:34.55%"></span>
+      <span class="unvisited" style="top:34.66%"></span>
+      <span class="unvisited" style="top:34.77%"></span>
+      <span class="unvisited" style="top:35.76%"></span>
+      <span class="unvisited" style="top:35.87%"></span>
+      <span class="unvisited" style="top:35.98%"></span>
+      <span class="unvisited" style="top:36.31%"></span>
+      <span class="unvisited" style="top:36.42%"></span>
+      <span class="unvisited" style="top:36.53%"></span>
+      <span class="unvisited" style="top:36.64%"></span>
+      <span class="unvisited" style="top:36.87%"></span>
+      <span class="unvisited" style="top:36.98%"></span>
+      <span class="unvisited" style="top:37.09%"></span>
+      <span class="unvisited" style="top:37.20%"></span>
+      <span class="unvisited" style="top:37.31%"></span>
+      <span class="unvisited" style="top:37.64%"></span>
+      <span class="unvisited" style="top:37.75%"></span>
+      <span class="unvisited" style="top:37.97%"></span>
+      <span class="unvisited" style="top:38.08%"></span>
+      <span class="unvisited" style="top:38.30%"></span>
+      <span class="unvisited" style="top:38.63%"></span>
+      <span class="unvisited" style="top:38.74%"></span>
+      <span class="unvisited" style="top:38.85%"></span>
+      <span class="unvisited" style="top:39.07%"></span>
+      <span class="unvisited" style="top:39.18%"></span>
+      <span class="unvisited" style="top:39.62%"></span>
+      <span class="unvisited" style="top:39.96%"></span>
+      <span class="unvisited" style="top:40.18%"></span>
+      <span class="unvisited" style="top:40.29%"></span>
+      <span class="unvisited" style="top:40.84%"></span>
+      <span class="unvisited" style="top:40.95%"></span>
+      <span class="unvisited" style="top:41.06%"></span>
+      <span class="unvisited" style="top:41.39%"></span>
+      <span class="unvisited" style="top:41.50%"></span>
+      <span class="unvisited" style="top:41.61%"></span>
+      <span class="unvisited" style="top:41.72%"></span>
+      <span class="unvisited" style="top:42.05%"></span>
+      <span class="unvisited" style="top:42.16%"></span>
+      <span class="unvisited" style="top:42.27%"></span>
+      <span class="unvisited" style="top:42.60%"></span>
+      <span class="unvisited" style="top:42.72%"></span>
+      <span class="unvisited" style="top:42.83%"></span>
+      <span class="unvisited" style="top:42.94%"></span>
+      <span class="unvisited" style="top:43.16%"></span>
+      <span class="unvisited" style="top:43.27%"></span>
+      <span class="unvisited" style="top:43.38%"></span>
+      <span class="unvisited" style="top:43.49%"></span>
+      <span class="unvisited" style="top:43.60%"></span>
+      <span class="unvisited" style="top:43.93%"></span>
+      <span class="unvisited" style="top:44.04%"></span>
+      <span class="unvisited" style="top:44.26%"></span>
+      <span class="unvisited" style="top:44.37%"></span>
+      <span class="unvisited" style="top:44.59%"></span>
+      <span class="unvisited" style="top:44.92%"></span>
+      <span class="unvisited" style="top:45.03%"></span>
+      <span class="unvisited" style="top:45.14%"></span>
+      <span class="unvisited" style="top:45.36%"></span>
+      <span class="unvisited" style="top:45.47%"></span>
+      <span class="unvisited" style="top:45.92%"></span>
+      <span class="unvisited" style="top:46.25%"></span>
+      <span class="unvisited" style="top:46.47%"></span>
+      <span class="unvisited" style="top:46.58%"></span>
+      <span class="unvisited" style="top:47.13%"></span>
+      <span class="unvisited" style="top:47.24%"></span>
+      <span class="unvisited" style="top:47.35%"></span>
+      <span class="unvisited" style="top:47.68%"></span>
+      <span class="unvisited" style="top:47.79%"></span>
+      <span class="unvisited" style="top:47.90%"></span>
+      <span class="unvisited" style="top:48.01%"></span>
+      <span class="unvisited" style="top:48.34%"></span>
+      <span class="unvisited" style="top:48.45%"></span>
+      <span class="unvisited" style="top:48.57%"></span>
+      <span class="unvisited" style="top:48.68%"></span>
+      <span class="unvisited" style="bottom:45.92%"></span>
+      <span class="unvisited" style="bottom:45.81%"></span>
+      <span class="unvisited" style="bottom:45.25%"></span>
+      <span class="unvisited" style="bottom:45.14%"></span>
+      <span class="unvisited" style="bottom:44.70%"></span>
+      <span class="unvisited" style="bottom:44.59%"></span>
+      <span class="unvisited" style="bottom:43.60%"></span>
+      <span class="unvisited" style="bottom:40.84%"></span>
+      <span class="unvisited" style="bottom:40.73%"></span>
+      <span class="unvisited" style="bottom:40.62%"></span>
+      <span class="unvisited" style="bottom:39.74%"></span>
+      <span class="unvisited" style="bottom:39.62%"></span>
+      <span class="unvisited" style="bottom:39.29%"></span>
+      <span class="unvisited" style="bottom:39.18%"></span>
+      <span class="unvisited" style="bottom:36.53%"></span>
+      <span class="unvisited" style="bottom:36.42%"></span>
+      <span class="unvisited" style="bottom:36.09%"></span>
+      <span class="unvisited" style="bottom:35.98%"></span>
+      <span class="unvisited" style="bottom:35.76%"></span>
+      <span class="unvisited" style="bottom:35.65%"></span>
+      <span class="unvisited" style="bottom:34.00%"></span>
+      <span class="unvisited" style="bottom:33.89%"></span>
+      <span class="unvisited" style="bottom:33.77%"></span>
+      <span class="unvisited" style="bottom:33.33%"></span>
+      <span class="unvisited" style="bottom:33.00%"></span>
+      <span class="unvisited" style="bottom:32.78%"></span>
+      <span class="unvisited" style="bottom:32.67%"></span>
+      <span class="unvisited" style="bottom:32.56%"></span>
+      <span class="unvisited" style="bottom:32.45%"></span>
+      <span class="unvisited" style="bottom:32.23%"></span>
+      <span class="unvisited" style="bottom:32.12%"></span>
+      <span class="unvisited" style="bottom:32.01%"></span>
+      <span class="unvisited" style="bottom:31.57%"></span>
+      <span class="unvisited" style="bottom:30.13%"></span>
+      <span class="unvisited" style="bottom:30.02%"></span>
+      <span class="unvisited" style="bottom:29.91%"></span>
+      <span class="unvisited" style="bottom:29.80%"></span>
+      <span class="unvisited" style="bottom:29.69%"></span>
+      <span class="unvisited" style="bottom:29.25%"></span>
+      <span class="unvisited" style="bottom:28.81%"></span>
+      <span class="unvisited" style="bottom:28.70%"></span>
+      <span class="unvisited" style="bottom:28.48%"></span>
+      <span class="unvisited" style="bottom:28.37%"></span>
+      <span class="unvisited" style="bottom:27.92%"></span>
+      <span class="unvisited" style="bottom:25.83%"></span>
+      <span class="unvisited" style="bottom:25.50%"></span>
+      <span class="unvisited" style="bottom:25.39%"></span>
+      <span class="unvisited" style="bottom:25.06%"></span>
+      <span class="unvisited" style="bottom:23.40%"></span>
+      <span class="unvisited" style="bottom:23.29%"></span>
+      <span class="unvisited" style="bottom:23.18%"></span>
+      <span class="unvisited" style="bottom:22.96%"></span>
+      <span class="unvisited" style="bottom:22.85%"></span>
+      <span class="unvisited" style="bottom:22.74%"></span>
+      <span class="unvisited" style="bottom:22.63%"></span>
+      <span class="unvisited" style="bottom:14.35%"></span>
+      <span class="unvisited" style="bottom:10.38%"></span>
+      <span class="unvisited" style="bottom:10.26%"></span>
+      <span class="unvisited" style="bottom:10.15%"></span>
+      <span class="unvisited" style="bottom:9.60%"></span>
+      <span class="unvisited" style="bottom:7.62%"></span>
+    </div>
+    <div id="report">
+      <div id="lines-layer">
+        <pre>
+<a id="L1"></a><span > </span>
+<a id="L2"></a><span > </span>
+<a id="L3"></a><span class="visited"> </span>
+<a id="L4"></a><span > </span>
+<a id="L5"></a><span > </span>
+<a id="L6"></a><span class="visited"> </span>
+<a id="L7"></a><span > </span>
+<a id="L8"></a><span > </span>
+<a id="L9"></a><span > </span>
+<a id="L10"></a><span > </span>
+<a id="L11"></a><span > </span>
+<a id="L12"></a><span > </span>
+<a id="L13"></a><span > </span>
+<a id="L14"></a><span > </span>
+<a id="L15"></a><span > </span>
+<a id="L16"></a><span class="visited"> </span>
+<a id="L17"></a><span > </span>
+<a id="L18"></a><span > </span>
+<a id="L19"></a><span class="visited"> </span>
+<a id="L20"></a><span class="visited"> </span>
+<a id="L21"></a><span class="visited"> </span>
+<a id="L22"></a><span class="visited"> </span>
+<a id="L23"></a><span > </span>
+<a id="L24"></a><span class="visited"> </span>
+<a id="L25"></a><span class="visited"> </span>
+<a id="L26"></a><span > </span>
+<a id="L27"></a><span > </span>
+<a id="L28"></a><span > </span>
+<a id="L29"></a><span > </span>
+<a id="L30"></a><span class="visited"> </span>
+<a id="L31"></a><span class="visited"> </span>
+<a id="L32"></a><span class="visited"> </span>
+<a id="L33"></a><span class="visited"> </span>
+<a id="L34"></a><span > </span>
+<a id="L35"></a><span class="visited"> </span>
+<a id="L36"></a><span class="visited"> </span>
+<a id="L37"></a><span > </span>
+<a id="L38"></a><span > </span>
+<a id="L39"></a><span > </span>
+<a id="L40"></a><span > </span>
+<a id="L41"></a><span > </span>
+<a id="L42"></a><span class="some-visited"> </span>
+<a id="L43"></a><span > </span>
+<a id="L44"></a><span > </span>
+<a id="L45"></a><span class="some-visited"> </span>
+<a id="L46"></a><span > </span>
+<a id="L47"></a><span > </span>
+<a id="L48"></a><span class="visited"> </span>
+<a id="L49"></a><span > </span>
+<a id="L50"></a><span > </span>
+<a id="L51"></a><span class="visited"> </span>
+<a id="L52"></a><span > </span>
+<a id="L53"></a><span > </span>
+<a id="L54"></a><span class="visited"> </span>
+<a id="L55"></a><span class="visited"> </span>
+<a id="L56"></a><span class="visited"> </span>
+<a id="L57"></a><span > </span>
+<a id="L58"></a><span > </span>
+<a id="L59"></a><span > </span>
+<a id="L60"></a><span class="visited"> </span>
+<a id="L61"></a><span > </span>
+<a id="L62"></a><span > </span>
+<a id="L63"></a><span > </span>
+<a id="L64"></a><span class="some-visited"> </span>
+<a id="L65"></a><span > </span>
+<a id="L66"></a><span > </span>
+<a id="L67"></a><span class="some-visited"> </span>
+<a id="L68"></a><span > </span>
+<a id="L69"></a><span > </span>
+<a id="L70"></a><span class="visited"> </span>
+<a id="L71"></a><span > </span>
+<a id="L72"></a><span > </span>
+<a id="L73"></a><span class="some-visited"> </span>
+<a id="L74"></a><span > </span>
+<a id="L75"></a><span > </span>
+<a id="L76"></a><span class="some-visited"> </span>
+<a id="L77"></a><span > </span>
+<a id="L78"></a><span > </span>
+<a id="L79"></a><span class="visited"> </span>
+<a id="L80"></a><span > </span>
+<a id="L81"></a><span > </span>
+<a id="L82"></a><span class="visited"> </span>
+<a id="L83"></a><span > </span>
+<a id="L84"></a><span > </span>
+<a id="L85"></a><span class="visited"> </span>
+<a id="L86"></a><span > </span>
+<a id="L87"></a><span > </span>
+<a id="L88"></a><span class="unvisited"> </span>
+<a id="L89"></a><span class="unvisited"> </span>
+<a id="L90"></a><span > </span>
+<a id="L91"></a><span > </span>
+<a id="L92"></a><span > </span>
+<a id="L93"></a><span > </span>
+<a id="L94"></a><span > </span>
+<a id="L95"></a><span > </span>
+<a id="L96"></a><span > </span>
+<a id="L97"></a><span > </span>
+<a id="L98"></a><span class="visited"> </span>
+<a id="L99"></a><span > </span>
+<a id="L100"></a><span > </span>
+<a id="L101"></a><span > </span>
+<a id="L102"></a><span > </span>
+<a id="L103"></a><span > </span>
+<a id="L104"></a><span > </span>
+<a id="L105"></a><span > </span>
+<a id="L106"></a><span > </span>
+<a id="L107"></a><span > </span>
+<a id="L108"></a><span class="visited"> </span>
+<a id="L109"></a><span class="visited"> </span>
+<a id="L110"></a><span > </span>
+<a id="L111"></a><span > </span>
+<a id="L112"></a><span class="visited"> </span>
+<a id="L113"></a><span class="unvisited"> </span>
+<a id="L114"></a><span class="unvisited"> </span>
+<a id="L115"></a><span class="unvisited"> </span>
+<a id="L116"></a><span > </span>
+<a id="L117"></a><span class="unvisited"> </span>
+<a id="L118"></a><span class="unvisited"> </span>
+<a id="L119"></a><span class="unvisited"> </span>
+<a id="L120"></a><span class="unvisited"> </span>
+<a id="L121"></a><span class="visited"> </span>
+<a id="L122"></a><span > </span>
+<a id="L123"></a><span > </span>
+<a id="L124"></a><span class="visited"> </span>
+<a id="L125"></a><span class="visited"> </span>
+<a id="L126"></a><span class="visited"> </span>
+<a id="L127"></a><span class="visited"> </span>
+<a id="L128"></a><span > </span>
+<a id="L129"></a><span class="visited"> </span>
+<a id="L130"></a><span class="visited"> </span>
+<a id="L131"></a><span class="unvisited"> </span>
+<a id="L132"></a><span class="unvisited"> </span>
+<a id="L133"></a><span class="visited"> </span>
+<a id="L134"></a><span > </span>
+<a id="L135"></a><span > </span>
+<a id="L136"></a><span class="unvisited"> </span>
+<a id="L137"></a><span class="unvisited"> </span>
+<a id="L138"></a><span class="unvisited"> </span>
+<a id="L139"></a><span class="unvisited"> </span>
+<a id="L140"></a><span class="unvisited"> </span>
+<a id="L141"></a><span class="unvisited"> </span>
+<a id="L142"></a><span > </span>
+<a id="L143"></a><span > </span>
+<a id="L144"></a><span > </span>
+<a id="L145"></a><span > </span>
+<a id="L146"></a><span > </span>
+<a id="L147"></a><span > </span>
+<a id="L148"></a><span > </span>
+<a id="L149"></a><span class="visited"> </span>
+<a id="L150"></a><span class="visited"> </span>
+<a id="L151"></a><span class="visited"> </span>
+<a id="L152"></a><span class="unvisited"> </span>
+<a id="L153"></a><span class="unvisited"> </span>
+<a id="L154"></a><span > </span>
+<a id="L155"></a><span > </span>
+<a id="L156"></a><span > </span>
+<a id="L157"></a><span > </span>
+<a id="L158"></a><span class="visited"> </span>
+<a id="L159"></a><span class="visited"> </span>
+<a id="L160"></a><span class="visited"> </span>
+<a id="L161"></a><span class="visited"> </span>
+<a id="L162"></a><span class="visited"> </span>
+<a id="L163"></a><span > </span>
+<a id="L164"></a><span > </span>
+<a id="L165"></a><span > </span>
+<a id="L166"></a><span > </span>
+<a id="L167"></a><span class="visited"> </span>
+<a id="L168"></a><span class="visited"> </span>
+<a id="L169"></a><span class="visited"> </span>
+<a id="L170"></a><span class="visited"> </span>
+<a id="L171"></a><span class="visited"> </span>
+<a id="L172"></a><span > </span>
+<a id="L173"></a><span > </span>
+<a id="L174"></a><span > </span>
+<a id="L175"></a><span > </span>
+<a id="L176"></a><span class="visited"> </span>
+<a id="L177"></a><span class="visited"> </span>
+<a id="L178"></a><span class="visited"> </span>
+<a id="L179"></a><span > </span>
+<a id="L180"></a><span > </span>
+<a id="L181"></a><span class="some-visited"> </span>
+<a id="L182"></a><span class="unvisited"> </span>
+<a id="L183"></a><span > </span>
+<a id="L184"></a><span class="unvisited"> </span>
+<a id="L185"></a><span class="unvisited"> </span>
+<a id="L186"></a><span > </span>
+<a id="L187"></a><span class="unvisited"> </span>
+<a id="L188"></a><span class="visited"> </span>
+<a id="L189"></a><span > </span>
+<a id="L190"></a><span > </span>
+<a id="L191"></a><span class="visited"> </span>
+<a id="L192"></a><span > </span>
+<a id="L193"></a><span > </span>
+<a id="L194"></a><span class="visited"> </span>
+<a id="L195"></a><span > </span>
+<a id="L196"></a><span > </span>
+<a id="L197"></a><span > </span>
+<a id="L198"></a><span > </span>
+<a id="L199"></a><span class="visited"> </span>
+<a id="L200"></a><span > </span>
+<a id="L201"></a><span > </span>
+<a id="L202"></a><span > </span>
+<a id="L203"></a><span class="visited"> </span>
+<a id="L204"></a><span > </span>
+<a id="L205"></a><span > </span>
+<a id="L206"></a><span > </span>
+<a id="L207"></a><span > </span>
+<a id="L208"></a><span class="visited"> </span>
+<a id="L209"></a><span > </span>
+<a id="L210"></a><span > </span>
+<a id="L211"></a><span class="visited"> </span>
+<a id="L212"></a><span class="visited"> </span>
+<a id="L213"></a><span class="visited"> </span>
+<a id="L214"></a><span > </span>
+<a id="L215"></a><span class="visited"> </span>
+<a id="L216"></a><span class="visited"> </span>
+<a id="L217"></a><span > </span>
+<a id="L218"></a><span > </span>
+<a id="L219"></a><span > </span>
+<a id="L220"></a><span > </span>
+<a id="L221"></a><span class="visited"> </span>
+<a id="L222"></a><span > </span>
+<a id="L223"></a><span > </span>
+<a id="L224"></a><span class="unvisited"> </span>
+<a id="L225"></a><span class="visited"> </span>
+<a id="L226"></a><span class="unvisited"> </span>
+<a id="L227"></a><span class="unvisited"> </span>
+<a id="L228"></a><span class="unvisited"> </span>
+<a id="L229"></a><span class="visited"> </span>
+<a id="L230"></a><span > </span>
+<a id="L231"></a><span > </span>
+<a id="L232"></a><span class="unvisited"> </span>
+<a id="L233"></a><span > </span>
+<a id="L234"></a><span class="unvisited"> </span>
+<a id="L235"></a><span class="unvisited"> </span>
+<a id="L236"></a><span class="unvisited"> </span>
+<a id="L237"></a><span class="unvisited"> </span>
+<a id="L238"></a><span class="unvisited"> </span>
+<a id="L239"></a><span > </span>
+<a id="L240"></a><span > </span>
+<a id="L241"></a><span class="visited"> </span>
+<a id="L242"></a><span > </span>
+<a id="L243"></a><span > </span>
+<a id="L244"></a><span > </span>
+<a id="L245"></a><span class="visited"> </span>
+<a id="L246"></a><span class="visited"> </span>
+<a id="L247"></a><span class="visited"> </span>
+<a id="L248"></a><span > </span>
+<a id="L249"></a><span > </span>
+<a id="L250"></a><span class="visited"> </span>
+<a id="L251"></a><span class="visited"> </span>
+<a id="L252"></a><span class="visited"> </span>
+<a id="L253"></a><span > </span>
+<a id="L254"></a><span > </span>
+<a id="L255"></a><span > </span>
+<a id="L256"></a><span class="visited"> </span>
+<a id="L257"></a><span class="visited"> </span>
+<a id="L258"></a><span class="visited"> </span>
+<a id="L259"></a><span > </span>
+<a id="L260"></a><span > </span>
+<a id="L261"></a><span > </span>
+<a id="L262"></a><span > </span>
+<a id="L263"></a><span class="visited"> </span>
+<a id="L264"></a><span > </span>
+<a id="L265"></a><span > </span>
+<a id="L266"></a><span > </span>
+<a id="L267"></a><span class="visited"> </span>
+<a id="L268"></a><span class="visited"> </span>
+<a id="L269"></a><span class="visited"> </span>
+<a id="L270"></a><span > </span>
+<a id="L271"></a><span > </span>
+<a id="L272"></a><span class="visited"> </span>
+<a id="L273"></a><span class="visited"> </span>
+<a id="L274"></a><span class="visited"> </span>
+<a id="L275"></a><span class="visited"> </span>
+<a id="L276"></a><span > </span>
+<a id="L277"></a><span class="visited"> </span>
+<a id="L278"></a><span class="visited"> </span>
+<a id="L279"></a><span class="visited"> </span>
+<a id="L280"></a><span class="visited"> </span>
+<a id="L281"></a><span class="visited"> </span>
+<a id="L282"></a><span > </span>
+<a id="L283"></a><span > </span>
+<a id="L284"></a><span class="visited"> </span>
+<a id="L285"></a><span class="visited"> </span>
+<a id="L286"></a><span > </span>
+<a id="L287"></a><span class="visited"> </span>
+<a id="L288"></a><span class="visited"> </span>
+<a id="L289"></a><span > </span>
+<a id="L290"></a><span class="visited"> </span>
+<a id="L291"></a><span > </span>
+<a id="L292"></a><span > </span>
+<a id="L293"></a><span class="visited"> </span>
+<a id="L294"></a><span class="visited"> </span>
+<a id="L295"></a><span class="visited"> </span>
+<a id="L296"></a><span > </span>
+<a id="L297"></a><span class="unvisited"> </span>
+<a id="L298"></a><span class="unvisited"> </span>
+<a id="L299"></a><span > </span>
+<a id="L300"></a><span > </span>
+<a id="L301"></a><span > </span>
+<a id="L302"></a><span class="unvisited"> </span>
+<a id="L303"></a><span > </span>
+<a id="L304"></a><span > </span>
+<a id="L305"></a><span class="unvisited"> </span>
+<a id="L306"></a><span > </span>
+<a id="L307"></a><span class="unvisited"> </span>
+<a id="L308"></a><span class="unvisited"> </span>
+<a id="L309"></a><span class="unvisited"> </span>
+<a id="L310"></a><span > </span>
+<a id="L311"></a><span > </span>
+<a id="L312"></a><span > </span>
+<a id="L313"></a><span class="unvisited"> </span>
+<a id="L314"></a><span class="unvisited"> </span>
+<a id="L315"></a><span class="unvisited"> </span>
+<a id="L316"></a><span > </span>
+<a id="L317"></a><span > </span>
+<a id="L318"></a><span class="visited"> </span>
+<a id="L319"></a><span class="visited"> </span>
+<a id="L320"></a><span class="visited"> </span>
+<a id="L321"></a><span class="visited"> </span>
+<a id="L322"></a><span > </span>
+<a id="L323"></a><span > </span>
+<a id="L324"></a><span class="unvisited"> </span>
+<a id="L325"></a><span class="unvisited"> </span>
+<a id="L326"></a><span class="unvisited"> </span>
+<a id="L327"></a><span > </span>
+<a id="L328"></a><span > </span>
+<a id="L329"></a><span class="unvisited"> </span>
+<a id="L330"></a><span class="unvisited"> </span>
+<a id="L331"></a><span class="unvisited"> </span>
+<a id="L332"></a><span class="unvisited"> </span>
+<a id="L333"></a><span > </span>
+<a id="L334"></a><span class="unvisited"> </span>
+<a id="L335"></a><span class="unvisited"> </span>
+<a id="L336"></a><span class="unvisited"> </span>
+<a id="L337"></a><span class="unvisited"> </span>
+<a id="L338"></a><span class="unvisited"> </span>
+<a id="L339"></a><span > </span>
+<a id="L340"></a><span > </span>
+<a id="L341"></a><span class="unvisited"> </span>
+<a id="L342"></a><span class="unvisited"> </span>
+<a id="L343"></a><span > </span>
+<a id="L344"></a><span class="unvisited"> </span>
+<a id="L345"></a><span class="unvisited"> </span>
+<a id="L346"></a><span > </span>
+<a id="L347"></a><span class="unvisited"> </span>
+<a id="L348"></a><span > </span>
+<a id="L349"></a><span > </span>
+<a id="L350"></a><span class="unvisited"> </span>
+<a id="L351"></a><span class="unvisited"> </span>
+<a id="L352"></a><span class="unvisited"> </span>
+<a id="L353"></a><span > </span>
+<a id="L354"></a><span class="unvisited"> </span>
+<a id="L355"></a><span class="unvisited"> </span>
+<a id="L356"></a><span > </span>
+<a id="L357"></a><span > </span>
+<a id="L358"></a><span > </span>
+<a id="L359"></a><span class="unvisited"> </span>
+<a id="L360"></a><span > </span>
+<a id="L361"></a><span > </span>
+<a id="L362"></a><span class="unvisited"> </span>
+<a id="L363"></a><span > </span>
+<a id="L364"></a><span class="unvisited"> </span>
+<a id="L365"></a><span class="unvisited"> </span>
+<a id="L366"></a><span > </span>
+<a id="L367"></a><span > </span>
+<a id="L368"></a><span > </span>
+<a id="L369"></a><span > </span>
+<a id="L370"></a><span class="unvisited"> </span>
+<a id="L371"></a><span class="unvisited"> </span>
+<a id="L372"></a><span class="unvisited"> </span>
+<a id="L373"></a><span > </span>
+<a id="L374"></a><span > </span>
+<a id="L375"></a><span class="unvisited"> </span>
+<a id="L376"></a><span class="unvisited"> </span>
+<a id="L377"></a><span class="unvisited"> </span>
+<a id="L378"></a><span class="unvisited"> </span>
+<a id="L379"></a><span > </span>
+<a id="L380"></a><span > </span>
+<a id="L381"></a><span class="unvisited"> </span>
+<a id="L382"></a><span class="unvisited"> </span>
+<a id="L383"></a><span class="unvisited"> </span>
+<a id="L384"></a><span > </span>
+<a id="L385"></a><span > </span>
+<a id="L386"></a><span class="unvisited"> </span>
+<a id="L387"></a><span class="unvisited"> </span>
+<a id="L388"></a><span class="unvisited"> </span>
+<a id="L389"></a><span class="unvisited"> </span>
+<a id="L390"></a><span > </span>
+<a id="L391"></a><span class="unvisited"> </span>
+<a id="L392"></a><span class="unvisited"> </span>
+<a id="L393"></a><span class="unvisited"> </span>
+<a id="L394"></a><span class="unvisited"> </span>
+<a id="L395"></a><span class="unvisited"> </span>
+<a id="L396"></a><span > </span>
+<a id="L397"></a><span > </span>
+<a id="L398"></a><span class="unvisited"> </span>
+<a id="L399"></a><span class="unvisited"> </span>
+<a id="L400"></a><span > </span>
+<a id="L401"></a><span class="unvisited"> </span>
+<a id="L402"></a><span class="unvisited"> </span>
+<a id="L403"></a><span > </span>
+<a id="L404"></a><span class="unvisited"> </span>
+<a id="L405"></a><span > </span>
+<a id="L406"></a><span > </span>
+<a id="L407"></a><span class="unvisited"> </span>
+<a id="L408"></a><span class="unvisited"> </span>
+<a id="L409"></a><span class="unvisited"> </span>
+<a id="L410"></a><span > </span>
+<a id="L411"></a><span class="unvisited"> </span>
+<a id="L412"></a><span class="unvisited"> </span>
+<a id="L413"></a><span > </span>
+<a id="L414"></a><span > </span>
+<a id="L415"></a><span > </span>
+<a id="L416"></a><span class="unvisited"> </span>
+<a id="L417"></a><span > </span>
+<a id="L418"></a><span > </span>
+<a id="L419"></a><span class="unvisited"> </span>
+<a id="L420"></a><span > </span>
+<a id="L421"></a><span class="unvisited"> </span>
+<a id="L422"></a><span class="unvisited"> </span>
+<a id="L423"></a><span > </span>
+<a id="L424"></a><span > </span>
+<a id="L425"></a><span > </span>
+<a id="L426"></a><span > </span>
+<a id="L427"></a><span class="unvisited"> </span>
+<a id="L428"></a><span class="unvisited"> </span>
+<a id="L429"></a><span class="unvisited"> </span>
+<a id="L430"></a><span > </span>
+<a id="L431"></a><span > </span>
+<a id="L432"></a><span class="unvisited"> </span>
+<a id="L433"></a><span class="unvisited"> </span>
+<a id="L434"></a><span class="unvisited"> </span>
+<a id="L435"></a><span class="unvisited"> </span>
+<a id="L436"></a><span > </span>
+<a id="L437"></a><span > </span>
+<a id="L438"></a><span class="unvisited"> </span>
+<a id="L439"></a><span class="unvisited"> </span>
+<a id="L440"></a><span class="unvisited"> </span>
+<a id="L441"></a><span class="unvisited"> </span>
+<a id="L442"></a><span > </span>
+<a id="L443"></a><span > </span>
+<a id="L444"></a><span > </span>
+<a id="L445"></a><span class="visited"> </span>
+<a id="L446"></a><span class="visited"> </span>
+<a id="L447"></a><span class="visited"> </span>
+<a id="L448"></a><span class="visited"> </span>
+<a id="L449"></a><span > </span>
+<a id="L450"></a><span > </span>
+<a id="L451"></a><span > </span>
+<a id="L452"></a><span > </span>
+<a id="L453"></a><span > </span>
+<a id="L454"></a><span > </span>
+<a id="L455"></a><span > </span>
+<a id="L456"></a><span class="visited"> </span>
+<a id="L457"></a><span class="visited"> </span>
+<a id="L458"></a><span class="visited"> </span>
+<a id="L459"></a><span class="visited"> </span>
+<a id="L460"></a><span class="visited"> </span>
+<a id="L461"></a><span class="visited"> </span>
+<a id="L462"></a><span > </span>
+<a id="L463"></a><span > </span>
+<a id="L464"></a><span > </span>
+<a id="L465"></a><span > </span>
+<a id="L466"></a><span > </span>
+<a id="L467"></a><span > </span>
+<a id="L468"></a><span > </span>
+<a id="L469"></a><span > </span>
+<a id="L470"></a><span class="visited"> </span>
+<a id="L471"></a><span class="visited"> </span>
+<a id="L472"></a><span > </span>
+<a id="L473"></a><span > </span>
+<a id="L474"></a><span > </span>
+<a id="L475"></a><span > </span>
+<a id="L476"></a><span > </span>
+<a id="L477"></a><span > </span>
+<a id="L478"></a><span class="visited"> </span>
+<a id="L479"></a><span class="visited"> </span>
+<a id="L480"></a><span class="visited"> </span>
+<a id="L481"></a><span class="visited"> </span>
+<a id="L482"></a><span > </span>
+<a id="L483"></a><span > </span>
+<a id="L484"></a><span > </span>
+<a id="L485"></a><span > </span>
+<a id="L486"></a><span class="visited"> </span>
+<a id="L487"></a><span class="visited"> </span>
+<a id="L488"></a><span class="visited"> </span>
+<a id="L489"></a><span class="visited"> </span>
+<a id="L490"></a><span class="unvisited"> </span>
+<a id="L491"></a><span class="unvisited"> </span>
+<a id="L492"></a><span class="visited"> </span>
+<a id="L493"></a><span class="visited"> </span>
+<a id="L494"></a><span class="visited"> </span>
+<a id="L495"></a><span class="visited"> </span>
+<a id="L496"></a><span class="unvisited"> </span>
+<a id="L497"></a><span class="unvisited"> </span>
+<a id="L498"></a><span class="visited"> </span>
+<a id="L499"></a><span > </span>
+<a id="L500"></a><span class="visited"> </span>
+<a id="L501"></a><span class="unvisited"> </span>
+<a id="L502"></a><span class="unvisited"> </span>
+<a id="L503"></a><span > </span>
+<a id="L504"></a><span > </span>
+<a id="L505"></a><span > </span>
+<a id="L506"></a><span > </span>
+<a id="L507"></a><span > </span>
+<a id="L508"></a><span > </span>
+<a id="L509"></a><span > </span>
+<a id="L510"></a><span > </span>
+<a id="L511"></a><span class="unvisited"> </span>
+<a id="L512"></a><span class="visited"> </span>
+<a id="L513"></a><span class="visited"> </span>
+<a id="L514"></a><span class="visited"> </span>
+<a id="L515"></a><span class="visited"> </span>
+<a id="L516"></a><span > </span>
+<a id="L517"></a><span > </span>
+<a id="L518"></a><span > </span>
+<a id="L519"></a><span > </span>
+<a id="L520"></a><span > </span>
+<a id="L521"></a><span > </span>
+<a id="L522"></a><span > </span>
+<a id="L523"></a><span class="visited"> </span>
+<a id="L524"></a><span class="visited"> </span>
+<a id="L525"></a><span > </span>
+<a id="L526"></a><span > </span>
+<a id="L527"></a><span > </span>
+<a id="L528"></a><span class="visited"> </span>
+<a id="L529"></a><span class="visited"> </span>
+<a id="L530"></a><span > </span>
+<a id="L531"></a><span > </span>
+<a id="L532"></a><span class="visited"> </span>
+<a id="L533"></a><span class="visited"> </span>
+<a id="L534"></a><span > </span>
+<a id="L535"></a><span > </span>
+<a id="L536"></a><span class="unvisited"> </span>
+<a id="L537"></a><span class="unvisited"> </span>
+<a id="L538"></a><span class="unvisited"> </span>
+<a id="L539"></a><span > </span>
+<a id="L540"></a><span > </span>
+<a id="L541"></a><span > </span>
+<a id="L542"></a><span > </span>
+<a id="L543"></a><span > </span>
+<a id="L544"></a><span > </span>
+<a id="L545"></a><span > </span>
+<a id="L546"></a><span class="unvisited"> </span>
+<a id="L547"></a><span class="unvisited"> </span>
+<a id="L548"></a><span > </span>
+<a id="L549"></a><span > </span>
+<a id="L550"></a><span class="unvisited"> </span>
+<a id="L551"></a><span class="unvisited"> </span>
+<a id="L552"></a><span > </span>
+<a id="L553"></a><span class="visited"> </span>
+<a id="L554"></a><span > </span>
+<a id="L555"></a><span > </span>
+<a id="L556"></a><span > </span>
+<a id="L557"></a><span class="visited"> </span>
+<a id="L558"></a><span > </span>
+<a id="L559"></a><span > </span>
+<a id="L560"></a><span class="visited"> </span>
+<a id="L561"></a><span > </span>
+<a id="L562"></a><span > </span>
+<a id="L563"></a><span class="visited"> </span>
+<a id="L564"></a><span > </span>
+<a id="L565"></a><span > </span>
+<a id="L566"></a><span class="visited"> </span>
+<a id="L567"></a><span > </span>
+<a id="L568"></a><span > </span>
+<a id="L569"></a><span class="visited"> </span>
+<a id="L570"></a><span > </span>
+<a id="L571"></a><span class="visited"> </span>
+<a id="L572"></a><span class="visited"> </span>
+<a id="L573"></a><span class="visited"> </span>
+<a id="L574"></a><span class="visited"> </span>
+<a id="L575"></a><span class="unvisited"> </span>
+<a id="L576"></a><span class="unvisited"> </span>
+<a id="L577"></a><span > </span>
+<a id="L578"></a><span > </span>
+<a id="L579"></a><span class="unvisited"> </span>
+<a id="L580"></a><span class="unvisited"> </span>
+<a id="L581"></a><span > </span>
+<a id="L582"></a><span class="unvisited"> </span>
+<a id="L583"></a><span class="unvisited"> </span>
+<a id="L584"></a><span class="visited"> </span>
+<a id="L585"></a><span class="visited"> </span>
+<a id="L586"></a><span > </span>
+<a id="L587"></a><span class="visited"> </span>
+<a id="L588"></a><span > </span>
+<a id="L589"></a><span class="visited"> </span>
+<a id="L590"></a><span > </span>
+<a id="L591"></a><span > </span>
+<a id="L592"></a><span class="visited"> </span>
+<a id="L593"></a><span class="visited"> </span>
+<a id="L594"></a><span > </span>
+<a id="L595"></a><span > </span>
+<a id="L596"></a><span class="visited"> </span>
+<a id="L597"></a><span > </span>
+<a id="L598"></a><span class="unvisited"> </span>
+<a id="L599"></a><span class="unvisited"> </span>
+<a id="L600"></a><span class="unvisited"> </span>
+<a id="L601"></a><span > </span>
+<a id="L602"></a><span > </span>
+<a id="L603"></a><span > </span>
+<a id="L604"></a><span class="unvisited"> </span>
+<a id="L605"></a><span class="visited"> </span>
+<a id="L606"></a><span class="visited"> </span>
+<a id="L607"></a><span class="unvisited"> </span>
+<a id="L608"></a><span > </span>
+<a id="L609"></a><span class="unvisited"> </span>
+<a id="L610"></a><span class="unvisited"> </span>
+<a id="L611"></a><span class="unvisited"> </span>
+<a id="L612"></a><span class="unvisited"> </span>
+<a id="L613"></a><span > </span>
+<a id="L614"></a><span class="unvisited"> </span>
+<a id="L615"></a><span class="unvisited"> </span>
+<a id="L616"></a><span class="unvisited"> </span>
+<a id="L617"></a><span > </span>
+<a id="L618"></a><span > </span>
+<a id="L619"></a><span > </span>
+<a id="L620"></a><span class="unvisited"> </span>
+<a id="L621"></a><span class="visited"> </span>
+<a id="L622"></a><span class="visited"> </span>
+<a id="L623"></a><span > </span>
+<a id="L624"></a><span class="visited"> </span>
+<a id="L625"></a><span > </span>
+<a id="L626"></a><span > </span>
+<a id="L627"></a><span class="visited"> </span>
+<a id="L628"></a><span class="visited"> </span>
+<a id="L629"></a><span class="visited"> </span>
+<a id="L630"></a><span class="visited"> </span>
+<a id="L631"></a><span class="visited"> </span>
+<a id="L632"></a><span > </span>
+<a id="L633"></a><span class="unvisited"> </span>
+<a id="L634"></a><span class="unvisited"> </span>
+<a id="L635"></a><span class="unvisited"> </span>
+<a id="L636"></a><span class="unvisited"> </span>
+<a id="L637"></a><span class="unvisited"> </span>
+<a id="L638"></a><span > </span>
+<a id="L639"></a><span > </span>
+<a id="L640"></a><span > </span>
+<a id="L641"></a><span class="unvisited"> </span>
+<a id="L642"></a><span > </span>
+<a id="L643"></a><span > </span>
+<a id="L644"></a><span > </span>
+<a id="L645"></a><span class="unvisited"> </span>
+<a id="L646"></a><span class="unvisited"> </span>
+<a id="L647"></a><span class="visited"> </span>
+<a id="L648"></a><span class="unvisited"> </span>
+<a id="L649"></a><span class="unvisited"> </span>
+<a id="L650"></a><span class="visited"> </span>
+<a id="L651"></a><span class="visited"> </span>
+<a id="L652"></a><span class="visited"> </span>
+<a id="L653"></a><span class="unvisited"> </span>
+<a id="L654"></a><span > </span>
+<a id="L655"></a><span class="visited"> </span>
+<a id="L656"></a><span > </span>
+<a id="L657"></a><span > </span>
+<a id="L658"></a><span class="visited"> </span>
+<a id="L659"></a><span > </span>
+<a id="L660"></a><span class="visited"> </span>
+<a id="L661"></a><span class="visited"> </span>
+<a id="L662"></a><span > </span>
+<a id="L663"></a><span > </span>
+<a id="L664"></a><span class="visited"> </span>
+<a id="L665"></a><span class="visited"> </span>
+<a id="L666"></a><span class="visited"> </span>
+<a id="L667"></a><span class="visited"> </span>
+<a id="L668"></a><span class="visited"> </span>
+<a id="L669"></a><span > </span>
+<a id="L670"></a><span class="visited"> </span>
+<a id="L671"></a><span class="visited"> </span>
+<a id="L672"></a><span class="unvisited"> </span>
+<a id="L673"></a><span > </span>
+<a id="L674"></a><span > </span>
+<a id="L675"></a><span class="unvisited"> </span>
+<a id="L676"></a><span class="unvisited"> </span>
+<a id="L677"></a><span > </span>
+<a id="L678"></a><span > </span>
+<a id="L679"></a><span class="unvisited"> </span>
+<a id="L680"></a><span > </span>
+<a id="L681"></a><span class="visited"> </span>
+<a id="L682"></a><span class="visited"> </span>
+<a id="L683"></a><span > </span>
+<a id="L684"></a><span class="visited"> </span>
+<a id="L685"></a><span class="visited"> </span>
+<a id="L686"></a><span class="visited"> </span>
+<a id="L687"></a><span > </span>
+<a id="L688"></a><span class="visited"> </span>
+<a id="L689"></a><span class="visited"> </span>
+<a id="L690"></a><span > </span>
+<a id="L691"></a><span class="visited"> </span>
+<a id="L692"></a><span > </span>
+<a id="L693"></a><span > </span>
+<a id="L694"></a><span class="unvisited"> </span>
+<a id="L695"></a><span class="unvisited"> </span>
+<a id="L696"></a><span class="unvisited"> </span>
+<a id="L697"></a><span > </span>
+<a id="L698"></a><span class="unvisited"> </span>
+<a id="L699"></a><span class="unvisited"> </span>
+<a id="L700"></a><span class="unvisited"> </span>
+<a id="L701"></a><span class="unvisited"> </span>
+<a id="L702"></a><span > </span>
+<a id="L703"></a><span > </span>
+<a id="L704"></a><span class="visited"> </span>
+<a id="L705"></a><span > </span>
+<a id="L706"></a><span > </span>
+<a id="L707"></a><span > </span>
+<a id="L708"></a><span class="visited"> </span>
+<a id="L709"></a><span > </span>
+<a id="L710"></a><span > </span>
+<a id="L711"></a><span class="visited"> </span>
+<a id="L712"></a><span > </span>
+<a id="L713"></a><span > </span>
+<a id="L714"></a><span class="visited"> </span>
+<a id="L715"></a><span > </span>
+<a id="L716"></a><span > </span>
+<a id="L717"></a><span class="visited"> </span>
+<a id="L718"></a><span > </span>
+<a id="L719"></a><span > </span>
+<a id="L720"></a><span > </span>
+<a id="L721"></a><span > </span>
+<a id="L722"></a><span > </span>
+<a id="L723"></a><span > </span>
+<a id="L724"></a><span > </span>
+<a id="L725"></a><span > </span>
+<a id="L726"></a><span class="visited"> </span>
+<a id="L727"></a><span > </span>
+<a id="L728"></a><span class="visited"> </span>
+<a id="L729"></a><span class="visited"> </span>
+<a id="L730"></a><span class="visited"> </span>
+<a id="L731"></a><span class="visited"> </span>
+<a id="L732"></a><span > </span>
+<a id="L733"></a><span > </span>
+<a id="L734"></a><span class="visited"> </span>
+<a id="L735"></a><span > </span>
+<a id="L736"></a><span class="visited"> </span>
+<a id="L737"></a><span class="visited"> </span>
+<a id="L738"></a><span > </span>
+<a id="L739"></a><span > </span>
+<a id="L740"></a><span class="visited"> </span>
+<a id="L741"></a><span class="visited"> </span>
+<a id="L742"></a><span class="visited"> </span>
+<a id="L743"></a><span class="visited"> </span>
+<a id="L744"></a><span class="visited"> </span>
+<a id="L745"></a><span > </span>
+<a id="L746"></a><span > </span>
+<a id="L747"></a><span class="visited"> </span>
+<a id="L748"></a><span class="visited"> </span>
+<a id="L749"></a><span > </span>
+<a id="L750"></a><span > </span>
+<a id="L751"></a><span > </span>
+<a id="L752"></a><span > </span>
+<a id="L753"></a><span > </span>
+<a id="L754"></a><span class="visited"> </span>
+<a id="L755"></a><span > </span>
+<a id="L756"></a><span class="visited"> </span>
+<a id="L757"></a><span class="visited"> </span>
+<a id="L758"></a><span > </span>
+<a id="L759"></a><span > </span>
+<a id="L760"></a><span class="visited"> </span>
+<a id="L761"></a><span class="visited"> </span>
+<a id="L762"></a><span class="visited"> </span>
+<a id="L763"></a><span class="visited"> </span>
+<a id="L764"></a><span > </span>
+<a id="L765"></a><span > </span>
+<a id="L766"></a><span class="visited"> </span>
+<a id="L767"></a><span class="visited"> </span>
+<a id="L768"></a><span > </span>
+<a id="L769"></a><span class="visited"> </span>
+<a id="L770"></a><span class="visited"> </span>
+<a id="L771"></a><span > </span>
+<a id="L772"></a><span > </span>
+<a id="L773"></a><span class="visited"> </span>
+<a id="L774"></a><span > </span>
+<a id="L775"></a><span class="visited"> </span>
+<a id="L776"></a><span class="unvisited"> </span>
+<a id="L777"></a><span class="visited"> </span>
+<a id="L778"></a><span class="visited"> </span>
+<a id="L779"></a><span class="visited"> </span>
+<a id="L780"></a><span > </span>
+<a id="L781"></a><span > </span>
+<a id="L782"></a><span class="visited"> </span>
+<a id="L783"></a><span > </span>
+<a id="L784"></a><span > </span>
+<a id="L785"></a><span class="visited"> </span>
+<a id="L786"></a><span > </span>
+<a id="L787"></a><span > </span>
+<a id="L788"></a><span class="visited"> </span>
+<a id="L789"></a><span class="visited"> </span>
+<a id="L790"></a><span > </span>
+<a id="L791"></a><span > </span>
+<a id="L792"></a><span > </span>
+<a id="L793"></a><span class="visited"> </span>
+<a id="L794"></a><span class="visited"> </span>
+<a id="L795"></a><span class="visited"> </span>
+<a id="L796"></a><span class="visited"> </span>
+<a id="L797"></a><span class="visited"> </span>
+<a id="L798"></a><span class="visited"> </span>
+<a id="L799"></a><span class="visited"> </span>
+<a id="L800"></a><span > </span>
+<a id="L801"></a><span > </span>
+<a id="L802"></a><span class="visited"> </span>
+<a id="L803"></a><span > </span>
+<a id="L804"></a><span > </span>
+<a id="L805"></a><span > </span>
+<a id="L806"></a><span class="visited"> </span>
+<a id="L807"></a><span > </span>
+<a id="L808"></a><span > </span>
+<a id="L809"></a><span class="visited"> </span>
+<a id="L810"></a><span > </span>
+<a id="L811"></a><span class="visited"> </span>
+<a id="L812"></a><span class="unvisited"> </span>
+<a id="L813"></a><span class="unvisited"> </span>
+<a id="L814"></a><span class="unvisited"> </span>
+<a id="L815"></a><span class="visited"> </span>
+<a id="L816"></a><span class="visited"> </span>
+<a id="L817"></a><span class="visited"> </span>
+<a id="L818"></a><span class="visited"> </span>
+<a id="L819"></a><span class="unvisited"> </span>
+<a id="L820"></a><span > </span>
+<a id="L821"></a><span > </span>
+<a id="L822"></a><span class="visited"> </span>
+<a id="L823"></a><span class="visited"> </span>
+<a id="L824"></a><span > </span>
+<a id="L825"></a><span > </span>
+<a id="L826"></a><span class="visited"> </span>
+<a id="L827"></a><span > </span>
+<a id="L828"></a><span class="visited"> </span>
+<a id="L829"></a><span class="visited"> </span>
+<a id="L830"></a><span > </span>
+<a id="L831"></a><span class="visited"> </span>
+<a id="L832"></a><span class="visited"> </span>
+<a id="L833"></a><span > </span>
+<a id="L834"></a><span > </span>
+<a id="L835"></a><span > </span>
+<a id="L836"></a><span > </span>
+<a id="L837"></a><span class="unvisited"> </span>
+<a id="L838"></a><span > </span>
+<a id="L839"></a><span > </span>
+<a id="L840"></a><span > </span>
+<a id="L841"></a><span > </span>
+<a id="L842"></a><span class="visited"> </span>
+<a id="L843"></a><span > </span>
+<a id="L844"></a><span > </span>
+<a id="L845"></a><span class="visited"> </span>
+<a id="L846"></a><span class="visited"> </span>
+<a id="L847"></a><span > </span>
+<a id="L848"></a><span > </span>
+<a id="L849"></a><span class="visited"> </span>
+<a id="L850"></a><span class="visited"> </span>
+<a id="L851"></a><span > </span>
+<a id="L852"></a><span class="visited"> </span>
+<a id="L853"></a><span > </span>
+<a id="L854"></a><span class="visited"> </span>
+<a id="L855"></a><span class="visited"> </span>
+<a id="L856"></a><span class="visited"> </span>
+<a id="L857"></a><span > </span>
+<a id="L858"></a><span > </span>
+<a id="L859"></a><span > </span>
+<a id="L860"></a><span > </span>
+<a id="L861"></a><span class="visited"> </span>
+<a id="L862"></a><span class="visited"> </span>
+<a id="L863"></a><span > </span>
+<a id="L864"></a><span class="visited"> </span>
+<a id="L865"></a><span class="visited"> </span>
+<a id="L866"></a><span > </span>
+<a id="L867"></a><span class="visited"> </span>
+<a id="L868"></a><span class="visited"> </span>
+<a id="L869"></a><span class="visited"> </span>
+<a id="L870"></a><span class="visited"> </span>
+<a id="L871"></a><span class="visited"> </span>
+<a id="L872"></a><span class="visited"> </span>
+<a id="L873"></a><span > </span>
+<a id="L874"></a><span > </span>
+<a id="L875"></a><span class="visited"> </span>
+<a id="L876"></a><span > </span>
+<a id="L877"></a><span > </span>
+<a id="L878"></a><span > </span>
+<a id="L879"></a><span > </span>
+<a id="L880"></a><span > </span>
+<a id="L881"></a><span class="visited"> </span>
+<a id="L882"></a><span > </span>
+<a id="L883"></a><span > </span>
+<a id="L884"></a><span class="visited"> </span>
+<a id="L885"></a><span class="visited"> </span>
+<a id="L886"></a><span > </span>
+<a id="L887"></a><span > </span>
+<a id="L888"></a><span class="visited"> </span>
+<a id="L889"></a><span > </span>
+<a id="L890"></a><span > </span>
+<a id="L891"></a><span class="visited"> </span>
+<a id="L892"></a><span class="visited"> </span>
+<a id="L893"></a><span > </span>
+<a id="L894"></a><span class="visited"> </span>
+<a id="L895"></a><span > </span>
+<a id="L896"></a><span > </span>
+<a id="L897"></a><span class="visited"> </span>
+<a id="L898"></a><span class="visited"> </span>
+<a id="L899"></a><span > </span>
+<a id="L900"></a><span class="visited"> </span>
+<a id="L901"></a><span > </span>
+<a id="L902"></a><span class="visited"> </span>
+<a id="L903"></a><span > </span>
+<a id="L904"></a><span > </span>
+<a id="L905"></a><span > </span>
+<a id="L906"></a><span class="visited"> </span>
+</pre>
+      </div>
+      <div id="text-layer">
+        <pre id="line-numbers">
+<a href="#L1">  1</a>
+<a href="#L2">  2</a>
+<a href="#L3">  3</a>
+<a href="#L4">  4</a>
+<a href="#L5">  5</a>
+<a href="#L6">  6</a>
+<a href="#L7">  7</a>
+<a href="#L8">  8</a>
+<a href="#L9">  9</a>
+<a href="#L10"> 10</a>
+<a href="#L11"> 11</a>
+<a href="#L12"> 12</a>
+<a href="#L13"> 13</a>
+<a href="#L14"> 14</a>
+<a href="#L15"> 15</a>
+<a href="#L16"> 16</a>
+<a href="#L17"> 17</a>
+<a href="#L18"> 18</a>
+<a href="#L19"> 19</a>
+<a href="#L20"> 20</a>
+<a href="#L21"> 21</a>
+<a href="#L22"> 22</a>
+<a href="#L23"> 23</a>
+<a href="#L24"> 24</a>
+<a href="#L25"> 25</a>
+<a href="#L26"> 26</a>
+<a href="#L27"> 27</a>
+<a href="#L28"> 28</a>
+<a href="#L29"> 29</a>
+<a href="#L30"> 30</a>
+<a href="#L31"> 31</a>
+<a href="#L32"> 32</a>
+<a href="#L33"> 33</a>
+<a href="#L34"> 34</a>
+<a href="#L35"> 35</a>
+<a href="#L36"> 36</a>
+<a href="#L37"> 37</a>
+<a href="#L38"> 38</a>
+<a href="#L39"> 39</a>
+<a href="#L40"> 40</a>
+<a href="#L41"> 41</a>
+<a href="#L42"> 42</a>
+<a href="#L43"> 43</a>
+<a href="#L44"> 44</a>
+<a href="#L45"> 45</a>
+<a href="#L46"> 46</a>
+<a href="#L47"> 47</a>
+<a href="#L48"> 48</a>
+<a href="#L49"> 49</a>
+<a href="#L50"> 50</a>
+<a href="#L51"> 51</a>
+<a href="#L52"> 52</a>
+<a href="#L53"> 53</a>
+<a href="#L54"> 54</a>
+<a href="#L55"> 55</a>
+<a href="#L56"> 56</a>
+<a href="#L57"> 57</a>
+<a href="#L58"> 58</a>
+<a href="#L59"> 59</a>
+<a href="#L60"> 60</a>
+<a href="#L61"> 61</a>
+<a href="#L62"> 62</a>
+<a href="#L63"> 63</a>
+<a href="#L64"> 64</a>
+<a href="#L65"> 65</a>
+<a href="#L66"> 66</a>
+<a href="#L67"> 67</a>
+<a href="#L68"> 68</a>
+<a href="#L69"> 69</a>
+<a href="#L70"> 70</a>
+<a href="#L71"> 71</a>
+<a href="#L72"> 72</a>
+<a href="#L73"> 73</a>
+<a href="#L74"> 74</a>
+<a href="#L75"> 75</a>
+<a href="#L76"> 76</a>
+<a href="#L77"> 77</a>
+<a href="#L78"> 78</a>
+<a href="#L79"> 79</a>
+<a href="#L80"> 80</a>
+<a href="#L81"> 81</a>
+<a href="#L82"> 82</a>
+<a href="#L83"> 83</a>
+<a href="#L84"> 84</a>
+<a href="#L85"> 85</a>
+<a href="#L86"> 86</a>
+<a href="#L87"> 87</a>
+<a href="#L88"> 88</a>
+<a href="#L89"> 89</a>
+<a href="#L90"> 90</a>
+<a href="#L91"> 91</a>
+<a href="#L92"> 92</a>
+<a href="#L93"> 93</a>
+<a href="#L94"> 94</a>
+<a href="#L95"> 95</a>
+<a href="#L96"> 96</a>
+<a href="#L97"> 97</a>
+<a href="#L98"> 98</a>
+<a href="#L99"> 99</a>
+<a href="#L100">100</a>
+<a href="#L101">101</a>
+<a href="#L102">102</a>
+<a href="#L103">103</a>
+<a href="#L104">104</a>
+<a href="#L105">105</a>
+<a href="#L106">106</a>
+<a href="#L107">107</a>
+<a href="#L108">108</a>
+<a href="#L109">109</a>
+<a href="#L110">110</a>
+<a href="#L111">111</a>
+<a href="#L112">112</a>
+<a href="#L113">113</a>
+<a href="#L114">114</a>
+<a href="#L115">115</a>
+<a href="#L116">116</a>
+<a href="#L117">117</a>
+<a href="#L118">118</a>
+<a href="#L119">119</a>
+<a href="#L120">120</a>
+<a href="#L121">121</a>
+<a href="#L122">122</a>
+<a href="#L123">123</a>
+<a href="#L124">124</a>
+<a href="#L125">125</a>
+<a href="#L126">126</a>
+<a href="#L127">127</a>
+<a href="#L128">128</a>
+<a href="#L129">129</a>
+<a href="#L130">130</a>
+<a href="#L131">131</a>
+<a href="#L132">132</a>
+<a href="#L133">133</a>
+<a href="#L134">134</a>
+<a href="#L135">135</a>
+<a href="#L136">136</a>
+<a href="#L137">137</a>
+<a href="#L138">138</a>
+<a href="#L139">139</a>
+<a href="#L140">140</a>
+<a href="#L141">141</a>
+<a href="#L142">142</a>
+<a href="#L143">143</a>
+<a href="#L144">144</a>
+<a href="#L145">145</a>
+<a href="#L146">146</a>
+<a href="#L147">147</a>
+<a href="#L148">148</a>
+<a href="#L149">149</a>
+<a href="#L150">150</a>
+<a href="#L151">151</a>
+<a href="#L152">152</a>
+<a href="#L153">153</a>
+<a href="#L154">154</a>
+<a href="#L155">155</a>
+<a href="#L156">156</a>
+<a href="#L157">157</a>
+<a href="#L158">158</a>
+<a href="#L159">159</a>
+<a href="#L160">160</a>
+<a href="#L161">161</a>
+<a href="#L162">162</a>
+<a href="#L163">163</a>
+<a href="#L164">164</a>
+<a href="#L165">165</a>
+<a href="#L166">166</a>
+<a href="#L167">167</a>
+<a href="#L168">168</a>
+<a href="#L169">169</a>
+<a href="#L170">170</a>
+<a href="#L171">171</a>
+<a href="#L172">172</a>
+<a href="#L173">173</a>
+<a href="#L174">174</a>
+<a href="#L175">175</a>
+<a href="#L176">176</a>
+<a href="#L177">177</a>
+<a href="#L178">178</a>
+<a href="#L179">179</a>
+<a href="#L180">180</a>
+<a href="#L181">181</a>
+<a href="#L182">182</a>
+<a href="#L183">183</a>
+<a href="#L184">184</a>
+<a href="#L185">185</a>
+<a href="#L186">186</a>
+<a href="#L187">187</a>
+<a href="#L188">188</a>
+<a href="#L189">189</a>
+<a href="#L190">190</a>
+<a href="#L191">191</a>
+<a href="#L192">192</a>
+<a href="#L193">193</a>
+<a href="#L194">194</a>
+<a href="#L195">195</a>
+<a href="#L196">196</a>
+<a href="#L197">197</a>
+<a href="#L198">198</a>
+<a href="#L199">199</a>
+<a href="#L200">200</a>
+<a href="#L201">201</a>
+<a href="#L202">202</a>
+<a href="#L203">203</a>
+<a href="#L204">204</a>
+<a href="#L205">205</a>
+<a href="#L206">206</a>
+<a href="#L207">207</a>
+<a href="#L208">208</a>
+<a href="#L209">209</a>
+<a href="#L210">210</a>
+<a href="#L211">211</a>
+<a href="#L212">212</a>
+<a href="#L213">213</a>
+<a href="#L214">214</a>
+<a href="#L215">215</a>
+<a href="#L216">216</a>
+<a href="#L217">217</a>
+<a href="#L218">218</a>
+<a href="#L219">219</a>
+<a href="#L220">220</a>
+<a href="#L221">221</a>
+<a href="#L222">222</a>
+<a href="#L223">223</a>
+<a href="#L224">224</a>
+<a href="#L225">225</a>
+<a href="#L226">226</a>
+<a href="#L227">227</a>
+<a href="#L228">228</a>
+<a href="#L229">229</a>
+<a href="#L230">230</a>
+<a href="#L231">231</a>
+<a href="#L232">232</a>
+<a href="#L233">233</a>
+<a href="#L234">234</a>
+<a href="#L235">235</a>
+<a href="#L236">236</a>
+<a href="#L237">237</a>
+<a href="#L238">238</a>
+<a href="#L239">239</a>
+<a href="#L240">240</a>
+<a href="#L241">241</a>
+<a href="#L242">242</a>
+<a href="#L243">243</a>
+<a href="#L244">244</a>
+<a href="#L245">245</a>
+<a href="#L246">246</a>
+<a href="#L247">247</a>
+<a href="#L248">248</a>
+<a href="#L249">249</a>
+<a href="#L250">250</a>
+<a href="#L251">251</a>
+<a href="#L252">252</a>
+<a href="#L253">253</a>
+<a href="#L254">254</a>
+<a href="#L255">255</a>
+<a href="#L256">256</a>
+<a href="#L257">257</a>
+<a href="#L258">258</a>
+<a href="#L259">259</a>
+<a href="#L260">260</a>
+<a href="#L261">261</a>
+<a href="#L262">262</a>
+<a href="#L263">263</a>
+<a href="#L264">264</a>
+<a href="#L265">265</a>
+<a href="#L266">266</a>
+<a href="#L267">267</a>
+<a href="#L268">268</a>
+<a href="#L269">269</a>
+<a href="#L270">270</a>
+<a href="#L271">271</a>
+<a href="#L272">272</a>
+<a href="#L273">273</a>
+<a href="#L274">274</a>
+<a href="#L275">275</a>
+<a href="#L276">276</a>
+<a href="#L277">277</a>
+<a href="#L278">278</a>
+<a href="#L279">279</a>
+<a href="#L280">280</a>
+<a href="#L281">281</a>
+<a href="#L282">282</a>
+<a href="#L283">283</a>
+<a href="#L284">284</a>
+<a href="#L285">285</a>
+<a href="#L286">286</a>
+<a href="#L287">287</a>
+<a href="#L288">288</a>
+<a href="#L289">289</a>
+<a href="#L290">290</a>
+<a href="#L291">291</a>
+<a href="#L292">292</a>
+<a href="#L293">293</a>
+<a href="#L294">294</a>
+<a href="#L295">295</a>
+<a href="#L296">296</a>
+<a href="#L297">297</a>
+<a href="#L298">298</a>
+<a href="#L299">299</a>
+<a href="#L300">300</a>
+<a href="#L301">301</a>
+<a href="#L302">302</a>
+<a href="#L303">303</a>
+<a href="#L304">304</a>
+<a href="#L305">305</a>
+<a href="#L306">306</a>
+<a href="#L307">307</a>
+<a href="#L308">308</a>
+<a href="#L309">309</a>
+<a href="#L310">310</a>
+<a href="#L311">311</a>
+<a href="#L312">312</a>
+<a href="#L313">313</a>
+<a href="#L314">314</a>
+<a href="#L315">315</a>
+<a href="#L316">316</a>
+<a href="#L317">317</a>
+<a href="#L318">318</a>
+<a href="#L319">319</a>
+<a href="#L320">320</a>
+<a href="#L321">321</a>
+<a href="#L322">322</a>
+<a href="#L323">323</a>
+<a href="#L324">324</a>
+<a href="#L325">325</a>
+<a href="#L326">326</a>
+<a href="#L327">327</a>
+<a href="#L328">328</a>
+<a href="#L329">329</a>
+<a href="#L330">330</a>
+<a href="#L331">331</a>
+<a href="#L332">332</a>
+<a href="#L333">333</a>
+<a href="#L334">334</a>
+<a href="#L335">335</a>
+<a href="#L336">336</a>
+<a href="#L337">337</a>
+<a href="#L338">338</a>
+<a href="#L339">339</a>
+<a href="#L340">340</a>
+<a href="#L341">341</a>
+<a href="#L342">342</a>
+<a href="#L343">343</a>
+<a href="#L344">344</a>
+<a href="#L345">345</a>
+<a href="#L346">346</a>
+<a href="#L347">347</a>
+<a href="#L348">348</a>
+<a href="#L349">349</a>
+<a href="#L350">350</a>
+<a href="#L351">351</a>
+<a href="#L352">352</a>
+<a href="#L353">353</a>
+<a href="#L354">354</a>
+<a href="#L355">355</a>
+<a href="#L356">356</a>
+<a href="#L357">357</a>
+<a href="#L358">358</a>
+<a href="#L359">359</a>
+<a href="#L360">360</a>
+<a href="#L361">361</a>
+<a href="#L362">362</a>
+<a href="#L363">363</a>
+<a href="#L364">364</a>
+<a href="#L365">365</a>
+<a href="#L366">366</a>
+<a href="#L367">367</a>
+<a href="#L368">368</a>
+<a href="#L369">369</a>
+<a href="#L370">370</a>
+<a href="#L371">371</a>
+<a href="#L372">372</a>
+<a href="#L373">373</a>
+<a href="#L374">374</a>
+<a href="#L375">375</a>
+<a href="#L376">376</a>
+<a href="#L377">377</a>
+<a href="#L378">378</a>
+<a href="#L379">379</a>
+<a href="#L380">380</a>
+<a href="#L381">381</a>
+<a href="#L382">382</a>
+<a href="#L383">383</a>
+<a href="#L384">384</a>
+<a href="#L385">385</a>
+<a href="#L386">386</a>
+<a href="#L387">387</a>
+<a href="#L388">388</a>
+<a href="#L389">389</a>
+<a href="#L390">390</a>
+<a href="#L391">391</a>
+<a href="#L392">392</a>
+<a href="#L393">393</a>
+<a href="#L394">394</a>
+<a href="#L395">395</a>
+<a href="#L396">396</a>
+<a href="#L397">397</a>
+<a href="#L398">398</a>
+<a href="#L399">399</a>
+<a href="#L400">400</a>
+<a href="#L401">401</a>
+<a href="#L402">402</a>
+<a href="#L403">403</a>
+<a href="#L404">404</a>
+<a href="#L405">405</a>
+<a href="#L406">406</a>
+<a href="#L407">407</a>
+<a href="#L408">408</a>
+<a href="#L409">409</a>
+<a href="#L410">410</a>
+<a href="#L411">411</a>
+<a href="#L412">412</a>
+<a href="#L413">413</a>
+<a href="#L414">414</a>
+<a href="#L415">415</a>
+<a href="#L416">416</a>
+<a href="#L417">417</a>
+<a href="#L418">418</a>
+<a href="#L419">419</a>
+<a href="#L420">420</a>
+<a href="#L421">421</a>
+<a href="#L422">422</a>
+<a href="#L423">423</a>
+<a href="#L424">424</a>
+<a href="#L425">425</a>
+<a href="#L426">426</a>
+<a href="#L427">427</a>
+<a href="#L428">428</a>
+<a href="#L429">429</a>
+<a href="#L430">430</a>
+<a href="#L431">431</a>
+<a href="#L432">432</a>
+<a href="#L433">433</a>
+<a href="#L434">434</a>
+<a href="#L435">435</a>
+<a href="#L436">436</a>
+<a href="#L437">437</a>
+<a href="#L438">438</a>
+<a href="#L439">439</a>
+<a href="#L440">440</a>
+<a href="#L441">441</a>
+<a href="#L442">442</a>
+<a href="#L443">443</a>
+<a href="#L444">444</a>
+<a href="#L445">445</a>
+<a href="#L446">446</a>
+<a href="#L447">447</a>
+<a href="#L448">448</a>
+<a href="#L449">449</a>
+<a href="#L450">450</a>
+<a href="#L451">451</a>
+<a href="#L452">452</a>
+<a href="#L453">453</a>
+<a href="#L454">454</a>
+<a href="#L455">455</a>
+<a href="#L456">456</a>
+<a href="#L457">457</a>
+<a href="#L458">458</a>
+<a href="#L459">459</a>
+<a href="#L460">460</a>
+<a href="#L461">461</a>
+<a href="#L462">462</a>
+<a href="#L463">463</a>
+<a href="#L464">464</a>
+<a href="#L465">465</a>
+<a href="#L466">466</a>
+<a href="#L467">467</a>
+<a href="#L468">468</a>
+<a href="#L469">469</a>
+<a href="#L470">470</a>
+<a href="#L471">471</a>
+<a href="#L472">472</a>
+<a href="#L473">473</a>
+<a href="#L474">474</a>
+<a href="#L475">475</a>
+<a href="#L476">476</a>
+<a href="#L477">477</a>
+<a href="#L478">478</a>
+<a href="#L479">479</a>
+<a href="#L480">480</a>
+<a href="#L481">481</a>
+<a href="#L482">482</a>
+<a href="#L483">483</a>
+<a href="#L484">484</a>
+<a href="#L485">485</a>
+<a href="#L486">486</a>
+<a href="#L487">487</a>
+<a href="#L488">488</a>
+<a href="#L489">489</a>
+<a href="#L490">490</a>
+<a href="#L491">491</a>
+<a href="#L492">492</a>
+<a href="#L493">493</a>
+<a href="#L494">494</a>
+<a href="#L495">495</a>
+<a href="#L496">496</a>
+<a href="#L497">497</a>
+<a href="#L498">498</a>
+<a href="#L499">499</a>
+<a href="#L500">500</a>
+<a href="#L501">501</a>
+<a href="#L502">502</a>
+<a href="#L503">503</a>
+<a href="#L504">504</a>
+<a href="#L505">505</a>
+<a href="#L506">506</a>
+<a href="#L507">507</a>
+<a href="#L508">508</a>
+<a href="#L509">509</a>
+<a href="#L510">510</a>
+<a href="#L511">511</a>
+<a href="#L512">512</a>
+<a href="#L513">513</a>
+<a href="#L514">514</a>
+<a href="#L515">515</a>
+<a href="#L516">516</a>
+<a href="#L517">517</a>
+<a href="#L518">518</a>
+<a href="#L519">519</a>
+<a href="#L520">520</a>
+<a href="#L521">521</a>
+<a href="#L522">522</a>
+<a href="#L523">523</a>
+<a href="#L524">524</a>
+<a href="#L525">525</a>
+<a href="#L526">526</a>
+<a href="#L527">527</a>
+<a href="#L528">528</a>
+<a href="#L529">529</a>
+<a href="#L530">530</a>
+<a href="#L531">531</a>
+<a href="#L532">532</a>
+<a href="#L533">533</a>
+<a href="#L534">534</a>
+<a href="#L535">535</a>
+<a href="#L536">536</a>
+<a href="#L537">537</a>
+<a href="#L538">538</a>
+<a href="#L539">539</a>
+<a href="#L540">540</a>
+<a href="#L541">541</a>
+<a href="#L542">542</a>
+<a href="#L543">543</a>
+<a href="#L544">544</a>
+<a href="#L545">545</a>
+<a href="#L546">546</a>
+<a href="#L547">547</a>
+<a href="#L548">548</a>
+<a href="#L549">549</a>
+<a href="#L550">550</a>
+<a href="#L551">551</a>
+<a href="#L552">552</a>
+<a href="#L553">553</a>
+<a href="#L554">554</a>
+<a href="#L555">555</a>
+<a href="#L556">556</a>
+<a href="#L557">557</a>
+<a href="#L558">558</a>
+<a href="#L559">559</a>
+<a href="#L560">560</a>
+<a href="#L561">561</a>
+<a href="#L562">562</a>
+<a href="#L563">563</a>
+<a href="#L564">564</a>
+<a href="#L565">565</a>
+<a href="#L566">566</a>
+<a href="#L567">567</a>
+<a href="#L568">568</a>
+<a href="#L569">569</a>
+<a href="#L570">570</a>
+<a href="#L571">571</a>
+<a href="#L572">572</a>
+<a href="#L573">573</a>
+<a href="#L574">574</a>
+<a href="#L575">575</a>
+<a href="#L576">576</a>
+<a href="#L577">577</a>
+<a href="#L578">578</a>
+<a href="#L579">579</a>
+<a href="#L580">580</a>
+<a href="#L581">581</a>
+<a href="#L582">582</a>
+<a href="#L583">583</a>
+<a href="#L584">584</a>
+<a href="#L585">585</a>
+<a href="#L586">586</a>
+<a href="#L587">587</a>
+<a href="#L588">588</a>
+<a href="#L589">589</a>
+<a href="#L590">590</a>
+<a href="#L591">591</a>
+<a href="#L592">592</a>
+<a href="#L593">593</a>
+<a href="#L594">594</a>
+<a href="#L595">595</a>
+<a href="#L596">596</a>
+<a href="#L597">597</a>
+<a href="#L598">598</a>
+<a href="#L599">599</a>
+<a href="#L600">600</a>
+<a href="#L601">601</a>
+<a href="#L602">602</a>
+<a href="#L603">603</a>
+<a href="#L604">604</a>
+<a href="#L605">605</a>
+<a href="#L606">606</a>
+<a href="#L607">607</a>
+<a href="#L608">608</a>
+<a href="#L609">609</a>
+<a href="#L610">610</a>
+<a href="#L611">611</a>
+<a href="#L612">612</a>
+<a href="#L613">613</a>
+<a href="#L614">614</a>
+<a href="#L615">615</a>
+<a href="#L616">616</a>
+<a href="#L617">617</a>
+<a href="#L618">618</a>
+<a href="#L619">619</a>
+<a href="#L620">620</a>
+<a href="#L621">621</a>
+<a href="#L622">622</a>
+<a href="#L623">623</a>
+<a href="#L624">624</a>
+<a href="#L625">625</a>
+<a href="#L626">626</a>
+<a href="#L627">627</a>
+<a href="#L628">628</a>
+<a href="#L629">629</a>
+<a href="#L630">630</a>
+<a href="#L631">631</a>
+<a href="#L632">632</a>
+<a href="#L633">633</a>
+<a href="#L634">634</a>
+<a href="#L635">635</a>
+<a href="#L636">636</a>
+<a href="#L637">637</a>
+<a href="#L638">638</a>
+<a href="#L639">639</a>
+<a href="#L640">640</a>
+<a href="#L641">641</a>
+<a href="#L642">642</a>
+<a href="#L643">643</a>
+<a href="#L644">644</a>
+<a href="#L645">645</a>
+<a href="#L646">646</a>
+<a href="#L647">647</a>
+<a href="#L648">648</a>
+<a href="#L649">649</a>
+<a href="#L650">650</a>
+<a href="#L651">651</a>
+<a href="#L652">652</a>
+<a href="#L653">653</a>
+<a href="#L654">654</a>
+<a href="#L655">655</a>
+<a href="#L656">656</a>
+<a href="#L657">657</a>
+<a href="#L658">658</a>
+<a href="#L659">659</a>
+<a href="#L660">660</a>
+<a href="#L661">661</a>
+<a href="#L662">662</a>
+<a href="#L663">663</a>
+<a href="#L664">664</a>
+<a href="#L665">665</a>
+<a href="#L666">666</a>
+<a href="#L667">667</a>
+<a href="#L668">668</a>
+<a href="#L669">669</a>
+<a href="#L670">670</a>
+<a href="#L671">671</a>
+<a href="#L672">672</a>
+<a href="#L673">673</a>
+<a href="#L674">674</a>
+<a href="#L675">675</a>
+<a href="#L676">676</a>
+<a href="#L677">677</a>
+<a href="#L678">678</a>
+<a href="#L679">679</a>
+<a href="#L680">680</a>
+<a href="#L681">681</a>
+<a href="#L682">682</a>
+<a href="#L683">683</a>
+<a href="#L684">684</a>
+<a href="#L685">685</a>
+<a href="#L686">686</a>
+<a href="#L687">687</a>
+<a href="#L688">688</a>
+<a href="#L689">689</a>
+<a href="#L690">690</a>
+<a href="#L691">691</a>
+<a href="#L692">692</a>
+<a href="#L693">693</a>
+<a href="#L694">694</a>
+<a href="#L695">695</a>
+<a href="#L696">696</a>
+<a href="#L697">697</a>
+<a href="#L698">698</a>
+<a href="#L699">699</a>
+<a href="#L700">700</a>
+<a href="#L701">701</a>
+<a href="#L702">702</a>
+<a href="#L703">703</a>
+<a href="#L704">704</a>
+<a href="#L705">705</a>
+<a href="#L706">706</a>
+<a href="#L707">707</a>
+<a href="#L708">708</a>
+<a href="#L709">709</a>
+<a href="#L710">710</a>
+<a href="#L711">711</a>
+<a href="#L712">712</a>
+<a href="#L713">713</a>
+<a href="#L714">714</a>
+<a href="#L715">715</a>
+<a href="#L716">716</a>
+<a href="#L717">717</a>
+<a href="#L718">718</a>
+<a href="#L719">719</a>
+<a href="#L720">720</a>
+<a href="#L721">721</a>
+<a href="#L722">722</a>
+<a href="#L723">723</a>
+<a href="#L724">724</a>
+<a href="#L725">725</a>
+<a href="#L726">726</a>
+<a href="#L727">727</a>
+<a href="#L728">728</a>
+<a href="#L729">729</a>
+<a href="#L730">730</a>
+<a href="#L731">731</a>
+<a href="#L732">732</a>
+<a href="#L733">733</a>
+<a href="#L734">734</a>
+<a href="#L735">735</a>
+<a href="#L736">736</a>
+<a href="#L737">737</a>
+<a href="#L738">738</a>
+<a href="#L739">739</a>
+<a href="#L740">740</a>
+<a href="#L741">741</a>
+<a href="#L742">742</a>
+<a href="#L743">743</a>
+<a href="#L744">744</a>
+<a href="#L745">745</a>
+<a href="#L746">746</a>
+<a href="#L747">747</a>
+<a href="#L748">748</a>
+<a href="#L749">749</a>
+<a href="#L750">750</a>
+<a href="#L751">751</a>
+<a href="#L752">752</a>
+<a href="#L753">753</a>
+<a href="#L754">754</a>
+<a href="#L755">755</a>
+<a href="#L756">756</a>
+<a href="#L757">757</a>
+<a href="#L758">758</a>
+<a href="#L759">759</a>
+<a href="#L760">760</a>
+<a href="#L761">761</a>
+<a href="#L762">762</a>
+<a href="#L763">763</a>
+<a href="#L764">764</a>
+<a href="#L765">765</a>
+<a href="#L766">766</a>
+<a href="#L767">767</a>
+<a href="#L768">768</a>
+<a href="#L769">769</a>
+<a href="#L770">770</a>
+<a href="#L771">771</a>
+<a href="#L772">772</a>
+<a href="#L773">773</a>
+<a href="#L774">774</a>
+<a href="#L775">775</a>
+<a href="#L776">776</a>
+<a href="#L777">777</a>
+<a href="#L778">778</a>
+<a href="#L779">779</a>
+<a href="#L780">780</a>
+<a href="#L781">781</a>
+<a href="#L782">782</a>
+<a href="#L783">783</a>
+<a href="#L784">784</a>
+<a href="#L785">785</a>
+<a href="#L786">786</a>
+<a href="#L787">787</a>
+<a href="#L788">788</a>
+<a href="#L789">789</a>
+<a href="#L790">790</a>
+<a href="#L791">791</a>
+<a href="#L792">792</a>
+<a href="#L793">793</a>
+<a href="#L794">794</a>
+<a href="#L795">795</a>
+<a href="#L796">796</a>
+<a href="#L797">797</a>
+<a href="#L798">798</a>
+<a href="#L799">799</a>
+<a href="#L800">800</a>
+<a href="#L801">801</a>
+<a href="#L802">802</a>
+<a href="#L803">803</a>
+<a href="#L804">804</a>
+<a href="#L805">805</a>
+<a href="#L806">806</a>
+<a href="#L807">807</a>
+<a href="#L808">808</a>
+<a href="#L809">809</a>
+<a href="#L810">810</a>
+<a href="#L811">811</a>
+<a href="#L812">812</a>
+<a href="#L813">813</a>
+<a href="#L814">814</a>
+<a href="#L815">815</a>
+<a href="#L816">816</a>
+<a href="#L817">817</a>
+<a href="#L818">818</a>
+<a href="#L819">819</a>
+<a href="#L820">820</a>
+<a href="#L821">821</a>
+<a href="#L822">822</a>
+<a href="#L823">823</a>
+<a href="#L824">824</a>
+<a href="#L825">825</a>
+<a href="#L826">826</a>
+<a href="#L827">827</a>
+<a href="#L828">828</a>
+<a href="#L829">829</a>
+<a href="#L830">830</a>
+<a href="#L831">831</a>
+<a href="#L832">832</a>
+<a href="#L833">833</a>
+<a href="#L834">834</a>
+<a href="#L835">835</a>
+<a href="#L836">836</a>
+<a href="#L837">837</a>
+<a href="#L838">838</a>
+<a href="#L839">839</a>
+<a href="#L840">840</a>
+<a href="#L841">841</a>
+<a href="#L842">842</a>
+<a href="#L843">843</a>
+<a href="#L844">844</a>
+<a href="#L845">845</a>
+<a href="#L846">846</a>
+<a href="#L847">847</a>
+<a href="#L848">848</a>
+<a href="#L849">849</a>
+<a href="#L850">850</a>
+<a href="#L851">851</a>
+<a href="#L852">852</a>
+<a href="#L853">853</a>
+<a href="#L854">854</a>
+<a href="#L855">855</a>
+<a href="#L856">856</a>
+<a href="#L857">857</a>
+<a href="#L858">858</a>
+<a href="#L859">859</a>
+<a href="#L860">860</a>
+<a href="#L861">861</a>
+<a href="#L862">862</a>
+<a href="#L863">863</a>
+<a href="#L864">864</a>
+<a href="#L865">865</a>
+<a href="#L866">866</a>
+<a href="#L867">867</a>
+<a href="#L868">868</a>
+<a href="#L869">869</a>
+<a href="#L870">870</a>
+<a href="#L871">871</a>
+<a href="#L872">872</a>
+<a href="#L873">873</a>
+<a href="#L874">874</a>
+<a href="#L875">875</a>
+<a href="#L876">876</a>
+<a href="#L877">877</a>
+<a href="#L878">878</a>
+<a href="#L879">879</a>
+<a href="#L880">880</a>
+<a href="#L881">881</a>
+<a href="#L882">882</a>
+<a href="#L883">883</a>
+<a href="#L884">884</a>
+<a href="#L885">885</a>
+<a href="#L886">886</a>
+<a href="#L887">887</a>
+<a href="#L888">888</a>
+<a href="#L889">889</a>
+<a href="#L890">890</a>
+<a href="#L891">891</a>
+<a href="#L892">892</a>
+<a href="#L893">893</a>
+<a href="#L894">894</a>
+<a href="#L895">895</a>
+<a href="#L896">896</a>
+<a href="#L897">897</a>
+<a href="#L898">898</a>
+<a href="#L899">899</a>
+<a href="#L900">900</a>
+<a href="#L901">901</a>
+<a href="#L902">902</a>
+<a href="#L903">903</a>
+<a href="#L904">904</a>
+<a href="#L905">905</a>
+<a href="#L906">906</a>
+</pre>
+<pre><code class="ocaml">open Piece_types
+
+let top_level_cont x = <span data-count="161">x</span>
+
+let create_metadata utf8 utf16 utf32 lines : metadata =
+  <span data-count="104">{</span>
+    utf8_subtree = utf8;
+    utf16_subtree = utf16;
+    utf32_subtree = utf32;
+    subtree_lines = lines;
+  }
+
+let emptyMetadata =
+  { utf8_subtree = 0; utf16_subtree = 0; utf32_subtree = 0; subtree_lines = 0 }
+
+let ht = function <span data-count="347">P</span>E -&gt; 0 | <span data-count="263">P</span>T (h, _, _, _, _, _) -&gt; h
+
+let fold f x t =
+  <span data-count="19">l</span>et rec fld x t cont =
+    <span data-count="111">m</span>atch t with
+    | <span data-count="65">P</span>E -&gt; cont x
+    | <span data-count="46">P</span>T (_, l, _, v, _, r) -&gt;
+        fld x l (fun x -&gt;
+            <span data-count="46">l</span>et x = f x v in
+            <span data-count="46">f</span>ld x r (fun x -&gt; <span data-count="46">c</span>ont x))
+  in
+  fld x t top_level_cont
+
+let fold_back f x t =
+  <span data-count="4">l</span>et rec fld x t cont =
+    <span data-count="16">m</span>atch t with
+    | <span data-count="10">P</span>E -&gt; cont x
+    | <span data-count="6">P</span>T (_, l, _, v, _, r) -&gt;
+        fld x r (fun x -&gt;
+            <span data-count="6">l</span>et x = f x v in
+            <span data-count="6">f</span>ld x l (fun x -&gt; <span data-count="6">c</span>ont x))
+  in
+  fld x t top_level_cont
+
+(* Getting narious node data. *)
+let utf8_length node =
+  <span data-count="3">m</span>atch node with <span data-count="0">P</span>E -&gt; 0 | <span data-count="3">P</span>T (_, _, _, v, _, _) -&gt; v.utf8_length
+
+let utf16_length node =
+  <span data-count="3">m</span>atch node with <span data-count="0">P</span>E -&gt; 0 | <span data-count="3">P</span>T (_, _, _, v, _, _) -&gt; v.utf16_length
+
+let utf32_length node =
+  <span data-count="22">m</span>atch node with <span data-count="16">P</span>E -&gt; 0 | <span data-count="6">P</span>T (_, _, _, v, _, _) -&gt; v.utf32_length
+
+let n_lines node =
+  <span data-count="19">m</span>atch node with <span data-count="13">P</span>E -&gt; 0 | <span data-count="6">P</span>T (_, _, _, v, _, _) -&gt; Array.length v.lines
+
+let tree_size node =
+  <span data-count="310">m</span>atch node with
+  | <span data-count="206">P</span>E -&gt; emptyMetadata
+  | <span data-count="104">P</span>T (_, _, lm, v, rm, _) -&gt;
+      let utf8 = lm.utf8_subtree + rm.utf8_subtree + v.utf8_length in
+      let utf16 = lm.utf16_subtree + rm.utf16_subtree + v.utf16_length in
+      let utf32 = lm.utf32_subtree + rm.utf32_subtree + v.utf32_length in
+      let lines = lm.subtree_lines + rm.subtree_lines + Array.lengt<span data-count="104">h</span> v.lines in
+      create_metadata utf8 utf16 utf32 lines
+
+let utf8_size_left node =
+  <span data-count="21">m</span>atch node with <span data-count="0">P</span>E -&gt; 0 | <span data-count="21">P</span>T (_, _, lm, _, _, _) -&gt; lm.utf8_subtree
+
+let utf16_size_left node =
+  <span data-count="21">m</span>atch node with <span data-count="0">P</span>E -&gt; 0 | <span data-count="21">P</span>T (_, _, lm, _, _, _) -&gt; lm.utf16_subtree
+
+let utf32_size_left node =
+  <span data-count="132">m</span>atch node with <span data-count="18">P</span>E -&gt; 0 | <span data-count="114">P</span>T (_, _, lm, _, _, _) -&gt; lm.utf32_subtree
+
+let utf8_size_right node =
+  <span data-count="3">m</span>atch node with <span data-count="0">P</span>E -&gt; 0 | <span data-count="3">P</span>T (_, _, _, _, rm, _) -&gt; rm.utf8_subtree
+
+let utf16_size_right node =
+  <span data-count="3">m</span>atch node with <span data-count="0">P</span>E -&gt; 0 | <span data-count="3">P</span>T (_, _, _, _, rm, _) -&gt; rm.utf16_subtree
+
+let utf32_size_right node =
+  <span data-count="22">m</span>atch node with <span data-count="16">P</span>E -&gt; 0 | <span data-count="6">P</span>T (_, _, _, _, rm, _) -&gt; rm.utf32_subtree
+
+let lines_left node =
+  <span data-count="57">m</span>atch node with <span data-count="11">P</span>E -&gt; 0 | <span data-count="46">P</span>T (_, _, lm, _, _, _) -&gt; lm.subtree_lines
+
+let lines_right node =
+  <span data-count="19">m</span>atch node with <span data-count="13">P</span>E -&gt; 0 | <span data-count="6">P</span>T (_, _, _, _, rm, _) -&gt; rm.subtree_lines
+
+let stats tree =
+  <span data-count="0">l</span>et metadata = tree_size tree in
+  <span data-count="0">{</span>
+    lines = metadata.subtree_lines + 1;
+    utf32_length = metadata.utf32_subtree;
+    utf16_length = metadata.utf16_subtree;
+    utf8_length = metadata.utf8_subtree;
+  }
+
+(* Creating and editing node data. *)
+let create_node start utf8length utf16length utf32length lines =
+  <span data-count="79">{</span>
+    start;
+    utf8_length = utf8length;
+    utf16_length = utf16length;
+    utf32_length = utf32length;
+    lines;
+  }
+
+(* AVL tree balance functions. *)
+let mk l a r =
+  <span data-count="154">l</span>et h = (if h<span data-count="154">t</span> l &gt; h<span data-count="154">t</span> r then <span data-count="14">h</span><span data-count="14">t</span> l else <span data-count="140">h</span><span data-count="140">t</span> r) + 1 in
+  PT (h, l, tree_siz<span data-count="154">e</span> l, a, tree_siz<span data-count="154">e</span> r, r)
+
+let balL ab x c =
+  <span data-count="23">i</span>f h<span data-count="23">t</span> ab = h<span data-count="23">t</span> c + 2 then
+    <span data-count="0">m</span>atch ab with
+    | <span data-count="0">P</span>T (_, a, _, y, _, b) -&gt; (
+        if h<span data-count="0">t</span> a &gt;= h<span data-count="0">t</span> b then <span data-count="0">m</span>k a y (m<span data-count="0">k</span> b x c)
+        else
+          <span data-count="0">m</span>atch b with
+          | <span data-count="0">P</span>T (_, b1, _, bx, _, b2) -&gt; mk (m<span data-count="0">k</span> a y b1) bx (m<span data-count="0">k</span> b2 x c)
+          | <span data-count="0">_</span> -&gt; mk ab x c)
+    | <span data-count="0">_</span> -&gt; mk ab x c
+  else <span data-count="23">m</span>k ab x c
+
+let balR a x bc =
+  <span data-count="38">i</span>f h<span data-count="38">t</span> bc = h<span data-count="38">t</span> a + 2 then
+    <span data-count="13">m</span>atch bc with
+    | <span data-count="13">P</span>T (_, b, _, y, _, c) -&gt; (
+        if h<span data-count="13">t</span> b &lt;= h<span data-count="13">t</span> c then <span data-count="4">m</span>k (m<span data-count="4">k</span> a x b) y c
+        else
+          <span data-count="9">m</span>atch b with
+          | <span data-count="9">P</span>T (_, b1, _, bx, _, b2) -&gt; mk (m<span data-count="9">k</span> a x b1) bx (m<span data-count="9">k</span> b2 y c)
+          | <span data-count="0">_</span> -&gt; mk a x bc)
+    | <span data-count="0">_</span> -&gt; mk a x bc
+  else <span data-count="25">m</span>k a x bc
+
+let split_max tree =
+  <span data-count="0">l</span>et rec split node cont =
+    <span data-count="0">m</span>atch node with
+    | <span data-count="0">P</span>T (_, l, _, a, _, r) -&gt;
+        if r = PE then <span data-count="0">(</span>l, a) |&gt; cont
+        else <span data-count="0">s</span>plit r (fun (r', a') -&gt; <span data-count="0">(</span>bal<span data-count="0">L</span> l a r', a') |&gt; cont)
+    | <span data-count="0">P</span>E -&gt; failwith "unexpected split_max case"
+  in
+  split tree top_level_cont
+
+(* Logic for handling piece nodes; not using a separate module because more work due to defining interface. *)
+
+(* tryFindIndex function ported from F#: https://github.com/dotnet/fsharp/blob/main/src/FSharp.Core/array.fs#L1558 *)
+let try_find_index (predicate : int -&gt; bool) (lines : int array) =
+  <span data-count="3">l</span>et len = Array.length lines in
+  <span data-count="3">l</span>et rec find n =
+    <span data-count="3">i</span>f n &gt;= len then <span data-count="3">N</span>one
+    else <span data-count="0">i</span>f predicate (Array.unsafe_ge<span data-count="0">t</span> lines n) then <span data-count="0">S</span>ome n
+    else <span data-count="0">f</span>ind (n + 1)
+  in
+  find 0
+
+let take_while predicate lines =
+  <span data-count="12">l</span>et len = Array.length lines in
+  <span data-count="12">l</span>et rec take n =
+    <span data-count="13">i</span>f n &gt;= len then <span data-count="10">l</span>ines
+    else <span data-count="3">i</span>f predicate (Array.unsafe_ge<span data-count="3">t</span> lines n) then <span data-count="1">t</span>ake (n + 1)
+    else <span data-count="2">A</span>rray.sub lines 0 n
+  in
+  take 0
+
+let skip_while predicate lines =
+  <span data-count="24">l</span>et len = Array.length lines in
+  <span data-count="24">l</span>et rec skip n =
+    <span data-count="39">i</span>f n &gt;= len then <span data-count="19">[</span>||]
+    else <span data-count="20">i</span>f predicate (Array.unsafe_ge<span data-count="20">t</span> lines n) then <span data-count="15">s</span>kip (n + 1)
+    else <span data-count="5">A</span>rray.sub lines n (len - n)
+  in
+  skip 0
+
+let count_lines pc_start offset_difference lines =
+  <span data-count="10">l</span>et find_pos = pc_start + offset_difference in
+  let lines = skip_while (fun x -&gt; <span data-count="17">x</span> &lt;= find_pos) lines in
+  <span data-count="10">A</span>rray.length lines
+
+let split_lines rStart (lines : int array) =
+  <span data-count="3">m</span>atch try_find_index (fun x -&gt; <span data-count="0">x</span> &gt;= rStart) lines with
+  | <span data-count="0">S</span>ome splitPoint -&gt;
+      let arrLeft = Array.sub lines 0 splitPoint in
+      <span data-count="0">l</span>et arrRight =
+        Array.sub lines splitPoint (Array.lengt<span data-count="0">h</span> lines - splitPoint)
+      in
+      <span data-count="0">(</span>arrLeft, arrRight)
+  | <span data-count="3">N</span>one -&gt; (lines, Array.mak<span data-count="3">e</span> 0 0)
+
+let text piece buffer =
+  <span data-count="44">P</span>iece_buffer.substring piece.start piece.utf32_length buffer
+
+let text_in_range curIndex start finish piece buffer =
+  <span data-count="18">l</span>et textStart = start - curIndex + piece.start in
+  let textLength = finish - curIndex + piece.start - textStart in
+  Piece_buffer.substring textStart textLength buffer
+
+let text_at_start curIndex finish piece buffer =
+  <span data-count="1">l</span>et textLength = finish - curIndex in
+  Piece_buffer.substring piece.start textLength buffer
+
+let text_at_end curIndex start piece buffer =
+  <span data-count="5">l</span>et textStart = start - curIndex + piece.start in
+  let textLength = piece.start + piece.utf32_length - textStart in
+  Piece_buffer.substring textStart textLength buffer
+
+let at_start_and_length start length buffer =
+  <span data-count="23">P</span>iece_buffer.substring start length buffer
+
+let is_at_line_break piece_pos_prev piece_pos_next lines =
+  <span data-count="26">l</span>et len = Array.length lines in
+  <span data-count="26">l</span>et rec find n =
+    <span data-count="27">i</span>f n &gt;= len then <span data-count="21">f</span>alse
+    else
+      <span data-count="6">l</span>et cur = Array.unsafe_get lines n in
+      <span data-count="6">i</span>f cur = piece_pos_pre<span data-count="3">v</span> || cur = piece_pos_nex<span data-count="2">t</span> then <span data-count="5">t</span>rue else <span data-count="1">f</span>ind (n + 1)
+  in
+  find 0
+
+let delete_at_start curIndex finish piece buffer =
+  <span data-count="2">l</span>et difference = finish - curIndex in
+  let new_start = piece.start + difference in
+  let newLength = piece.utf32_length - difference in
+  let newLines = skip_while (fun x -&gt; <span data-count="0">x</span> &lt; new_start) piece.lines in
+  <span data-count="2">i</span>f is_at_line_break (new_start - 1) new_start piece.lines then
+    <span data-count="0">l</span>et txt = at_start_and_length (new_start - 1) 2 buffer in
+    <span data-count="0">i</span>f txt = "\r\n" then <span data-count="0">(</span>new_start - 1, newLength - 1, newLines)
+    else <span data-count="0">(</span>new_start, newLength, newLines)
+  else <span data-count="2">(</span>new_start, newLength, newLines)
+
+let delete_at_end curIndex start piece buffer =
+  <span data-count="0">l</span>et length = start - curIndex in
+  let length_offset = length + piece.start in
+  let lines = skip_while (fun x -&gt; <span data-count="0">x</span> &lt;= length_offset) piece.lines in
+  <span data-count="0">i</span>f is_at_line_break length_offset (length_offset + 1) piece.lines then
+    <span data-count="0">l</span>et txt = at_start_and_length (length_offset - 1) 2 buffer in
+    <span data-count="0">i</span>f txt = "\r\n" then <span data-count="0">(</span>length - 1, lines) else <span data-count="0">(</span>length, lines)
+  else <span data-count="0">(</span>length, lines)
+
+let delete_in_range curIndex start finish piece buffer =
+  <span data-count="12">l</span>et finish_difference = finish - curIndex in
+  let p1_length = start - curIndex in
+  let p2_start = finish_difference + piece.start in
+  let p1_length_offset = p1_length + piece.start in
+  let p1Lines = take_while (fun x -&gt; <span data-count="3">x</span> &lt; p1_length_offset) piece.lines in
+  <span data-count="12">l</span>et p2Lines = skip_while (fun x -&gt; <span data-count="3">x</span> &lt; p2_start) piece.lines in
+  <span data-count="12">l</span>et p2Length = piece.utf32_length - finish_difference in
+  let p1_length =
+    if is_at_line_break (p1_length_offset - 1) p1_length_offset piece.lines then
+      <span data-count="3">l</span>et txt = at_start_and_length (p1_length_offset - 1) 2 buffer in
+      <span data-count="3">i</span>f txt = "\r\n" then <span data-count="1">p</span>1_length - 1 else <span data-count="2">p</span>1_length
+    else <span data-count="9">p</span>1_length
+  in
+  let p2_start =
+    if is_at_line_break (p2_start - 1) p2_start piece.lines then
+      <span data-count="2">l</span>et txt = at_start_and_length (p2_start - 1) 2 buffer in
+      <span data-count="2">i</span>f txt = "\r\n" then <span data-count="1">p</span>2_start + 1 else <span data-count="1">p</span>2_start
+    else <span data-count="10">p</span>2_start
+  in
+  (p1_length, p1Lines, p2_start, p2Length, p2Lines)
+
+(* Core PieceTree logic. *)
+let is_consecutive v pcStart = <span data-count="13">v</span>.start + v.utf32_length = pcStart
+
+(* Indexing operations for finding offsets in other encodings. *)
+let offsets_from_ut32 find_offset rope : index_offsets =
+  <span data-count="20">l</span>et rec off cur_u8 cur_u16 cur_u32 (cur_line : int) (node : piece_tree) =
+    <span data-count="24">m</span>atch node with
+    | <span data-count="24">P</span>T (_, l, _, v, _, r) -&gt;
+        let u32_node_end = cur_u32 + v.utf32_length in
+        if find_offset &lt; cur_u32 then
+          <span data-count="3">l</span>et next_u8 = cur_u8 - utf8_lengt<span data-count="3">h</span> l - utf8_size_righ<span data-count="3">t</span> l in
+          let next_u16 = cur_u16 - utf16_lengt<span data-count="3">h</span> l - utf16_size_righ<span data-count="3">t</span> l in
+          let next_u32 = cur_u32 - utf32_lengt<span data-count="3">h</span> l - utf32_size_righ<span data-count="3">t</span> l in
+          let next_line = cur_line - n_line<span data-count="3">s</span> l - lines_righ<span data-count="3">t</span> l in
+          off next_u8 next_u16 next_u32 next_line l
+        else <span data-count="21">i</span>f find_offset &gt; u32_node_end then
+          <span data-count="1">l</span>et next_u8 = cur_u8 + v.utf8_length + utf8_size_lef<span data-count="1">t</span> r in
+          let next_u16 = cur_u16 + v.utf16_length + utf16_size_lef<span data-count="1">t</span> r in
+          let next_u32 = u32_node_end + utf32_size_lef<span data-count="1">t</span> r in
+          let next_line = cur_line + Array.lengt<span data-count="1">h</span> v.lines + lines_lef<span data-count="1">t</span> r in
+          off next_u8 next_u16 next_u32 next_line r
+          (* Trying to find start of this node. *)
+        else <span data-count="20">i</span>f find_offset = cur_u32 then
+          <span data-count="9">U</span>nicode.create_offsets cur_u8 cur_u16 cur_u32 cur_line
+          (* Trying to find end of this node. *)
+        else <span data-count="11">i</span>f find_offset = u32_node_end then
+          <span data-count="1">U</span>nicode.create_offsets (cur_u8 + v.utf8_length)
+            (cur_u16 + v.utf16_length) u32_node_end
+            (cur_line + Array.lengt<span data-count="1">h</span> v.lines)
+          (* Trying to find middle of this node
+             while neither this node or any node we ttavelled to before contain any non-ASCII text. *)
+        else <span data-count="10">i</span>f cur_u8 = cur_u32 &amp;&amp; <span data-count="10">v</span>.utf8_length = v.utf32_length then
+          <span data-count="10">l</span>et line_num = count_lines v.start (find_offset - cur_u32) v.lines in
+          <span data-count="10">U</span>nicode.create_offsets find_offset find_offset find_offset line_num
+          (* Trying to find middle of this node, and this node contains no non-ASCII chars. *)
+        else <span data-count="0">i</span>f v.utf8_length = v.utf32_length then
+          <span data-count="0">l</span>et u32_difference = find_offset - cur_u32 in
+          let u8_offset = cur_u8 + u32_difference in
+          let u16_offset = cur_u16 + u32_difference in
+          let line_num = count_lines v.start u32_difference v.lines in
+          <span data-count="0">U</span>nicode.create_offsets u8_offset u16_offset find_offset line_num
+          (* Trying to find middle of this node. We must get this node's text and count offsets from the string. *)
+        else
+          <span data-count="0">l</span>et u32_difference = find_offset - cur_u32 in
+          let nodeText = text v rope.buffer in
+          <span data-count="0">l</span>et textOffsets = Unicode.count_to nodeText u32_difference Utf32 in
+          <span data-count="0">l</span>et line_num = count_lines v.start u32_difference v.lines in
+          <span data-count="0">U</span>nicode.create_offsets
+            (textOffsets.utf8_pos + cur_u8)
+            (textOffsets.utf16_pos + cur_u16)
+            find_offset line_num
+    | <span data-count="0">P</span>E -&gt;
+        if rope.pieces = PE then <span data-count="0">U</span>nicode.create_offsets 0 0 0 0
+        else <span data-count="0">f</span>ailwith "impossible offsets_from_ut32 case"
+  in
+  off
+    (utf8_size_lef<span data-count="20">t</span> rope.pieces)
+    (utf16_size_lef<span data-count="20">t</span> rope.pieces)
+    (utf32_size_lef<span data-count="20">t</span> rope.pieces)
+    (lines_lef<span data-count="20">t</span> rope.pieces) rope.pieces
+
+let offsets_from_ut16 find_offset rope =
+  <span data-count="0">l</span>et rec off cur_u8 cur_u16 cur_u32 (cur_line : int) node =
+    <span data-count="0">m</span>atch node with
+    | <span data-count="0">P</span>T (_, l, _, v, _, r) -&gt;
+        let u16_node_end = cur_u16 + v.utf16_length in
+        if find_offset &lt; cur_u16 then
+          <span data-count="0">l</span>et next_u8 = cur_u8 - utf8_lengt<span data-count="0">h</span> l - utf8_size_righ<span data-count="0">t</span> l in
+          let next_u16 = cur_u16 - utf16_lengt<span data-count="0">h</span> l - utf16_size_righ<span data-count="0">t</span> l in
+          let next_u32 = cur_u32 - utf32_lengt<span data-count="0">h</span> l - utf32_size_righ<span data-count="0">t</span> l in
+          let next_line = cur_line - n_line<span data-count="0">s</span> l - lines_righ<span data-count="0">t</span> l in
+          off next_u8 next_u16 next_u32 next_line l
+        else <span data-count="0">i</span>f find_offset &gt; u16_node_end then
+          <span data-count="0">l</span>et next_u8 = cur_u8 + v.utf8_length + utf8_size_lef<span data-count="0">t</span> r in
+          let next_u16 = u16_node_end + utf16_size_lef<span data-count="0">t</span> r in
+          let next_u32 = cur_u32 + v.utf32_length + utf32_size_lef<span data-count="0">t</span> r in
+          let next_line = cur_line + Array.lengt<span data-count="0">h</span> v.lines + lines_lef<span data-count="0">t</span> r in
+          off next_u8 next_u16 next_u32 next_line r
+          (* Trying to find start of this node. *)
+        else <span data-count="0">i</span>f find_offset = cur_u16 then
+          <span data-count="0">U</span>nicode.create_offsets cur_u8 cur_u16 cur_u32 cur_line
+          (* Trying to find end of this node. *)
+        else <span data-count="0">i</span>f find_offset = u16_node_end then
+          <span data-count="0">U</span>nicode.create_offsets (cur_u8 + v.utf8_length) u16_node_end
+            (cur_u32 + v.utf32_length)
+            (cur_line + Array.lengt<span data-count="0">h</span> v.lines)
+          (* Trying to find middle of this node
+             while neither this node or any node we ttavelled to before contain any non-ASCII text. *)
+        else <span data-count="0">i</span>f cur_u8 = cur_u32 &amp;&amp; <span data-count="0">v</span>.utf8_length = v.utf32_length then
+          <span data-count="0">l</span>et line_num = count_lines v.start (find_offset - cur_u32) v.lines in
+          <span data-count="0">U</span>nicode.create_offsets find_offset find_offset find_offset line_num
+          (* Trying to find middle of this node, and this node contains no non-ASCII chars. *)
+        else <span data-count="0">i</span>f v.utf8_length = v.utf32_length then
+          <span data-count="0">l</span>et u16_difference = find_offset - cur_u16 in
+          let u8_offset = cur_u8 + u16_difference in
+          let u32_offset = cur_u32 + u16_difference in
+          let line_num = count_lines v.start u32_offset v.lines in
+          <span data-count="0">U</span>nicode.create_offsets u8_offset find_offset u32_offset line_num
+          (* Trying to find middle of this node. We must get this node's text and count offsets from the string. *)
+        else
+          <span data-count="0">l</span>et u16_difference = find_offset - cur_u16 in
+          let nodeText = text v rope.buffer in
+          <span data-count="0">l</span>et textOffsets = Unicode.count_to nodeText u16_difference Utf16 in
+          <span data-count="0">U</span>nicode.create_offsets
+            (textOffsets.utf8_pos + cur_u8)
+            (textOffsets.utf16_pos + cur_u16)
+            (textOffsets.utf32_pos + cur_u32)
+            (cur_line + textOffsets.line_num)
+    | <span data-count="0">P</span>E -&gt;
+        if rope.pieces = PE then <span data-count="0">U</span>nicode.create_offsets 0 0 0 0
+        else <span data-count="0">f</span>ailwith "impossible offsets_from_ut32 case"
+  in
+  off
+    (utf8_size_lef<span data-count="0">t</span> rope.pieces)
+    (utf16_size_lef<span data-count="0">t</span> rope.pieces)
+    (utf32_size_lef<span data-count="0">t</span> rope.pieces)
+    (lines_lef<span data-count="0">t</span> rope.pieces) rope.pieces
+
+let offsets_from_ut8 find_offset rope =
+  <span data-count="0">l</span>et rec off cur_u8 cur_u16 cur_u32 (cur_line : int) (node : piece_tree) =
+    <span data-count="0">m</span>atch node with
+    | <span data-count="0">P</span>T (_, l, _, v, _, r) -&gt;
+        let u8_node_end = cur_u8 + v.utf8_length in
+        if find_offset &lt; cur_u8 then
+          <span data-count="0">l</span>et next_u8 = cur_u8 - utf8_lengt<span data-count="0">h</span> l - utf8_size_righ<span data-count="0">t</span> l in
+          let next_u16 = cur_u16 - utf16_lengt<span data-count="0">h</span> l - utf16_size_righ<span data-count="0">t</span> l in
+          let next_u32 = cur_u32 - utf32_lengt<span data-count="0">h</span> l - utf32_size_righ<span data-count="0">t</span> l in
+          let next_line = cur_line - n_line<span data-count="0">s</span> l - lines_righ<span data-count="0">t</span> l in
+          off next_u8 next_u16 next_u32 next_line l
+        else <span data-count="0">i</span>f find_offset &gt; u8_node_end then
+          <span data-count="0">l</span>et next_u8 = u8_node_end + utf8_size_lef<span data-count="0">t</span> r in
+          let next_u16 = cur_u16 + v.utf16_length + utf16_size_lef<span data-count="0">t</span> r in
+          let next_u32 = cur_u32 + v.utf32_length + utf32_size_lef<span data-count="0">t</span> r in
+          let next_line = cur_line + Array.lengt<span data-count="0">h</span> v.lines + lines_lef<span data-count="0">t</span> r in
+          off next_u8 next_u16 next_u32 next_line r
+          (* Trying to find start of this node. *)
+        else <span data-count="0">i</span>f find_offset = cur_u8 then
+          <span data-count="0">U</span>nicode.create_offsets cur_u8 cur_u16 cur_u32 cur_line
+          (* Trying to find end of this node. *)
+        else <span data-count="0">i</span>f find_offset = u8_node_end then
+          <span data-count="0">U</span>nicode.create_offsets u8_node_end (cur_u16 + v.utf16_length)
+            (cur_u32 + v.utf32_length)
+            (cur_line + Array.lengt<span data-count="0">h</span> v.lines)
+          (* Trying to find middle of this node
+             while neither this node or any node we ttavelled to before contain any non-ASCII text. *)
+        else <span data-count="0">i</span>f cur_u8 = cur_u32 &amp;&amp; <span data-count="0">v</span>.utf8_length = v.utf32_length then
+          <span data-count="0">l</span>et line_num = count_lines v.start (find_offset - cur_u32) v.lines in
+          <span data-count="0">U</span>nicode.create_offsets find_offset find_offset find_offset line_num
+          (* Trying to find middle of this node, while this node contains no non-ASCII chars. *)
+        else <span data-count="0">i</span>f v.utf8_length = v.utf32_length then
+          <span data-count="0">l</span>et u8_difference = find_offset - cur_u8 in
+          let u16_offset = cur_u16 + u8_difference in
+          let u32_offset = cur_u32 + u8_difference in
+          let line_num = count_lines v.start u32_offset v.lines in
+          <span data-count="0">U</span>nicode.create_offsets find_offset u16_offset u32_offset line_num
+          (* Trying to find middle of this node. We must get this node's text and count offsets from the string. *)
+        else
+          <span data-count="0">l</span>et u16_difference = find_offset - cur_u16 in
+          let nodeText = text v rope.buffer in
+          <span data-count="0">l</span>et textOffsets = Unicode.count_to nodeText u16_difference Utf8 in
+          <span data-count="0">U</span>nicode.create_offsets
+            (textOffsets.utf8_pos + cur_u8)
+            (textOffsets.utf16_pos + cur_u16)
+            (textOffsets.utf32_pos + cur_u32)
+            (textOffsets.line_num + cur_line)
+    | <span data-count="0">P</span>E -&gt;
+        if rope.pieces = PE then <span data-count="0">U</span>nicode.create_offsets 0 0 0 0
+        else <span data-count="0">f</span>ailwith "impossible offsets_from_ut32 case"
+  in
+  off
+    (utf8_size_lef<span data-count="0">t</span> rope.pieces)
+    (utf16_size_lef<span data-count="0">t</span> rope.pieces)
+    (utf32_size_lef<span data-count="0">t</span> rope.pieces)
+    (lines_lef<span data-count="0">t</span> rope.pieces) rope.pieces
+
+let offsets find_offset rope enc : index_offsets =
+  <span data-count="0">m</span>atch enc with
+  | <span data-count="0">U</span>tf8 -&gt; offsets_from_ut8 find_offset rope
+  | <span data-count="0">U</span>tf16 -&gt; offsets_from_ut16 find_offset rope
+  | <span data-count="0">U</span>tf32 -&gt; offsets_from_ut32 find_offset rope
+
+(** Adds the given piece to the start of the given tree. *)
+let prepend insNode tree =
+  <span data-count="29">l</span>et rec pre node cont =
+    <span data-count="43">m</span>atch node with
+    | <span data-count="29">P</span>E -&gt; mk PE insNode PE |&gt; <span data-count="29">c</span>ont
+    | <span data-count="14">P</span>T (_, l, _, v, _, r) -&gt; pre l (fun l' -&gt; <span data-count="14">b</span>alL l' v r |&gt; <span data-count="14">c</span>ont)
+  in
+  pre tree top_level_cont
+
+(** Adds the given piece to the end of the given tree. 
+    If the previous insert on the tree was done at the very end,
+    we merge with the last piece rather than creating a new node to keep the tree more shallow. *)
+let append insNode tree =
+  <span data-count="31">l</span>et rec app node cont =
+    <span data-count="34">m</span>atch node with
+    | <span data-count="30">P</span>E -&gt; mk PE insNode PE |&gt; <span data-count="30">c</span>ont
+    | <span data-count="4">P</span>T (_, l, _, v, _, PE) when is_consecutiv<span data-count="4">e</span> v insNode.start -&gt;
+        <span data-count="1">l</span>et v'Lines = Array.append v.lines insNode.lines in
+        <span data-count="1">l</span>et v' =
+          {
+            v with
+            lines = v'Lines;
+            utf8_length = v.utf8_length + insNode.utf8_length;
+            utf16_length = v.utf16_length + insNode.utf16_length;
+            utf32_length = v.utf32_length + insNode.utf32_length;
+          }
+        in
+        mk l v' PE |&gt; <span data-count="1">c</span>ont
+    | <span data-count="3">P</span>T (_, l, _, v, _, r) -&gt; app r (fun r' -&gt; <span data-count="3">b</span>alR l v r' |&gt; <span data-count="3">c</span>ont)
+  in
+  app tree top_level_cont
+
+(** Same as above append functino but omits the is_consecutive check. 
+    Used when we split a piece and is not meant to be a public function. *)
+let ins_max insNode tree =
+  <span data-count="6">l</span>et rec max node cont =
+    <span data-count="9">m</span>atch node with
+    | <span data-count="6">P</span>E -&gt; mk PE insNode PE |&gt; <span data-count="6">c</span>ont
+    | <span data-count="3">P</span>T (_, l, _, v, _, r) -&gt; max r (fun r' -&gt; <span data-count="3">b</span>alR l v r' |&gt; <span data-count="3">c</span>ont)
+  in
+  max tree top_level_cont
+
+let insert_tree insIndex insNode tree buffer =
+  <span data-count="14">l</span>et rec ins curIndex node cont =
+    <span data-count="23">m</span>atch node with
+    | <span data-count="2">P</span>E -&gt; mk PE insNode PE |&gt; <span data-count="2">c</span>ont
+    | <span data-count="21">P</span>T (_, l, _, v, _, r) when insIndex &lt; curIndex -&gt;
+        <span data-count="0">l</span>et nextIndex = curIndex - utf32_lengt<span data-count="0">h</span> l - utf32_size_righ<span data-count="0">t</span> l in
+        ins nextIndex l (fun l' -&gt; <span data-count="0">b</span>alL l' v r |&gt; <span data-count="0">c</span>ont)
+    | <span data-count="21">P</span>T (_, l, _, v, _, r) when insIndex &gt; curIndex + v.utf32_length -&gt;
+        <span data-count="9">l</span>et nextIndex = curIndex + v.utf32_length + utf32_size_lef<span data-count="9">t</span> r in
+        ins nextIndex r (fun r' -&gt; <span data-count="9">b</span>alR l v r' |&gt; <span data-count="9">c</span>ont)
+    | <span data-count="12">P</span>T (_, l, _, v, _, r) when insIndex = curIndex -&gt;
+        <span data-count="0">l</span>et l' = ins_max insNode l in
+        <span data-count="0">b</span>alL l' v r |&gt; <span data-count="0">c</span>ont
+    | <span data-count="12">P</span>T (_, l, _, v, _, r)
+      when insIndex = curIndex + v.utf32_length
+           &amp;&amp; <span data-count="9">i</span>s_consecutiv<span data-count="9">e</span> v insNode.start -&gt;
+        <span data-count="0">l</span>et v'Lines = Array.append v.lines insNode.lines in
+        <span data-count="0">l</span>et v' =
+          {
+            v with
+            lines = v'Lines;
+            utf8_length = v.utf8_length + insNode.utf8_length;
+            utf16_length = v.utf16_length + insNode.utf16_length;
+            utf32_length = v.utf32_length + insNode.utf32_length;
+          }
+        in
+        mk l v' r |&gt; <span data-count="0">c</span>ont
+    | <span data-count="12">P</span>T (_, l, _, v, _, r) when insIndex = curIndex + v.utf32_length -&gt;
+        <span data-count="9">l</span>et r' = prepend insNode r in
+        <span data-count="9">b</span>alR l v r' |&gt; <span data-count="9">c</span>ont
+    | <span data-count="3">P</span>T (_, l, _, v, _, r) -&gt;
+        (* UTF-32 offset calculations which are same in both if/else cases. *)
+        let difference_u32 = insIndex - curIndex in
+        let rStart = v.start + difference_u32 in
+        let rLength_u32 = v.utf32_length - difference_u32 in
+        let leftLines, rightLines = split_lines rStart v.lines in
+
+        (* Requires no special handling as this node only contains ASCII. *)
+        <span data-count="3">i</span>f v.utf32_length = v.utf8_length then
+          <span data-count="3">l</span>et l'node =
+            create_node v.start difference_u32 difference_u32 difference_u32
+              leftLines
+          in
+          <span data-count="3">l</span>et l' = ins_max l'node l in
+          <span data-count="3">l</span>et r'node =
+            create_node rStart rLength_u32 rLength_u32 rLength_u32 rightLines
+          in
+          <span data-count="3">l</span>et r' = prepend r'node r in
+          <span data-count="3">m</span>k l' insNode r' |&gt; <span data-count="3">c</span>ont
+          (* Get string so we can translate utf-32 offset to utf-8/16. *)
+        else
+          <span data-count="0">l</span>et nodeText = text v buffer in
+          <span data-count="0">l</span>et offsets = Unicode.count_to nodeText difference_u32 Utf32 in
+          <span data-count="0">l</span>et difference_u8 = offsets.utf8_pos in
+          let difference_u16 = offsets.utf16_pos in
+          let rLength_u8 = v.start + difference_u8 in
+          let rLength_u16 = v.start + difference_u16 in
+          let l'node =
+            create_node v.start difference_u8 difference_u16 difference_u32
+              leftLines
+          in
+          <span data-count="0">l</span>et l' = ins_max l'node l in
+          <span data-count="0">l</span>et r'node =
+            create_node rStart rLength_u8 rLength_u16 rLength_u32 rightLines
+          in
+          <span data-count="0">l</span>et r' = prepend r'node r in
+          <span data-count="0">m</span>k l' insNode r' |&gt; <span data-count="0">c</span>ont
+  in
+  ins (utf32_size_lef<span data-count="14">t</span> tree) tree top_level_cont
+
+(* Repeated if-statements used in both delete and substring. *)
+let in_range start curIndex finish nodeEndIndex =
+  <span data-count="42">s</span>tart &lt;= curIndex &amp;&amp; <span data-count="3">f</span>inish &gt;= nodeEndIndex
+
+let start_is_in_range start curIndex finish nodeEndIndex =
+  <span data-count="42">s</span>tart &lt;= curIndex &amp;&amp; <span data-count="3">f</span>inish &lt; nodeEndIndex &amp;&amp; <span data-count="3">c</span>urIndex &lt; finish
+
+let end_is_in_range start curIndex finish nodeEndIndex =
+  <span data-count="45">s</span>tart &gt; curIndex &amp;&amp; <span data-count="44">f</span>inish &gt;= nodeEndIndex &amp;&amp; <span data-count="14">s</span>tart &lt;= nodeEndIndex
+
+let middle_is_in_range start curIndex finish nodeEndIndex =
+  <span data-count="39">s</span>tart &gt;= curIndex &amp;&amp; <span data-count="39">f</span>inish &lt;= nodeEndIndex
+
+let delete_tree start length tree buffer =
+  <span data-count="14">l</span>et finish = start + length in
+  let rec del curIndex node cont =
+    <span data-count="25">m</span>atch node with
+    | <span data-count="2">P</span>E -&gt; PE |&gt; cont
+    | <span data-count="23">P</span>T (_, l, _, v, _, r)
+      when in_rang<span data-count="23">e</span> start curIndex finish (curIndex + v.utf32_length) -&gt;
+        <span data-count="0">l</span>et recurseLeftIndex = curIndex - utf32_lengt<span data-count="0">h</span> l - utf32_size_righ<span data-count="0">t</span> l in
+        let recurseRightIndex = curIndex + v.utf32_length + utf32_size_lef<span data-count="0">t</span> r in
+
+        del recurseLeftIndex l (fun l' -&gt;
+            <span data-count="0">d</span>el recurseRightIndex r (fun r' -&gt;
+                <span data-count="0">i</span>f l' = PE then <span data-count="0">r</span>' |&gt; cont
+                else
+                  <span data-count="0">l</span>et newLeft, newVal = split_max l' in
+                  <span data-count="0">b</span>alR newLeft newVal r' |&gt; <span data-count="0">c</span>ont))
+    | <span data-count="23">P</span>T (_, l, _, v, _, r)
+      when start_is_in_rang<span data-count="23">e</span> start curIndex finish (curIndex + v.utf32_length)
+      -&gt;
+        <span data-count="2">l</span>et recurseLeftIndex = curIndex - utf32_lengt<span data-count="2">h</span> l - utf32_size_righ<span data-count="2">t</span> l in
+        del recurseLeftIndex l (fun l' -&gt;
+            <span data-count="2">l</span>et newStart, newLength, newLines =
+              delete_at_start curIndex finish v buffer
+            in
+            <span data-count="2">i</span>f v.utf8_length = v.utf32_length then
+              <span data-count="2">l</span>et v' =
+                create_node newStart newLength newLength newLength newLines
+              in
+              <span data-count="2">b</span>alR l' v' r |&gt; <span data-count="2">c</span>ont
+            else
+              <span data-count="0">l</span>et nodeText = at_start_and_length newStart newLength buffer in
+              <span data-count="0">l</span>et offsets = Unicode.count_to nodeText newLength Utf32 in
+              <span data-count="0">l</span>et v' =
+                create_node newStart offsets.utf8_pos offsets.utf16_pos
+                  newLength newLines
+              in
+              <span data-count="0">b</span>alR l' v' r)
+    | <span data-count="21">P</span>T (_, l, _, v, _, r)
+      when end_is_in_rang<span data-count="21">e</span> start curIndex finish (curIndex + v.utf32_length) -&gt;
+        <span data-count="0">l</span>et recurseRightIndex = curIndex + v.utf32_length + utf32_size_lef<span data-count="0">t</span> r in
+        del recurseRightIndex r (fun r' -&gt;
+            <span data-count="0">l</span>et length, lines = delete_at_end curIndex start v buffer in
+            <span data-count="0">i</span>f v.utf32_length = v.utf8_length then
+              <span data-count="0">l</span>et v' = create_node v.start length length length lines in
+              <span data-count="0">b</span>alL l v' r' |&gt; <span data-count="0">c</span>ont
+            else
+              <span data-count="0">l</span>et nodeText = at_start_and_length v.start length buffer in
+              <span data-count="0">l</span>et offsets = Unicode.count_to nodeText length Utf32 in
+              <span data-count="0">l</span>et v' =
+                create_node v.start offsets.utf8_pos offsets.utf16_pos length
+                  lines
+              in
+              <span data-count="0">b</span>alL l v' r' |&gt; <span data-count="0">c</span>ont)
+    | <span data-count="21">P</span>T (_, l, _, v, _, r)
+      when middle_is_in_rang<span data-count="21">e</span> start curIndex finish (curIndex + v.utf32_length)
+      -&gt;
+        <span data-count="12">l</span>et p1Length, p1Lines, p2Start, p2Length, p2Lines =
+          delete_in_range curIndex start finish v buffer
+        in
+        <span data-count="12">i</span>f v.utf32_length = v.utf8_length then
+          <span data-count="12">l</span>et r'node = create_node p2Start p2Length p2Length p2Length p2Lines in
+          <span data-count="12">l</span>et r' = prepend r'node r in
+          <span data-count="12">l</span>et v' = create_node v.start p1Length p1Length p1Length p1Lines in
+          <span data-count="12">b</span>alR l v' r' |&gt; <span data-count="12">c</span>ont
+        else
+          <span data-count="0">l</span>et p1_text = at_start_and_length v.start p1Length buffer in
+          <span data-count="0">l</span>et p2_text = at_start_and_length p2Start p2Length buffer in
+          <span data-count="0">l</span>et p1_offset = Unicode.count_to p1_text p1Length Utf32 in
+          <span data-count="0">l</span>et p2_offset = Unicode.count_to p2_text p2Length Utf32 in
+          <span data-count="0">l</span>et r'node =
+            create_node p2Start p2_offset.utf8_pos p2_offset.utf16_pos p2Length
+              p2Lines
+          in
+          <span data-count="0">l</span>et v' =
+            create_node v.start p1_offset.utf8_pos p1_offset.utf16_pos p1Length
+              p1Lines
+          in
+          <span data-count="0">l</span>et r' = prepend r'node r in
+          <span data-count="0">b</span>alR l v' r' |&gt; <span data-count="0">c</span>ont
+    | <span data-count="9">P</span>T (_, l, _, v, _, r) when start &lt; curIndex -&gt;
+        <span data-count="0">l</span>et recurseLeftIndex = curIndex - utf32_lengt<span data-count="0">h</span> l - utf32_size_righ<span data-count="0">t</span> l in
+        del recurseLeftIndex l (fun l' -&gt; <span data-count="0">b</span>alR l' v r |&gt; <span data-count="0">c</span>ont)
+    | <span data-count="9">P</span>T (_, l, _, v, _, r) when finish &gt; curIndex + v.utf32_length -&gt;
+        <span data-count="9">l</span>et recurseRightIndex = curIndex + v.utf32_length + utf32_size_lef<span data-count="9">t</span> r in
+        del recurseRightIndex r (fun r' -&gt; <span data-count="9">b</span>alL l v r' |&gt; <span data-count="9">c</span>ont)
+    | <span data-count="0">P</span>T (_, _, _, _, _, _) -&gt; failwith "impossible PieceTree.delete case"
+  in
+  del (utf32_size_lef<span data-count="14">t</span> tree) tree top_level_cont
+
+let substring start length rope =
+  <span data-count="24">l</span>et finish = start + length in
+  let rec sub curIndex node acc cont =
+    <span data-count="30">m</span>atch node with
+    | <span data-count="6">P</span>E -&gt; acc |&gt; cont
+    (* Cases when the current node is at least partially in the substring range. *)
+    (* The end of the current substring range is in this node, |whi|ch means the start of this node. *)
+    | <span data-count="24">P</span>T (_, _, _, v, _, r)
+      when end_is_in_rang<span data-count="24">e</span> start curIndex finish (curIndex + v.utf32_length) -&gt;
+        <span data-count="5">l</span>et nodeText = text_at_end curIndex start v rope.buffer in
+        <span data-count="5">l</span>et recurseRightIndex = curIndex + v.utf32_length + utf32_size_lef<span data-count="5">t</span> r in
+        sub recurseRightIndex r acc (fun x -&gt; <span data-count="5">n</span>odeText :: x |&gt; cont)
+    (* The currennt node is |fully| within the substring range. *)
+    | <span data-count="19">P</span>T (_, l, _, v, _, r)
+      when in_rang<span data-count="19">e</span> start curIndex finish (curIndex + v.utf32_length) -&gt;
+        <span data-count="0">l</span>et nodeEndIndex = curIndex + v.utf32_length in
+        let nodeText = text v rope.buffer in
+
+        <span data-count="0">l</span>et recurseRightIndex = nodeEndIndex + utf32_size_lef<span data-count="0">t</span> r in
+        let recurseLeftIndex = curIndex - utf32_lengt<span data-count="0">h</span> l - utf32_size_righ<span data-count="0">t</span> l in
+
+        sub recurseRightIndex r acc (fun right -&gt;
+            <span data-count="0">s</span>ub recurseLeftIndex l (nodeText :: right) (fun x -&gt; <span data-count="0">x</span> |&gt; cont))
+    (* The start of the substring range is in the node, whi|ch| means the end of this node. *)
+    | <span data-count="19">P</span>T (_, l, _, v, _, _)
+      when start_is_in_rang<span data-count="19">e</span> start curIndex finish (curIndex + v.utf32_length)
+      -&gt;
+        <span data-count="1">l</span>et nodeText = text_at_start curIndex finish v rope.buffer in
+        <span data-count="1">l</span>et recurseLeftIndex = curIndex - utf32_lengt<span data-count="1">h</span> l - utf32_size_righ<span data-count="1">t</span> l in
+        sub recurseLeftIndex l (nodeText :: acc) (fun x -&gt; <span data-count="1">x</span> |&gt; cont)
+    (* The mi|d|dle of the current node is in the substring range. *)
+    | <span data-count="18">P</span>T (_, _, _, v, _, _)
+      when middle_is_in_rang<span data-count="18">e</span> start curIndex finish (curIndex + v.utf32_length)
+      -&gt;
+        <span data-count="18">[</span> text_in_rang<span data-count="18">e</span> curIndex start finish v rope.buffer ] |&gt; cont
+    (* Below two cases navigate to the next node when the substring range is outside the current node. *)
+    (* When the current node is after the substring's end range. *)
+    | <span data-count="0">P</span>T (_, l, _, _, _, _) when start &lt; curIndex -&gt;
+        <span data-count="0">l</span>et recurseLeftIndex = curIndex - utf32_lengt<span data-count="0">h</span> l - utf32_size_righ<span data-count="0">t</span> l in
+        sub recurseLeftIndex l acc (fun x -&gt; <span data-count="0">x</span> |&gt; cont)
+    (* When the current node is before the substring's start range. *)
+    | <span data-count="0">P</span>T (_, _, _, v, _, r) when finish &gt; curIndex + v.utf32_length -&gt;
+        <span data-count="0">l</span>et recurseRightIndex = curIndex + v.utf32_length + utf32_size_lef<span data-count="0">t</span> r in
+        sub recurseRightIndex r acc (fun x -&gt; <span data-count="0">x</span> |&gt; cont)
+    | <span data-count="0">P</span>T (_, _, _, _, _, _) -&gt; failwith "unreachable Buffer.substring case"
+  in
+  String.concat ""
+    (su<span data-count="24">b</span> (utf32_size_lef<span data-count="24">t</span> rope.pieces) rope.pieces [] top_level_cont)
+
+(* Delete/substring if-statements adapted to work with lines. *)
+let node_is_in_line nodeStartLine searchLine nodeEndLine =
+  <span data-count="22">n</span>odeStartLine = searchLine &amp;&amp; <span data-count="16">s</span>earchLine = nodeEndLine
+
+let end_of_line_is_in_node nodeStartLine searchLine nodeEndLine =
+  <span data-count="13">n</span>odeStartLine = searchLine &amp;&amp; <span data-count="7">s</span>earchLine &lt; nodeEndLine
+
+let start_of_line_in_node nodeStartLine searchLine nodeEndLine =
+  <span data-count="28">n</span>odeStartLine &lt; searchLine &amp;&amp; <span data-count="12">s</span>earchLine = nodeEndLine
+
+let line_is_in_node nodeStartLine searchLine nodeEndLine =
+  <span data-count="6">n</span>odeStartLine &lt; searchLine &amp;&amp; <span data-count="6">n</span>odeEndLine &gt; searchLine
+
+(*
+    We retrieve an additional character when getting a line to see if it ends with \r\n
+    and return it unmodified if it does.
+    However, we need to substring (chop off the last character) if the line break is \r or \n
+    to account for the additional character.
+*)
+let chop_last_char_if_not_crln str =
+  <span data-count="12">i</span>f String.lengt<span data-count="12">h</span> str = 1 then <span data-count="1">s</span>tr
+  else
+    <span data-count="11">l</span>et last_char = String.unsafe_get str (String.lengt<span data-count="11">h</span> str - 1) in
+    <span data-count="11">l</span>et second_last_char = String.unsafe_get str (String.lengt<span data-count="11">h</span> str - 2) in
+    <span data-count="11">i</span>f second_last_char = '\r' &amp;&amp; <span data-count="3">l</span>ast_char = '\n' then <span data-count="3">s</span>tr
+    else <span data-count="8">S</span>tring.sub str 0 (String.lengt<span data-count="8">h</span> str - 1)
+
+let chop_first_char_if_ln str =
+  <span data-count="20">i</span>f String.lengt<span data-count="20">h</span> str = 1 then <span data-count="1">s</span>tr
+  else
+    <span data-count="19">l</span>et first_char = String.unsafe_get str 0 in
+    <span data-count="19">i</span>f first_char = '\n' then <span data-count="3">S</span>tring.sub str 1 (String.lengt<span data-count="3">h</span> str - 1) else <span data-count="16">s</span>tr
+
+let get_line line rope =
+  <span data-count="20">l</span>et rec get cur_line cur_u32 node acc cont =
+    <span data-count="52">m</span>atch node with
+    | <span data-count="24">P</span>E -&gt; (acc, None) |&gt; cont
+    | <span data-count="28">P</span>T (_, _, _, v, _, r)
+      when start_of_line_in_nod<span data-count="28">e</span> cur_line line (cur_line + Array.lengt<span data-count="28">h</span> v.lines)
+      -&gt;
+        (* Start of line in terms of piece offset. *)
+        <span data-count="6">l</span>et lineStart =
+          Array.unsafe_ge<span data-count="6">t</span> v.lines (Array.lengt<span data-count="6">h</span> v.lines - 1) + 1
+        in
+        let length = v.utf32_length - lineStart + v.start in
+        let nodeText = at_start_and_length lineStart length rope.buffer in
+
+        (* Index where line starts in terms of piece tree (not buffer). *)
+        <span data-count="6">l</span>et lineStartIndex = Some (cur_u32 + v.utf32_length - length) in
+
+        let recurseRightLine = cur_line + Array.lengt<span data-count="6">h</span> v.lines + lines_lef<span data-count="6">t</span> r in
+        let recurseRightIndex = cur_u32 + v.utf32_length + utf32_size_lef<span data-count="6">t</span> r in
+
+        get recurseRightLine recurseRightIndex r acc (fun (acc, _) -&gt;
+            <span data-count="6">(</span>nodeText :: acc, lineStartIndex) |&gt; cont)
+    | <span data-count="22">P</span>T (_, l, _, v, _, r)
+      when node_is_in_lin<span data-count="22">e</span> cur_line line (cur_line + Array.lengt<span data-count="22">h</span> v.lines) -&gt;
+        <span data-count="9">l</span>et nodeEndLine = cur_line + Array.lengt<span data-count="9">h</span> v.lines in
+        let nodeText = text v rope.buffer in
+
+        <span data-count="9">l</span>et recurseRightLine = nodeEndLine + lines_lef<span data-count="9">t</span> r in
+        let recurseLeftLine = cur_line - n_line<span data-count="9">s</span> l - lines_righ<span data-count="9">t</span> l in
+
+        let recurseRightIndex = cur_u32 + v.utf32_length + utf32_size_lef<span data-count="9">t</span> r in
+        let recurseLeftIndex = cur_u32 - utf32_lengt<span data-count="9">h</span> l - utf32_size_righ<span data-count="9">t</span> l in
+
+        get recurseRightLine recurseRightIndex r acc (fun (acc, _) -&gt;
+            <span data-count="9">g</span>et recurseLeftLine recurseLeftIndex l (nodeText :: acc)
+              (fun (acc, lidx) -&gt;
+                <span data-count="9">m</span>atch lidx with
+                | <span data-count="0">S</span>ome _ -&gt; (acc, lidx) |&gt; cont
+                | <span data-count="9">N</span>one -&gt; (acc, Some cur_u32) |&gt; cont))
+    | <span data-count="13">P</span>T (_, l, _, v, _, _)
+      when end_of_line_is_in_nod<span data-count="13">e</span> cur_line line (cur_line + Array.lengt<span data-count="13">h</span> v.lines)
+      -&gt;
+        (* + 2 in length gives us \r\n in string and - v.Start takes us to piece offset *)
+        <span data-count="7">l</span>et length : int = Array.unsafe_ge<span data-count="7">t</span> v.lines 0 + 2 - v.start in
+        let nodeText =
+          at_start_and_length v.start length rope.buffer
+          |&gt; <span data-count="7">c</span>hop_last_char_if_not_crln
+        in
+
+        <span data-count="7">l</span>et recurseLeftLine = cur_line - n_line<span data-count="7">s</span> l - lines_righ<span data-count="7">t</span> l in
+        let recurseLeftIndex = cur_u32 - utf32_lengt<span data-count="7">h</span> l - utf32_size_righ<span data-count="7">t</span> l in
+
+        get recurseLeftLine recurseLeftIndex l (nodeText :: acc)
+          (fun (acc, lidx) -&gt;
+            <span data-count="7">m</span>atch lidx with
+            | <span data-count="3">S</span>ome _ -&gt; (acc, lidx) |&gt; cont
+            | <span data-count="4">N</span>one -&gt; (acc, Some cur_u32) |&gt; cont)
+    | <span data-count="6">P</span>T (_, _, _, v, _, _)
+      when line_is_in_nod<span data-count="6">e</span> cur_line line (cur_line + Array.lengt<span data-count="6">h</span> v.lines) -&gt;
+        <span data-count="5">l</span>et lineDifference = line - cur_line in
+        let lineStart = Array.unsafe_ge<span data-count="5">t</span> v.lines (lineDifference - 1) + 1 in
+        (* + 2 in length gives us \r\n in string and - v.Start takes us to piece offset *)
+        let lineLength =
+          Array.unsafe_ge<span data-count="5">t</span> v.lines lineDifference - lineStart + 2
+        in
+        let text =
+          at_start_and_length lineStart lineLength rope.buffer
+          |&gt; <span data-count="5">c</span>hop_last_char_if_not_crln
+        in
+
+        <span data-count="5">l</span>et lineStartIndex = Some (cur_u32 + lineStart - v.start) in
+        ([ text ], lineStartIndex) |&gt; cont
+    | <span data-count="1">P</span>T (_, l, _, _, _, _) when line &lt; cur_line -&gt;
+        <span data-count="0">l</span>et recurseLeftLine = cur_line - n_line<span data-count="0">s</span> l - lines_righ<span data-count="0">t</span> l in
+        let recurseLeftIndex = cur_u32 - utf32_lengt<span data-count="0">h</span> l - utf32_size_righ<span data-count="0">t</span> l in
+        get recurseLeftLine recurseLeftIndex l acc (fun x -&gt; <span data-count="0">x</span> |&gt; cont)
+    | <span data-count="1">P</span>T (_, _, _, v, _, r) when line &gt; cur_line + Array.lengt<span data-count="1">h</span> v.lines -&gt;
+        <span data-count="1">l</span>et right_line = cur_line + Array.lengt<span data-count="1">h</span> v.lines + lines_lef<span data-count="1">t</span> r in
+        let right_u32 = cur_u32 + v.utf32_length + utf32_size_lef<span data-count="1">t</span> r in
+        get right_line right_u32 r acc (fun x -&gt; <span data-count="1">x</span> |&gt; cont)
+    | <span data-count="0">P</span>T (_, _, _, _, _, _) -&gt; failwith "unreachable Piece_tree.get_line case"
+  in
+  let strList, lineStartIndex =
+    get (lines_lef<span data-count="20">t</span> rope.pieces)
+      (utf32_size_lef<span data-count="20">t</span> rope.pieces)
+      rope.pieces [] top_level_cont
+  in
+  <span data-count="20">l</span>et str = String.concat "" strList in
+
+  <span data-count="20">m</span>atch lineStartIndex with
+  | <span data-count="20">S</span>ome idx -&gt;
+      let offsets = offsets_from_ut32 idx rope in
+      <span data-count="20">{</span>
+        line = str |&gt; chop_first_char_if_l<span data-count="20">n</span>;
+        utf32_offset = idx;
+        utf16_offset = offsets.utf16_pos;
+        utf8_offset = offsets.utf8_pos;
+      }
+  | <span data-count="0">N</span>one -&gt; { line = str; utf32_offset = 0; utf16_offset = 0; utf8_offset = 0 }
+
+let empty = PE
+
+let fold_text rope state folder =
+  <span data-count="10">f</span>old (fun x pc -&gt; <span data-count="35">f</span>older x (tex<span data-count="35">t</span> pc rope.buffer)) state rope.pieces
+
+let get_text rope =
+  <span data-count="10">l</span>et lst = fold_text rope [] (fun acc str -&gt; <span data-count="35">s</span>tr :: acc) in
+  <span data-count="10">L</span>ist.rev lst |&gt; <span data-count="10">S</span>tring.concat ""
+
+let fold_lines rope state folder =
+  <span data-count="2">l</span>et metadata = tree_size rope.pieces in
+  <span data-count="2">l</span>et total_lines = metadata.subtree_lines in
+  let rec fld lineNum state =
+    <span data-count="6">i</span>f lineNum &gt; total_lines then <span data-count="2">s</span>tate
+    else
+      <span data-count="4">l</span>et line = get_line lineNum rope in
+      <span data-count="4">l</span>et state = folder state line in
+      <span data-count="4">f</span>ld (lineNum + 1) state
+  in
+  fld 0 state
+
+let fold_match_indices str rope initial_state folder =
+  <span data-count="5">l</span>et chr = String.unsafe_get str 0 in
+  <span data-count="5">l</span>et _, length, _ = Unicode.count_string_stats str 0 in
+
+  <span data-count="5">l</span>et rec fnd str_idx utf32_pos text acc tree_pos =
+    <span data-count="84">i</span>f str_idx = String.lengt<span data-count="84">h</span> text then <span data-count="5">a</span>cc
+    else
+      <span data-count="79">l</span>et cur_chr = String.unsafe_get text str_idx in
+      <span data-count="79">l</span>et char_length = Unicode.utf8_length cur_chr in
+      <span data-count="79">i</span>f cur_chr = chr then
+        <span data-count="24">l</span>et substr = substring utf32_pos length rope in
+        <span data-count="24">l</span>et acc =
+          if substr = str then <span data-count="16">f</span>olde<span data-count="16">r</span> acc (utf32_pos + tree_pos) else <span data-count="8">a</span>cc
+        in
+        fnd (str_idx + char_length) (utf32_pos + 1) text acc tree_pos
+      else <span data-count="55">f</span>nd (str_idx + char_length) (utf32_pos + 1) text acc tree_pos
+  in
+
+  let result, _ =
+    fold
+      (fun (acc, pos) piece -&gt;
+        <span data-count="5">l</span>et text =
+          Piece_buffer.substring piece.start piece.utf32_length rope.buffer
+        in
+        <span data-count="5">l</span>et acc = fnd 0 0 text acc pos in
+        <span data-count="5">(</span>acc, pos + piece.utf32_length))
+      (initial_state, 0) rope.pieces
+  in
+  <span data-count="5">r</span>esult
+
+let find_matches find_string rope =
+  <span data-count="1">l</span>et lst =
+    fold_match_indices find_string rope [] (fun acc idx -&gt; <span data-count="3">i</span>dx :: acc)
+  in
+  <span data-count="1">L</span>ist.rev lst |&gt; <span data-count="1">A</span>rray.of_list
+
+let find_and_replace find_string (replace_node : node) rope =
+  <span data-count="3">l</span>et _, find_string_length, _ = Unicode.count_string_stats find_string 0 in
+  <span data-count="3">l</span>et length_difference = replace_node.utf32_length - find_string_length in
+  let folder (acc_tree, acc_diff) idx =
+    <span data-count="9">l</span>et idx = idx + acc_diff in
+    let acc_tree = delete_tree idx find_string_length acc_tree rope.buffer in
+    <span data-count="9">(</span> insert_tre<span data-count="9">e</span> idx replace_node acc_tree rope.buffer,
+      acc_diff + length_difference )
+  in
+  let tree, _ = fold_match_indices find_string rope (rope.pieces, 0) folder in
+  <span data-count="3">t</span>ree
+</code></pre>
+      </div>
+    </div>
+    <script src="../coverage.js"></script>
+  </body>
+</html>

@@ -232,7 +232,7 @@ let delete_at_end curIndex start piece buffer =
   let length = start - curIndex in
   let length_offset = length + piece.start in
   let lines = skip_while (fun x -> x <= length_offset) piece.lines in
-  if is_at_line_break (length_offset - 1) length_offset piece.lines then
+  if is_at_line_break length_offset (length_offset + 1) piece.lines then
     let txt = at_start_and_length (length_offset - 1) 2 buffer in
     if txt = "\r\n" then (length - 1, lines) else (length, lines)
   else (length, lines)
