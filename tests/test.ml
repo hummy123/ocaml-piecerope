@@ -130,6 +130,42 @@ let () =
               let rope = Piece_rope.of_string str in
               let result = Piece_rope.get_line 0 rope in
               Alcotest.(check string) "returns first line" expected result.line);
+          test "returns second line when there is one line break" (fun () ->
+              let str = "asdf\necjeev" in
+              let expected = "ecjeev" in
+              let rope = Piece_rope.of_string str in
+              let result = Piece_rope.get_line 1 rope in
+              Alcotest.(check string) "returns second line" expected result.line);
+          test "returns \r\n when line ends with that" (fun () ->
+              let str = "asdf\r\nvrefvij" in
+              let expected = "asdf\r\n" in
+              let rope = Piece_rope.of_string str in
+              let result = Piece_rope.get_line 0 rope in
+              Alcotest.(check string) "returns \r\n" expected result.line);
+          test "returns first line when we split string with \n" (fun () ->
+              (* No lines in input string. *)
+              let str = "asdfvrefvij" in
+              let rope = Piece_rope.of_string str in
+              let rope = Piece_rope.insert 1 "\n" rope in
+              let expected = "a\n" in
+              let result = Piece_rope.get_line 0 rope in
+              Alcotest.(check string) "returns first line" expected result.line);
+          test "returns second line when we split string with \n" (fun () ->
+              (* No lines in input string. *)
+              let str = "asdfvrefvij" in
+              let rope = Piece_rope.of_string str in
+              let rope = Piece_rope.insert 1 "\n" rope in
+              let expected = "sdfvrefvij" in
+              let result = Piece_rope.get_line 1 rope in
+              Alcotest.(check string) "returns second line" expected result.line);
+          test "returns first line when we split string with \r\n" (fun () ->
+              (* No lines in input string. *)
+              let str = "asdfvrefvij" in
+              let rope = Piece_rope.of_string str in
+              let rope = Piece_rope.insert 1 "\r\n" rope in
+              let expected = "a\r\n" in
+              let result = Piece_rope.get_line 0 rope in
+              Alcotest.(check string) "returns first line" expected result.line);
         ] );
       ( "Piece_rope.serialise",
         [
