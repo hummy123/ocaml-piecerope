@@ -87,7 +87,7 @@ let lines_right node =
 let stats tree =
   let metadata = tree_size tree in
   {
-    lines = metadata.subtree_lines;
+    lines = metadata.subtree_lines + 1;
     utf32_length = metadata.utf32_subtree;
     utf16_length = metadata.utf16_subtree;
     utf8_length = metadata.utf8_subtree;
@@ -734,9 +734,23 @@ let get_line line rope =
     | PT (_, l, _, v, _, _)
       when end_of_line_is_in_node cur_line line (cur_line + Array.length v.lines)
       ->
-        (* + 1 gives us \n in string and - v.Start takes us to piece offset *)
+        (* + 2 gives us \n in string and - v.Start takes us to piece offset *)
         let length : int = Array.unsafe_get v.lines 0 + 1 - v.start in
         let nodeText = at_start_and_length v.start length rope.buffer in
+
+        (* Additional processing for returning correct line break by checking last char. *)
+        let nodeText =
+          (* Don't need to do anything if this is \n *)
+          if String.unsafe_get nodeText (String.length nodeText - 1) = '\n' then
+            nodeText
+          (* This is \r: *)
+          else
+            let last_char = at_start_and_length (v.start + length) 1 rope.buffer in
+            if last_char = "\n" then 
+              nodeText ^ last_char
+            else
+              nodeText
+        in
 
         let recurseLeftLine = cur_line - n_lines l - lines_right l in
         let recurseLeftIndex = cur_u32 - utf32_length l - utf32_size_right l in
@@ -799,7 +813,7 @@ let fold_lines rope state folder =
   let metadata = tree_size rope.pieces in
   let total_lines = metadata.subtree_lines in
   let rec fld lineNum state =
-    if lineNum = total_lines + 1 then state
+    if lineNum > total_lines then state
     else
       let line = get_line lineNum rope in
       let state = folder state line in

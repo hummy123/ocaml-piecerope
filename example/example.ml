@@ -70,7 +70,7 @@ let dispatch model = function
       *)
       let next_line = model.line_num + 1 in
       let stats = Piece_rope.stats model.text in
-      if next_line <= stats.lines then
+      if next_line < stats.lines then
         let line_offset = Piece_rope.get_line next_line model.text in
         let line_stats = Piece_rope.count_string_stats line_offset.line in
         let max_col_num = line_stats.utf32_length in
@@ -111,7 +111,7 @@ let dispatch model = function
       let line_offset = Piece_rope.get_line model.line_num model.text in
       let line_length = String.length line_offset.line - 1 in
       if model.offset = stats.utf32_length then model
-      else if model.col_num = line_length && model.line_num < stats.lines then
+      else if model.col_num = line_length && model.line_num < stats.lines - 1 then
         let next_line_offset =
           Piece_rope.get_line (model.line_num + 1) model.text
         in
@@ -236,7 +236,7 @@ let get_stats model =
     Format.sprintf "col %i of %i cols for current line" model.col_num
       line_stats.utf32_length
   in
-  let line_str = Format.sprintf "line %i of %i" model.line_num stats.lines in
+  let line_str = Format.sprintf "line %i of %i" model.line_num (stats.lines - 1) in
   let line_offset_str =
     Format.sprintf "current line start idx: %i" line_offset.utf32_offset
   in

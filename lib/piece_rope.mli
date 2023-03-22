@@ -84,6 +84,9 @@ val get_line : int -> piece_rope -> line_offset
 
     Returns:
     A line_offset instance containing the retrieved line and the offset the line starts at.
+
+    Notes:
+    This library counts \r, \n and \r\n as distinct line breaks. 
   *)
 
 val get_text : piece_rope -> string
