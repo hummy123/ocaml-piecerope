@@ -2,10 +2,6 @@ open Piece_types
 
 type t = piece_rope
 
-exception
-  Out_of_bounds of
-    string (* Throw exception if querying a range that does not exist. *)
-
 let empty =
   {
     buffer = Piece_buffer.empty;
@@ -25,29 +21,22 @@ let update_piecerope new_tree new_buffer piecerope =
   { buffer = new_buffer; pieces = new_tree; undo; redo; add_to_history = false }
 
 let insert index (str : string) piecerope =
-  let stats = Piece_tree.stats piecerope.pieces in
-  if index <= 0 || index <= stats.utf32_length then
-    if str <> "" then
-      let buffer_length = Piece_buffer.size piecerope.buffer in
-      let utf16length, utf32length, pcLines =
-        Unicode.count_string_stats str buffer_length
-      in
-      let utf8length = String.length str in
-      let buffer = Piece_buffer.append str utf32length piecerope.buffer in
-      let node =
-        Piece_tree.create_node buffer_length utf8length utf16length utf32length
-          pcLines
-      in
-      let pieces =
-        Piece_tree.insert_tree index node piecerope.pieces piecerope.buffer
-      in
-      update_piecerope pieces buffer piecerope
-    else piecerope
-  else
-    raise
-      (Out_of_bounds
-         "Piece_rope.insert: either attempted to insert before index 0 or \
-          after Piece_rope's UTF-32 length")
+  if str <> "" then
+    let buffer_length = Piece_buffer.size piecerope.buffer in
+    let utf16length, utf32length, pcLines =
+      Unicode.count_string_stats str buffer_length
+    in
+    let utf8length = String.length str in
+    let buffer = Piece_buffer.append str utf32length piecerope.buffer in
+    let node =
+      Piece_tree.create_node buffer_length utf8length utf16length utf32length
+        pcLines
+    in
+    let pieces =
+      Piece_tree.insert_tree index node piecerope.pieces piecerope.buffer
+    in
+    update_piecerope pieces buffer piecerope
+  else piecerope
 
 let prepend (str : string) piecerope =
   if str <> "" then
@@ -81,61 +70,16 @@ let append (str : string) piecerope =
 
 let delete start length piecerope =
   if length = 0 then piecerope
-  else if start < 0 then
-    raise
-      (Out_of_bounds "Piece_rope.delete: attempted to delete before index 0")
-  else if length <= 0 then
-    raise
-      (Out_of_bounds
-         "Piece_rope.delete: provided a negative length to delete with")
   else
-    let stats = Piece_tree.stats piecerope.pieces in
-    let finish = start + length in
-    if finish >= stats.utf32_length then
-      raise
-        (Out_of_bounds
-           "Piece_rope.delete: attempted to delete after the Piece_rope's \
-            contents")
-    else
-      let pieces =
-        Piece_tree.delete_tree start length piecerope.pieces piecerope.buffer
-      in
-      update_piecerope pieces piecerope.buffer piecerope
+    let pieces =
+      Piece_tree.delete_tree start length piecerope.pieces piecerope.buffer
+    in
+    update_piecerope pieces piecerope.buffer piecerope
 
 let substring start length piecerope =
-  if length = 0 then ""
-  else if start < 0 then
-    raise
-      (Out_of_bounds
-         "Piece_rope.substring: attempted to get substring before index 0")
-  else if length <= 0 then
-    raise
-      (Out_of_bounds
-         "Piece_rope.substring: provided a negative length to get a substring \
-          with")
-  else
-    let stats = Piece_tree.stats piecerope.pieces in
-    let finish = start + length in
-    if finish >= stats.utf32_length then
-      raise
-        (Out_of_bounds
-           "Piece_rope.substring: attempted to get substring after the \
-            Piece_rope's contents")
-    else Piece_tree.substring start length piecerope
+  if length = 0 then "" else Piece_tree.substring start length piecerope
 
-let get_line line piecerope =
-  if line < 0 then
-    raise
-      (Out_of_bounds
-         "Piece_rope.get_line: attempted to get line number before first")
-  else
-    let stats = Piece_tree.stats piecerope.pieces in
-    if line >= stats.lines then
-      raise
-        (Out_of_bounds
-           "Piece_rope.get_line: attempted to get line number after last line")
-    else Piece_tree.get_line line piecerope
-
+let get_line line piecerope = Piece_tree.get_line line piecerope
 let get_text piecerope = Piece_tree.get_text piecerope
 let of_string str = append str empty
 let stats piecerope = Piece_tree.stats piecerope.pieces

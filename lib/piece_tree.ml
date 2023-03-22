@@ -565,6 +565,12 @@ let delete_tree start length tree buffer =
             let newStart, newLength, newLines =
               delete_at_start curIndex finish v
             in
+            (* Check to make sure, if we split a \r\n pair, that we shift this automatically. *)
+            let newStart, newLength =
+              let chr_point = at_start_and_length (newStart - 1) 2 buffer in
+              if chr_point = "\r\n" then (newStart + 1, newLength - 1)
+              else (newStart, newLength)
+            in
             if v.utf8_length = v.utf32_length then
               let v' =
                 create_node newStart newLength newLength newLength newLines
@@ -583,6 +589,11 @@ let delete_tree start length tree buffer =
         let recurseRightIndex = curIndex + v.utf32_length + utf32_size_left r in
         del recurseRightIndex r (fun r' ->
             let length, lines = delete_at_end curIndex start v in
+            (* Make sure we delete \r\n pair. *)
+            let length =
+              let txt = at_start_and_length (v.start + length - 1) 2 buffer in
+              if txt = "\r\n" then length - 1 else length
+            in
             if v.utf32_length = v.utf8_length then
               let v' = create_node v.start length length length lines in
               balL l v' r' |> cont
@@ -599,6 +610,15 @@ let delete_tree start length tree buffer =
       ->
         let p1Length, p1Lines, p2Start, p2Length, p2Lines =
           delete_in_range curIndex start finish v
+        in
+        (* Make sure we delete \r\n pair. *)
+        let p1Length =
+          let txt = at_start_and_length (v.start + p1Length - 1) 2 buffer in
+          if txt = "\r\n" then p1Length - 1 else p1Length
+        in
+        let p2Start =
+          let txt = at_start_and_length (p2Start - 1) 2 buffer in
+          if txt = "\r\n" then p2Start + 1 else p2Start
         in
         if v.utf32_length = v.utf8_length then
           let r'node = create_node p2Start p2Length p2Length p2Length p2Lines in

@@ -173,20 +173,18 @@ let () =
               let expected = "asdfvrefvij" in
               let result = Piece_rope.get_line 0 rope in
               Alcotest.(check string) "returns whole line" expected result.line);
-          test "returns string with \r when we try to delete last char of \r\n"
-            (fun () ->
+          test "deleting last char of \r\n deletes both" (fun () ->
               let str = "asdf\r\n1234" in
               let rope = Piece_rope.of_string str in
               let rope = Piece_rope.delete 5 1 rope in
-              let expected = "asdf\r1234" in
+              let expected = "asdf1234" in
               let result = Piece_rope.get_text rope in
               Alcotest.(check string) "returns string with \r" expected result);
-          test "returns string with \n when we try to delete first char of \r\n"
-            (fun () ->
+          test "deleting first char of \r\n deletes both" (fun () ->
               let str = "asdf\r\n1234" in
               let rope = Piece_rope.of_string str in
               let rope = Piece_rope.delete 4 1 rope in
-              let expected = "asdf\n1234" in
+              let expected = "asdf1234" in
               let result = Piece_rope.get_text rope in
               Alcotest.(check string) "returns string with \n" expected result);
           test "returns line when line spans multiple pieces (a)" (fun () ->
