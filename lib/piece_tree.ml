@@ -692,6 +692,23 @@ let start_of_line_in_node nodeStartLine searchLine nodeEndLine =
 let line_is_in_node nodeStartLine searchLine nodeEndLine =
   nodeStartLine < searchLine && nodeEndLine > searchLine
 
+(*
+    We retrieve an additional character when getting a line to see if it ends with \r\n
+    and return it unmodified if it does.
+    However, we need to substring (chop off the last character) if the line break is \r or \n
+    to account for the additional character.
+*)
+let chop_last_char_if_not_crln str =
+  if String.length str = 1 then str
+  else
+    let last_char = String.unsafe_get str (String.length str - 1) in
+    let second_last_char = String.unsafe_get str (String.length str - 2) in
+    if
+      (second_last_char = '\r' && last_char = '\n')
+      || (second_last_char <> '\r' && second_last_char <> '\n')
+    then str
+    else String.sub str 0 (String.length str - 2)
+
 let get_line line rope =
   let rec get cur_line cur_u32 node acc cont =
     match node with
@@ -734,22 +751,11 @@ let get_line line rope =
     | PT (_, l, _, v, _, _)
       when end_of_line_is_in_node cur_line line (cur_line + Array.length v.lines)
       ->
-        (* + 2 gives us \n in string and - v.Start takes us to piece offset *)
-        let length : int = Array.unsafe_get v.lines 0 + 1 - v.start in
-        let nodeText = at_start_and_length v.start length rope.buffer in
-
-        (* Additional processing for returning correct line break by checking last char. *)
+        (* + 2 in length gives us \r\n in string and - v.Start takes us to piece offset *)
+        let length : int = Array.unsafe_get v.lines 0 + 2 - v.start in
         let nodeText =
-          (* Don't need to do anything if this is \n *)
-          if String.unsafe_get nodeText (String.length nodeText - 1) = '\n' then
-            nodeText
-          (* This is \r: *)
-          else
-            let last_char = at_start_and_length (v.start + length) 1 rope.buffer in
-            if last_char = "\n" then 
-              nodeText ^ last_char
-            else
-              nodeText
+          at_start_and_length v.start length rope.buffer
+          |> chop_last_char_if_not_crln
         in
 
         let recurseLeftLine = cur_line - n_lines l - lines_right l in
@@ -764,14 +770,17 @@ let get_line line rope =
       when line_is_in_node cur_line line (cur_line + Array.length v.lines) ->
         let lineDifference = line - cur_line in
         let lineStart = Array.unsafe_get v.lines (lineDifference - 1) + 1 in
+        (* + 2 in length gives us \r\n in string and - v.Start takes us to piece offset *)
         let lineLength =
-          Array.unsafe_get v.lines lineDifference - lineStart + 1
+          Array.unsafe_get v.lines lineDifference - lineStart + 2
+        in
+        let text =
+          at_start_and_length lineStart lineLength rope.buffer
+          |> chop_last_char_if_not_crln
         in
 
         let lineStartIndex = Some (cur_u32 + lineStart - v.start) in
-        ( [ at_start_and_length lineStart lineLength rope.buffer ],
-          lineStartIndex )
-        |> cont
+        ([ text ], lineStartIndex) |> cont
     | PT (_, l, _, _, _, _) when line < cur_line ->
         let recurseLeftLine = cur_line - n_lines l - lines_right l in
         let recurseLeftIndex = cur_u32 - utf32_length l - utf32_size_right l in
