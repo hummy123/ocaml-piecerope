@@ -21,9 +21,10 @@ val insert : int -> string -> piece_rope -> piece_rope
     Returns:
     The Piece_rope.t with the node inserted at the given index.
 
-    Raises Out_of_bounds exception if:
-    - Attempting to insert before index 0.
-    - Attempting to insert after the UTF-32 length queried by Piece_rope.stats.
+    Notes:
+    - If you try inserting in the middle of a \r\n pair, your insert will appear after the pair.
+    - If you try inserting a string before index 0, it prepends the string to the piece_rope.
+    - If you try inserting a string after the total UTF-32 length, it appends the string to the piece_rope.
   *)
 
 val prepend : string -> piece_rope -> piece_rope
@@ -63,9 +64,9 @@ val delete : int -> int -> piece_rope -> piece_rope
     Returns:
     The Piece_rope.t with the given range deleted.
 
-    Raises Out_of_bounds exception if:
-    - Provided a negative number for the start or length values.
-    - Attempting to delete after the UTF-32 length queried by Piece_rope.stats.
+    Notes:
+    - If you try deleting just \r or just \n in a \r\n pair, it will delete both characters.
+    - If you specify a start or length that is out of bounds, just deletes the valid part of thar range if any.
   *)
 
 val substring : int -> int -> piece_rope -> string
@@ -81,9 +82,9 @@ val substring : int -> int -> piece_rope -> string
     Returns:
     The extracted substring.
 
-    Raises Out_of_bounds exception if:
-    - Provided a negative number for the start or length values.
-    - Attempting to get a subsring after the UTF-32 length queried by Piece_rope.stats.
+    Notes:
+    - Unlike insert and delete, this function lets you query inside a \r\n pair.
+    - No exception is raised if start or length is out of bounds. Just returns string in the valid part of this range if any.
   *)
 
 val get_line : int -> piece_rope -> line_offset
@@ -91,7 +92,7 @@ val get_line : int -> piece_rope -> line_offset
     This function retrieves a given line from a Piece_tree.
 
     Accepts:
-    The line to retrieve. This is zero-indexed where line 1 can be accessed with index 0, just like string indices are.
+    The line to retrieve.
     The Piece_rope.t to retrieve the line from
 
     Returns:
@@ -100,9 +101,11 @@ val get_line : int -> piece_rope -> line_offset
     Notes:
     This library counts \r, \n and \r\n as distinct line breaks. 
 
-    Raises Out_of_bounds exception if:
-    - Attempting to get a line before index 0.
-    - Attempting to get a line after the total number of lines queried by Piece_rope.stats.
+    Notes:
+    - Line endings \r, \n and \r\n are recognised.
+    - Line access is 0-indexed, just like getting the first char in a string.
+    - Returns the line ending unless you ask for the last line (last line does not have a line ending by definition).
+    - If you ask for a line that is out of bounds, returns an empty string with offsets set to 0.
   *)
 
 val get_text : piece_rope -> string
