@@ -238,6 +238,18 @@ let () =
               let result = Piece_rope.get_line 1 rope in
               Alcotest.(check string) "returns '\r'\n" expected result.line);
         ] );
+      ( "Piece_rope.insert",
+        [
+          test "inserting into middle of \r\n moves insert to after the \r\n pair"
+          (fun () ->
+            let rope = Piece_rope.of_string "az\r\n23" in
+            let rope = Piece_rope.insert 3 "_" rope in
+            let expected = "az\r\n_a23" in
+            let result = Piece_rope.get_text rope in
+            Alcotest.(check string) "inserts after \r\n" expected result
+          );
+        ]
+      );
       ( "Piece_rope.delete",
         [
           test "deletes \r\n when \r\n is at start and we only try deleting \n"
