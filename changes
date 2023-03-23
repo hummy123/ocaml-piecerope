@@ -5,6 +5,7 @@
   * If either \r or \n is deleted in \r\n pair, deletes both.
   * If trying to retrieve line that ends with \r\n, returns the \r\n pair at the end.
   * If trying to retrieve line after a \r\n pair, now returns the line after the pair (previously returned \n at the start).
+* Additional unit tests to verify proper functioning.
 
 # 0.9.0 (2023-03-16)
 * Implementation of functionality in mind is done but I might change my mind later.
