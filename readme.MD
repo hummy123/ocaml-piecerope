@@ -21,15 +21,25 @@ Here is the list of available features:
 
 The easiest way to install this package is `opam install piece_rope`.
 
-## Example usage and benchmarks
+## Example usage
 
 You can see the `/example/` directory for usage instructions and a simple example program tha. 
 
 The example program can be run with `dune exec example/example.exe` and requires you to have installed notty with `opam install notty`.
 
+## Benchmarks
+
 Benchmarks can be run with `dune exec bench/bench.exe`.
 
 From the benchmarks (using the same dataset as [Jumprope-rs](https://github.com/josephg/jumprope-rs#benchmarks)), it seems to be faster than XiRope but slower than the fastest mutable Ropes in Rust.
+
+It seems to be much faster than the Rope in [Zed](https://github.com/ocaml-community/zed) and competitive with the Rope in [Ocaml-bazaar](https://github.com/backtracking/ocaml-bazaar) (half the time this library is faster and half the time it is slower).
+
+|              | Svelte | Rustcode | Sephblog | Automerge |
+|--------------|--------|----------|----------|-----------|
+| piece_rope   | 16 ms  | 31 ms    | 94 ms    | 218 ms    |
+| zed_rope     | 267 ms | 1287 ms  | 665 ms   | 1558 ms   |
+| ocaml_bazaar | 13 ms  | 86 ms    | 198 ms   | 122 ms    |
 
 ## Credits
 
