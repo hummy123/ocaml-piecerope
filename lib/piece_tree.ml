@@ -519,6 +519,18 @@ let insert_tree insIndex insNode tree buffer =
         let rLength_u32 = v.utf32_length - difference_u32 in
         let leftLines, rightLines = split_lines rStart v.lines in
 
+        (* If we try inserting in the middle of a \r\n pair, clip insert to after. *)
+        let rStart, rLength_u32 = 
+          if is_at_line_break (rStart - 1) rStart v.lines then
+            let txt = at_start_and_length (rStart - 1) rStart buffer in
+            if txt = "\r\n" then
+              rStart + 1, rLength_u32 - 1
+            else
+              rStart, rLength_u32
+          else
+            rStart, rLength_u32
+        in
+
         (* Requires no special handling as this node only contains ASCII. *)
         if v.utf32_length = v.utf8_length then
           let l'node =
