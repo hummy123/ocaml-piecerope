@@ -240,16 +240,29 @@ let () =
         ] );
       ( "Piece_rope.insert",
         [
-          test "inserting into middle of \r\n moves insert to after the \r\n pair"
-          (fun () ->
-            let rope = Piece_rope.of_string "az\r\n23" in
-            let rope = Piece_rope.insert 3 "_" rope in
-            let expected = "az\r\n_a23" in
-            let result = Piece_rope.get_text rope in
-            Alcotest.(check string) "inserts after \r\n" expected result
-          );
-        ]
-      );
+          test "trying to insert into middle of \r\n inserts after \r\n pair"
+            (fun () ->
+              let rope = Piece_rope.of_string "az\r\n23" in
+              let rope = Piece_rope.insert 3 "_" rope in
+              let expected = "az\r\n_23" in
+              let result = Piece_rope.get_text rope in
+              let _ =
+                Alcotest.(check string)
+                  "inserts string after \r\n" expected result
+              in
+
+              (* Also check if get_line returns expected result after above insertion. *)
+              let line1 = Piece_rope.get_line 0 rope in
+              let expected_line1 = "az\r\n" in
+              let line2 = Piece_rope.get_line 1 rope in
+              let expected_line2 = "_23" in
+              let _ =
+                Alcotest.(check string)
+                  "first line contains \r\n" expected_line1 line1.line
+              in
+              Alcotest.(check string)
+                "second line starts after \r\n" expected_line2 line2.line);
+        ] );
       ( "Piece_rope.delete",
         [
           test "deletes \r\n when \r\n is at start and we only try deleting \n"
