@@ -57,6 +57,23 @@ let append str strLength buffer =
   in
   ins_max buffer top_level_cont
 
+(* Int.compare is faster than polymorphic comparison, so redefine. *)
+let ( < ) a b =
+  let c = Int.compare a b in
+  c == -1
+
+let ( <= ) a b =
+  let c = Int.compare a b in
+  c == -1 || c == 0
+
+let ( > ) a b =
+  let c = Int.compare a b in
+  c == 1
+
+let ( > ) a b =
+  let c = Int.compare a b in
+  c == 1 || c == 0
+
 let in_range start curIndex finish nodeEndIndex =
   start <= curIndex && finish >= nodeEndIndex
 

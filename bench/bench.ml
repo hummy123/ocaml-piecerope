@@ -104,7 +104,7 @@ let () =
     Utils.run_txns_time "Rustcode Zed" Rustcode.data (Zed_rope.empty ())
       zed_insert zed_delete
   in
-  let zed_seph, zed_length =
+  let zed_seph, seph_length =
     Utils.run_txns_time "Sephblog Zed" Sephblog.data (Zed_rope.empty ())
       zed_insert zed_delete
   in
@@ -140,7 +140,7 @@ let () =
     Utils.run_txns_time "Rustcode Bazaar_rope" Rustcode.data Bazaar_rope.S.empty
       bazaar_insert bazaar_delete
   in
-  let bazaar_seph, bazaar_length =
+  let bazaar_seph, seph_length =
     Utils.run_txns_time "Sephblog Bazaar_rope" Sephblog.data Bazaar_rope.S.empty
       bazaar_insert bazaar_delete
   in
