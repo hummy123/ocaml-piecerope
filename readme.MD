@@ -1,4 +1,30 @@
-# PieceRope-ocaml
+# PieceRope-ocaml ⚠️
+ 
+## DEPRECATED
+
+This repository is deprecated and exists only for archival purposes now.
+
+There is a less featured but much more performant text editing data structure (here)[https://github.com/hummy123/brolib]. Alternatively, zed is probably OCaml's most popular rope implementation, used by utop and lambda-term.
+
+That data structure is built on the idea of plain, simple Ropes rather than Piece Tables or Piece Trees.
+
+The implementation in this repository has embarrassingly slow query/substring times because it is built on the idea of a Piece Tree.
+
+Briefly, a Piece Table/Tree suffers from fragmentation problems because pieces can be extended only in the case of consecutive insertions. This means the tree contains many piece fragments, in contrast to ropes which suffer no such limitation in extending strings because the whole string itself is available. 
+
+This fragmentation is bad because it means there are more nodes in the tree, so that `n` in the expected `O(log n)` time is substituted for a larger number.
+
+Additionally, a Piece Tree as implemented here (and also as implemented in VS Code and AbiWord) contains longer substring/deletion times, because the tree contains data at internal nodes rather than at leaves like a rope would.
+
+To illustrate this, consider an Piece Tree containing the words "The quick brown fox jumps" where each space represents a different piece, and the root piece represents the string "brown".
+
+The user wants to highlight the "quick" and "fox" pieces. To do this, you get the rightmost piece at the root's left subtree (an O(log n) query), the leftmost piece at the root's right subtree (another O(log n) query) and the string represented by the root piece.
+
+This relatively common operation represents two O(log n) queries from the root node and that's pretty slow.
+
+In contrast, a rope which stores data at the leaves will find the smallest subtree that the whole query can be reached from. It may perform more than one O(log n) queries from that smallest subtree, but that's faster than two O(log n) queries from the root.
+
+The embarrasingly slow query times are the reason for this repository being deprecated and existing only as an archive.
 
 ## Introduction
 
@@ -23,7 +49,7 @@ The easiest way to install this package is `opam install piece_rope`.
 
 ## Example usage
 
-You can see the `/example/` directory for usage instructions and a simple example program tha. 
+You can see the `/example/` directory for usage instructions and a simple example program. 
 
 The example program can be run with `dune exec example/example.exe` and requires you to have installed notty with `opam install notty`.
 
